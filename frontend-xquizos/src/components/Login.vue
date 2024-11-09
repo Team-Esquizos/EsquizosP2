@@ -20,6 +20,7 @@
               </label>
               <button type="submit">Logearse</button>
           </form>
+          <router-link to="/vistaAdministrador">Ir a Vista Administrador</router-link>
       </div>
   </body>
   </template>
