@@ -1,25 +1,25 @@
-const fs = require('fs');
-const csv = require('csv-parser');
-const Usuario = require('./models/user');
+const {readFileSync} = require('fs');
+const { parse } = require('csv-parse/sync');
 
-const resultados = [];
 
-fs.createReadStream('user.csv')
-  .pipe(csv())
-  .on('data', (fila) => {
-    // Convierte los valores a tipos adecuados si es necesario
-    resultados.push({
-      nombre: fila.nombre,
-      edad: parseInt(fila.edad, 10),
-      email: fila.email,
-    });
-  })
-  .on('end', async () => {
-    try {
-      // Guarda los resultados en MongoDB
-      await Usuario.insertMany(resultados);
-      console.log('Datos insertados en MongoDB');
-    } catch (error) {
-      console.error('Error al insertar los datos:', error);
+const fileContent = readFileSync('Example.csv', 'utf8');
+
+
+function csvtodb(fileContent){
+  const file= parse(fileContent, { 
+    columns: true,
+    
+    cast:(value, context)=>{
+      if(context.column === 'estatura'){
+        return Number(value);
+      }
+      if(context.column === 'fecha_nacimiento'){
+        return new Date(value);
+      }
+      return value;
+
+      }
     }
-  });
+  );
+  console.log(file);
+}
