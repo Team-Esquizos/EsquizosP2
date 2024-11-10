@@ -86,8 +86,8 @@
           });
           this.message = response.data.message;
         } catch (error) {
-          console.error("Error al subir el archivo:", error);
-          this.message = "Hubo un error al subir el archivo.";
+          console.error('Error al subir el archivo:??');
+          
         }
       },
       handleEditCourses() {
