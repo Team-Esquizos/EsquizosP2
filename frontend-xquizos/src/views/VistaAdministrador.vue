@@ -36,9 +36,11 @@
 
   <script>
   import navBar from '@/components/AppNavbar.vue';
+  import autenticadorSesion from '@/mixins/AutenticadorSesion';
 
   export default {
     name: 'VistaAdministrador',
+    mixins: [autenticadorSesion],
     components: {
         navBar
     },
