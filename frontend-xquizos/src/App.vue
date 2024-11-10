@@ -3,17 +3,13 @@
 </template>
 
 <script>
-import SendCsv from './components/sendcsv.vue';
 export default {
   name: 'App',
   components: {
-    SendCsv
+    
   },
 
-    enviarcsv() {
-      console.log("enviarcsv");
-      this.$refs.sendCsv.uploadFile();
-    }
+
 }
   
 

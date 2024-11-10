@@ -21,6 +21,7 @@
               <button type="submit">Logearse</button>
           </form>
           <router-link to="/vistaAdministrador">Ir a Vista Administrador</router-link>
+          <router-link to="/vistaDocente">Ir a Vista docente</router-link>
       </div>
   </body>
   </template>
