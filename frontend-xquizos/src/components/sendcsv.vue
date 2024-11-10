@@ -35,7 +35,7 @@
   
         const reader = new FileReader();
         reader.onload = (e) => {
-          const text = e.target.result;
+          const text = e.target.result || '';
           const rows = text.split("\n").map((row) => row.split(","));
           this.previewData = rows;
         };
