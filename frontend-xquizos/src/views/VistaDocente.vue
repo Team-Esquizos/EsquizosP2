@@ -14,9 +14,11 @@
 <script>
 import navBar from '@/components/AppNavbar.vue';
 import modulos from '@/components/modulos.vue';
+import autenticadorSesion from '@/mixins/AutenticadorSesion';
 
 export default {
     name: "VistaDocente",
+    mixins: [autenticadorSesion],
     components: {
         navBar,
         modulos

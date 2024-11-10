@@ -5,6 +5,13 @@ const multer = require('multer');
 const csv = require('csv-parser');
 const fs = require('fs');
 
+
+const cors = require('cors');
+const routes = require('./route/routes');
+
+
+mongoose.set('strictQuery', false);
+
 const app = express();
 const upload = multer({ dest: 'uploads/' }); // Configuración de multer
 
@@ -14,6 +21,7 @@ app.get('/', (req, res) => {
 });
 
 // Ruta para subir el archivo CSV y guardar en MongoDB
+
 app.post('/api/upload', upload.single('file'), (req, res) => {
   const filePath = req.file.path;
   const results = [];
@@ -34,7 +42,25 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
     });
 });
 
-const PORT = 8080;
+/*
+async function connectToDatabase() {
+  try {
+    await mongoose.connect('mongodb://localhost:27017/users');
+    console.log("Connected to DB");
+  } catch (err) {
+    console.log("Error connecting to DB", err);
+  }
+}
+connectToDatabase();
+*/
+
+app.use(cors({ origin: 'http://localhost:8080' })); 
+
+
+app.use(express.json());
+app.use(routes);
+
+const PORT = 3333;
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
