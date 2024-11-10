@@ -2,6 +2,7 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router'; // Importa el enrutador
+import 'flowbite/dist/flowbite.css';
 
 const app = createApp(App);
 
