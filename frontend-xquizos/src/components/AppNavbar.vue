@@ -8,13 +8,25 @@
             <li><a href="#" class="active">Inicio</a></li>
             <li><a href="#">Services</a></li>
             <li><a href="#">Pricing</a></li>
-            <li><router-link to="/login">Salir</router-link></li>
+            <li><a href="#" @click="cerrarSesion">Salir</a></li>
         </ul>
     </nav>
 </template>
 
 <script>
+export default {
 
+methods: {
+  cerrarSesion () {
+      localStorage.removeItem('user');
+      sessionStorage.removeItem('user');
+      this.$router.push('/');
+    }
+
+}
+
+
+}
 </script>
 
 <style scoped>

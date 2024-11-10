@@ -1,53 +1,117 @@
 <template>
-  <head>
-      <link rel="stylesheet" href="styles.css">
-  </head>
-  
-  <body>
-      <img src="../assets/Circuit.svg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
-      <div class="card">
-          <h2>Login</h2>
-          <h3>Ingresa tus credenciales</h3>
-          <form class="form">
-              <input type="text" placeholder="Usermane">
-              <input type="text" placeholder="Password">
-              <label>
-                  <input type="checkbox">
-                  <span class="checkbox-wrapper">
-                      <span class="checkbox"></span>
-                  </span>
-                  <span class="checkbox-text">Recuerdame</span>
-              </label>
-              <button type="submit">Logearse</button>
-          </form>
-          <router-link to="/vistaAdministrador">Ir a Vista Administrador</router-link>
-          <router-link to="/vistaDocente">Ir a Vista docente</router-link>
-      </div>
-  </body>
+    <head>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    
+    <body>
+        <img src="../assets/fondo.svg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
+        <div class="card">
+            <h2>Login</h2>
+            <h3>Ingresa tus credenciales</h3>
+            <form class="form" @submit.prevent="login">
+                <input type="text" placeholder="Email" v-model="user.email" required />
+                <input type="password" placeholder="Password" v-model="user.password" required />
+                <label>
+                    <input type="checkbox" v-model="user.rememberMe">
+                    <span class="checkbox-wrapper">
+                        <span class="checkbox"></span>
+                    </span>
+                    <span class="checkbox-text">Recuerdame</span>
+                </label>
+                <button type="submit">Logearse</button>
+            </form>
+            <router-link to="/vistaAdministrador">Ir a Vista Administrador</router-link>
+            <router-link to="/vistaDocente">Ir a Vista docente</router-link>
+            <router-link to="/editor">Ir a editar cursos</router-link>
+        </div>
+    </body>
   </template>
+  
   <script>
+  import Swal from 'sweetalert2';
+  import axios from 'axios';
+  
   export default {
-    name: 'HelloWorld',
+    name: 'Login',
     data() {
       return {
-        username: '',
-        password: '',
-        rememberMe: false
+        user: {
+          email: '',
+          password: '',
+          rememberMe: false,
+        },
+        isAdmin: false,
+        message: ''
       };
+    },
+    mounted() {
+        const storedUser = localStorage.getItem('user') || sessionStorage.getItem('user');
+        
+        if (storedUser) {
+            axios.get(`http://localhost:3333/user/${storedUser}`)
+                .then(({ data }) => {
+                    if (data) {
+                        this.user = data; 
+                    }
+                    if (data.isAdmin === 'true' || data.isAdmin === true) {
+                        this.$router.push({ name: 'VistaAdministrador' });
+                    } else {
+                        this.$router.push({ name: 'VistaDocente' });
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                });
+        }
+
     },
     methods: {
       login() {
-        console.log('Username:', this.username);
-        console.log('Password:', this.password);
-        console.log('Remember Me:', this.rememberMe);
-      }
+        axios.post("http://localhost:3333/user/login", {
+          email: this.user.email,
+          password: this.user.password
+        })
+        .then(({ data }) => {
+          if (data.status === true) {
+            Swal.fire({
+              title: "Sesión iniciada",
+              text: "Has iniciado sesión de forma exitosa",
+              icon: "success"
+            });
+  
+            const storage = this.user.rememberMe ? localStorage : sessionStorage;
+            storage.setItem('email', this.user.email);
+            storage.setItem('user', data.username);
+            storage.setItem('isAdmin', data.isAdmin);
+  
+            if (data.isAdmin === 'true' || data.isAdmin === true) {
+                this.$router.push({ name: 'VistaAdministrador' });
+            } else {
+                this.$router.push({ name: 'VistaDocente' });
+            }
+
+          } else {
+            Swal.fire({
+              title: "Error al iniciar sesión",
+              text: "Comprueba el correo o la contraseña",
+              icon: "error"
+            });
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          Swal.fire({
+            title: "Error",
+            text: "An error occurred. Try again.",
+            icon: "error"
+          });
+        });
+      },
     }
   };
   </script>
   
-  <script>
-  
-  </script>
+
   
   <style scoped>
   ★ {
