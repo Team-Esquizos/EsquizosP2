@@ -4,7 +4,7 @@
   </head>
   
   <body>
-      <img src="../assets/Circuit.svg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
+      <img src="../assets/fondo.svg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
       <div class="card">
           <h2>Login</h2>
           <h3>Ingresa tus credenciales</h3>
@@ -22,6 +22,7 @@
           </form>
           <router-link to="/vistaAdministrador">Ir a Vista Administrador</router-link>
           <router-link to="/vistaDocente">Ir a Vista docente</router-link>
+          <router-link to="/editor">Ir a editar cursos</router-link>
       </div>
   </body>
   </template>
