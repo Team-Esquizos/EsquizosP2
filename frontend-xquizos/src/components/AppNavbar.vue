@@ -8,7 +8,7 @@
             <li><a href="#" class="active">Inicio</a></li>
             <li><a href="#">Services</a></li>
             <li><a href="#">Pricing</a></li>
-            <li><a href="#">Contact</a></li>
+            <li><router-link to="/login">Salir</router-link></li>
         </ul>
     </nav>
 </template>
