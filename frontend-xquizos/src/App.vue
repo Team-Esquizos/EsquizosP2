@@ -1,35 +1,32 @@
 <template>
-  <div id="app">
-    <nav>
-      <!-- Enlaces de navegación -->
-      <router-link to="/login">Login</router-link>
-      <router-link to="/editor">Editor</router-link>
-    </nav>
-    <!-- Vista de la ruta actual -->
-    <router-view></router-view>
-  </div>
+<router-view/>
 </template>
 
 <script>
+import SendCsv from './components/sendcsv.vue';
 export default {
-  name: 'App'
-};
+  name: 'App',
+  components: {
+    SendCsv
+  },
+
+    enviarcsv() {
+      console.log("enviarcsv");
+      this.$refs.sendCsv.uploadFile();
+    }
+}
+  
+
+
 </script>
 
 <style>
-nav {
-  padding: 1rem;
-  background-color: #f4f4f4;
-}
-
-nav a {
-  margin-right: 1rem;
-  color: #42b983;
-  text-decoration: none;
-}
-
-nav a.router-link-active {
-  font-weight: bold;
-  color: #35495e;
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
 }
 </style>
