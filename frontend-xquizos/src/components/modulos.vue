@@ -17,6 +17,11 @@
 </template>
 
 <script>
+import autenticadorSesion from '@/mixins/AutenticadorSesion';
+
+export default {
+  mixins: [autenticadorSesion]
+}
 
 </script>
 

@@ -44,11 +44,13 @@
 
   <script>
   import navBar from '@/components/AppNavbar.vue';
+  import autenticadorSesion from '@/mixins/AutenticadorSesion';
   import axios from 'axios';
 
 
   export default {
     name: 'VistaAdministrador',
+    mixins: [autenticadorSesion],
     components: {
         navBar
     },
