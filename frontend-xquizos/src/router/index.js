@@ -7,7 +7,7 @@ import VistaDocente from '@/views/VistaDocente.vue';
 
 const routes = [
   {
-    path: '/login',
+    path: '/',
     name: 'login',
     component: Login
   },

@@ -18,8 +18,10 @@
   
   <script>
   import axios from "axios";
+  import autenticadorSesion from "@/mixins/AutenticadorSesion";
   
   export default {
+    mixins: [autenticadorSesion],
     data() {
       return {
         file: null,
