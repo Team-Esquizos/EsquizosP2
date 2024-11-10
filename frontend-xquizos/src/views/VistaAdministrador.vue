@@ -57,6 +57,7 @@
   
   <style scoped>
   .admin-container {
+
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -67,7 +68,7 @@
     background-position: center;
     background-repeat: no-repeat;
     width: 100vw; /* Asegúrate de que el contenedor ocupe todo el ancho de la ventana */
-    height: 100vh; /* Asegúrate de que el contenedor ocupe toda la altura de la ventana */
+    height: calc(100vh - 60px);
     overflow: hidden; /* Evita que el contenido se desborde */
   }
   
