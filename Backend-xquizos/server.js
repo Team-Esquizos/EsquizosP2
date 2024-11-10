@@ -4,6 +4,7 @@ const Upload = require('./models/Upload'); // Importa el modelo
 const multer = require('multer');
 const csv = require('csv-parser');
 const fs = require('fs');
+const bodyParser = require('body-parser');
 
 
 const cors = require('cors');
@@ -59,6 +60,9 @@ app.use(cors({ origin: 'http://localhost:8080' }));
 
 app.use(express.json());
 app.use(routes);
+
+app.use(bodyParser.json());  // Middleware para procesar JSON
+app.use(bodyParser.urlencoded({ extended: true }));  // Para datos de formularios
 
 const PORT = 3333;
 app.listen(PORT, () => {
