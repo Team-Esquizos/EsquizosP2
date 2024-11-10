@@ -20,7 +20,7 @@
 
 </script>
 
-<style>
+<style scoped>
 .parent {
   width: 300px;
   padding: 20px;
