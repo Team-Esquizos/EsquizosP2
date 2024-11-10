@@ -10,18 +10,6 @@
             <li><a href="#">Pricing</a></li>
             <li><a href="#" @click="cerrarSesion">Salir</a></li>
         </ul>
-
-        <div class="btn-group">
-          <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            Bienvenido, {{ username }}
-          </button>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Algo</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#" @click="cerrarSesion">Cerrar sesión</a></li>
-            <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#invitacionesModal">Invitaciones</a></li>
-          </ul>
-        </div>
     </nav>
 </template>
 
