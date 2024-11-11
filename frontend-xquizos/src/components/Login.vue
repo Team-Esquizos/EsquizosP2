@@ -23,6 +23,7 @@
             <router-link to="/vistaAdministrador">Ir a Vista Administrador</router-link>
             <router-link to="/vistaDocente">Ir a Vista docente</router-link>
             <router-link to="/editor">Ir a editar cursos</router-link>
+            <router-link to="/temp">temp</router-link>
         </div>
     </body>
   </template>

@@ -1,15 +1,16 @@
-/* eslint-disable */
 <template>
-    <navBar/>
-    <div class="body">
+    <div class="vista-docente">
+      <navBar/>
+      <div class="body">
         <modulos/>
         <modulos/>
         <modulos/>
         <modulos/>
         <modulos/>
         <modulos/>
+      </div>
     </div>
-</template>
+  </template>
 
 <script>
 import navBar from '@/components/AppNavbar.vue';
@@ -27,31 +28,43 @@ export default {
 </script>
 
 <style scoped>
+.vista-docente {
+  background-image: url('../assets/oficina.jpg'); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Estilos del contenedor de módulos */
 .body {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Ajuste automático */
-    gap: 10px; /* Espacio entre módulos */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 10px;
     padding: 20px;
 }
 
 /* Media queries para adaptar el diseño */
-@media (max-width: 768px) { /* Pantallas pequeñas */
-    .body {
-        grid-template-columns: repeat(1, 1fr); /* 1 módulo por fila en pantallas pequeñas */
-        padding: 10px;
-    }
+@media (max-width: 768px) {
+  .body {
+    grid-template-columns: repeat(1, 1fr);
+    padding: 10px;
+  }
 }
 
-@media (min-width: 769px) and (max-width: 1024px) { /* Pantallas medianas */
-    .body {
-        grid-template-columns: repeat(2, 1fr); /* 2 módulos por fila en pantallas medianas */
-    }
+@media (min-width: 769px) and (max-width: 1024px) {
+  .body {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
-@media (min-width: 1025px) { /* Pantallas grandes */
-    .body {
-        margin-left: 10%; /* Espacios laterales en pantallas grandes */
-        margin-right: 10%;
-    }
+@media (min-width: 1025px) {
+  .body {
+    margin-left: 10%;
+    margin-right: 10%;
+  }
 }
 </style>
