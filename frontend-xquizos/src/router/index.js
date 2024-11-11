@@ -7,6 +7,7 @@ import VistaDocente from '@/views/VistaDocente.vue';
 import temp from '@/views/temp.vue';
 import GestorDatos from '@/views/GestorDatos.vue';
 import GestorAlumnos from '@/views/GestorAlumnos.vue';
+import alumnos from '@/views/alumnos.vue';
 
 const routes = [
   {
@@ -43,6 +44,11 @@ const routes = [
     path: '/gestorAlumnos',
     name: 'GestorAlumnos',
     component: GestorAlumnos
+  },
+  {
+    path: '/alumnos',
+    name: 'alumnos',
+    component: alumnos
   }
 ];
 

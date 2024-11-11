@@ -22,6 +22,7 @@
             </li>
           </ul>
         </div>
+        <router-link to="/alumnos"> <span class="see-more">Entrar</span></router-link>
       </div>
     </div>
   </div>
