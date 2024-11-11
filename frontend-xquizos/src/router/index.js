@@ -4,6 +4,8 @@ import Login from '../components/Login.vue';
 import Editor from '../components/EditorView.vue';
 import VistaAdministrador from '@/views/VistaAdministrador.vue';
 import VistaDocente from '@/views/VistaDocente.vue';
+import GestorDatos from '@/views/GestorDatos.vue';
+import GestorAlumnos from '@/views/GestorAlumnos.vue';
 
 const routes = [
   {
@@ -25,6 +27,16 @@ const routes = [
     path: '/vistaDocente',
     name: 'VistaDocente',
     component: VistaDocente
+  },
+  {
+    path: '/gestorDatos',
+    name: 'GestorDatos',
+    component: GestorDatos
+  },
+  {
+    path: '/gestorAlumnos',
+    name: 'GestorAlumnos',
+    component: GestorAlumnos
   }
 ];
 
