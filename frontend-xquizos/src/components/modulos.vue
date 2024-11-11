@@ -7,7 +7,7 @@
         <p class="card-content">
             Lorem ipsum dolor sit amet, consectetur adipisicing elit. 
         </p>
-        <span class="see-more">Entrar</span>
+        <router-link to="/alumnos"> <span class="see-more">Entrar</span></router-link>
       </div>
     </div>
   </div>
