@@ -34,6 +34,15 @@
               </svg>
             </button>
           </div>
+
+          <!--- Botón gestor de datos !--->
+          <div class="button-wrapper">
+            <router-link to="/gestorDatos" class="btn btn-primary">
+              <p class="Btn">Gestor de datos</p>
+            </router-link>
+          </div>
+
+
         </div>
       </div>
     </div>
