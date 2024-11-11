@@ -1,68 +1,69 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-    <div class="container">
-        <h1>Gestión de Alumnos y Cursos</h1>
+<div class="container">
+    <img src="../assets/oficina.jpg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
+    <h1>Gestión de Alumnos y Cursos</h1>
 
-        <!-- Gestión de Alumnos -->
-        <div class="section">
-            <h2>Alumnos</h2>
-            <div class="input-group">
-                <input v-model="newStudent" placeholder="Agregar nuevo alumno" />
-                <button @click="addStudent">Agregar Alumno</button>
-            </div>
-            <ul>
-                <li v-for="(student, index) in students" :key="index">
-                    {{ student }}
-                    <button class="delete-button" @click="removeStudent(index)">Eliminar</button>
-                </li>
-            </ul>
+    <!-- Gestión de Alumnos -->
+    <div class="section">
+        <h2>Alumnos</h2>
+        <div class="input-group">
+            <input v-model="newStudent" placeholder="Agregar nuevo alumno" />
+            <button @click="addStudent">Agregar Alumno</button>
         </div>
-
-        <!-- Gestión de Profesores -->
-        <div class="section">
-            <h2>Profesores</h2>
-            <div class="input-group">
-                <input v-model="newTeacher" placeholder="Agregar nuevo profesor" />
-                <button @click="addTeacher">Agregar Profesor</button>
-            </div>
-            <ul>
-                <li v-for="(teacher, index) in teachers" :key="index">
-                    {{ teacher }}
-                    <button class="delete-button" @click="removeTeacher(index)">Eliminar</button>
-                </li>
-            </ul>
-        </div>
-
-        <!-- Gestión de Cursos -->
-        <div class="section">
-            <h2>Cursos</h2>
-            <div class="input-group">
-                <input v-model="newCourse" placeholder="Nombre del curso" />
-                <select v-model="selectedTeacher">
-                    <option disabled value="">Seleccione un profesor</option>
-                    <option v-for="(teacher, index) in teachers" :key="index">{{ teacher }}</option>
-                </select>
-                <button @click="addCourse">Agregar Curso</button>
-            </div>
-            <ul>
-                <li v-for="(course, index) in courses" :key="index">
-                    <strong>{{ course.name }}</strong> - Profesor: {{ course.teacher }}
-                    <button class="delete-button" @click="removeCourse(index)">Eliminar</button>
-                    <p>Estudiantes:</p>
-                    <ul>
-                        <li v-for="(student, studentIndex) in course.students" :key="studentIndex">{{ student }}</li>
-                    </ul>
-                    <div class="input-group">
-                        <select v-model="selectedStudent" :disabled="students.length === 0">
-                            <option disabled value="">Agregar un estudiante</option>
-                            <option v-for="(student, index) in students" :key="index">{{ student }}</option>
-                        </select>
-                        <button @click="addStudentToCourse(index)" :disabled="!selectedStudent">Añadir al Curso</button>
-                    </div>
-                </li>
-            </ul>
-        </div>
+        <ul>
+            <li v-for="(student, index) in students" :key="index">
+                {{ student }}
+                <button class="delete-button" @click="removeStudent(index)">Eliminar</button>
+            </li>
+        </ul>
     </div>
+
+    <!-- Gestión de Profesores -->
+    <div class="section">
+        <h2>Profesores</h2>
+        <div class="input-group">
+            <input v-model="newTeacher" placeholder="Agregar nuevo profesor" />
+            <button @click="addTeacher">Agregar Profesor</button>
+        </div>
+        <ul>
+            <li v-for="(teacher, index) in teachers" :key="index">
+                {{ teacher }}
+                <button class="delete-button" @click="removeTeacher(index)">Eliminar</button>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Gestión de Cursos -->
+    <div class="section">
+        <h2>Cursos</h2>
+        <div class="input-group">
+            <input v-model="newCourse" placeholder="Nombre del curso" />
+            <select v-model="selectedTeacher">
+                <option disabled value="">Seleccione un profesor</option>
+                <option v-for="(teacher, index) in teachers" :key="index">{{ teacher }}</option>
+            </select>
+            <button @click="addCourse">Agregar Curso</button>
+        </div>
+        <ul>
+            <li v-for="(course, index) in courses" :key="index">
+                <strong>{{ course.name }}</strong> - Profesor: {{ course.teacher }}
+                <button class="delete-button" @click="removeCourse(index)">Eliminar</button>
+                <p>Estudiantes:</p>
+                <ul>
+                    <li v-for="(student, studentIndex) in course.students" :key="studentIndex">{{ student }}</li>
+                </ul>
+                <div class="input-group">
+                    <select v-model="selectedStudent" :disabled="students.length === 0">
+                        <option disabled value="">Agregar un estudiante</option>
+                        <option v-for="(student, index) in students" :key="index">{{ student }}</option>
+                    </select>
+                    <button @click="addStudentToCourse(index)" :disabled="!selectedStudent">Añadir al Curso</button>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
 </template>
 
 <script>
@@ -104,7 +105,11 @@ export default {
         },
         addCourse() {
             if (this.newCourse.trim() !== '' && this.selectedTeacher !== '') {
-                this.courses.push({ name: this.newCourse, teacher: this.selectedTeacher, students: [] });
+                this.courses.push({
+                    name: this.newCourse,
+                    teacher: this.selectedTeacher,
+                    students: []
+                });
                 this.newCourse = '';
                 this.selectedTeacher = '';
             }
@@ -122,7 +127,6 @@ export default {
 };
 </script>
 
-
 <style scoped>
 .container {
     max-width: 600px;
@@ -132,6 +136,7 @@ export default {
 }
 
 h1 {
+    font-size: 35PX;
     text-align: center;
     color: #333;
     margin-bottom: 20px;
@@ -142,6 +147,7 @@ h1 {
 }
 
 h2 {
+    font-size: 20PX;
     color: #555;
     margin-bottom: 10px;
 }

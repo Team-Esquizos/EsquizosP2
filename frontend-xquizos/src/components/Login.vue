@@ -4,7 +4,7 @@
     </head>
     
     <body>
-        <img src="../assets/fondo.svg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
+        <img src="../assets/fondo2.jpg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
         <div class="card">
             <h2>Login</h2>
             <h3>Ingresa tus credenciales</h3>
@@ -134,16 +134,16 @@
       place-items: center;
       margin: 0;
       height: 90vh;
+      color: #f9f9f9;
+      background-color: rgba(255,255,255,0);
       padding: 0 24px;
       background-size: cover;
       font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-      color: #f9f9f9;
-      background-color: rgba(255, 255, 255, 0);
       animation: rotate 6s infinite linear;
   }
   
   .card {
-      width: 30%;
+      width: 20%;
       margin: 0 20px;
       padding: 70px 30px 44px;
       border-radius: 20px;
