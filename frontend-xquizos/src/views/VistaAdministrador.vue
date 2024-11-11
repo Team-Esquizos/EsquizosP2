@@ -5,10 +5,10 @@
       <div class="transparent-box">
         <h1 class="highlight-title">Administrador de cursos</h1>
 
-        <div class="button-container">
-          <!-- Botón Añadir archivo -->
-          <div class="button-wrapper">
+          <div class="button-container">
+            <div class="button-wrapper">
             <p class="button-name">Añadir archivo</p>
+            <!-- Botón para abrir la ventana de selección de archivo -->
             <a href="#" @click.prevent="handleAddFile">
               <svg viewBox="0 0 256 256" height="32" width="38" xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -17,10 +17,16 @@
                 ></path>
               </svg>
             </a>
+            <!-- Input file oculto -->
+            <input
+              type="file"
+              ref="fileInput"
+              style="display: none;"
+              @change="onFileSelected"
+            />
           </div>
-
-          <!-- Botón Editar cursos -->
-          <div class="button-wrapper">
+      
+            <div class="button-wrapper">
             <p class="button-name">Editar cursos</p>
             <button class="Btn" @click.prevent="handleEditCourses">
               Editar
@@ -45,26 +51,60 @@
 </template>
 
 <script>
-import navBar from '@/components/AppNavbar.vue';
-import autenticadorSesion from '@/mixins/AutenticadorSesion';
+  import navBar from '@/components/AppNavbar.vue';
+  import autenticadorSesion from '@/mixins/AutenticadorSesion';
+  import axios from 'axios';
 
-export default {
-  name: 'VistaAdministrador',
-  mixins: [autenticadorSesion],
-  components: {
-    navBar
-  },
-  methods: {
-    handleAddFile() {
-      // Lógica para añadir archivo
-      console.log('Añadir archivo');
+
+  export default {
+    name: 'VistaAdministrador',
+    mixins: [autenticadorSesion],
+    components: {
+        navBar
     },
-    handleEditCourses() {
-      // Lógica para editar cursos
-      console.log('Editar cursos');
+    data() {
+      return {
+        selectedFile: null,
+        message: "",
+      };
+    },
+    methods: {
+      handleAddFile() {
+      this.$refs.fileInput.click();
+    },
+    onFileSelected(event) {
+      this.selectedFile = event.target.files[0];
+      this.uploadFile();
+    },
+      async uploadFile() {
+        console.log('Subir archivo');
+        if (!this.selectedFile) {
+          this.message = "Por favor, selecciona un archivo primero.";
+          return;
+        }
+        
+        const formData = new FormData();
+        formData.append('file', this.selectedFile);
+        
+        try {
+          const response = await axios.post('http://localhost:8081/importDatos', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          });
+          this.message = response.data.message;
+        } catch (error) {
+          console.error('Error al subir el archivo:??');
+          
+        }
+      },
+      handleEditCourses() {
+        // Lógica para editar cursos
+        console.log('Editar cursos');
+      }
     }
   }
-};
+
 </script>
 
 <style scoped>
