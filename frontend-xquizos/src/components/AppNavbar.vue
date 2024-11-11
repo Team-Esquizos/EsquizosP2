@@ -10,11 +10,18 @@
             <li><a href="#">Pricing</a></li>
             <li><a href="#" @click="cerrarSesion">Salir</a></li>
         </ul>
+        <Profile/>
     </nav>
 </template>
 
 <script>
+import Profile from '@/components/Profile.vue';
+
 export default {
+  name: 'AppNavbar',
+  components: {
+    Profile,
+  },
 
 methods: {
   cerrarSesion () {
@@ -35,22 +42,20 @@ methods: {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: transparent; /* Fondo completamente transparente */
+    background-color: transparent; 
     padding: 20px 50px;
     color: #fff;
-    position: fixed;
+    position: absolute;
     top: 0;
-    left: 0;
-    z-index: 1000;
     height: 80px;
     box-sizing: border-box;
-    backdrop-filter: blur(5px); /* Efecto de desenfoque detrás de la navbar */
+    backdrop-filter: blur(5px); 
   }
   
   .navbar-logo {
     color: #000000;
     display: flex;
-    align-items: center; /* Alinea la imagen y el texto en el centro verticalmente */
+    align-items: center; 
   }
   
   .navbar-logo img {
@@ -64,7 +69,7 @@ methods: {
     gap: 10%;
     justify-content: center;
     margin: 0;
-    flex: 1; /* Ocupa el espacio restante para centrar los enlaces */
+    flex: 1; 
   }
   
   .navbar-links li {
