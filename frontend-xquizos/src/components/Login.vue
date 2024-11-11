@@ -137,12 +137,11 @@
       padding: 0 24px;
       background-size: cover;
       font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-      color: #f9f9f9;
       animation: rotate 6s infinite linear;
   }
   
   .card {
-      width: 30%;
+      width: 20%;
       margin: 0 20px;
       padding: 70px 30px 44px;
       border-radius: 20px;
