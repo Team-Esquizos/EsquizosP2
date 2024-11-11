@@ -5,9 +5,23 @@
         <!-- Mostrar el nombre del módulo recibido como prop -->
         <span class="card-title">{{ nombre }}</span>
         <p class="card-content">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. 
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. 
         </p>
-        <span class="see-more">Entrar</span>
+        <button class="see-more" @click.prevent="obtenerModulos">Entrar</button>
+
+        <!-- Mostrar la información obtenida -->
+        <div v-if="cursos.length">
+          <h3>Información del Curso:</h3>
+          <ul>
+            <li v-for="(curso, index) in cursos" :key="index">
+              <p><strong>ID:</strong> {{ curso.ID }}</p>
+              <p><strong>Curso:</strong> {{ curso.curso }}</p>
+              <p><strong>Nombre del Alumno:</strong> {{ curso.nombreAlumno }}</p>
+              <p><strong>Apellido del Alumno:</strong> {{ curso.apellidoAlumno }}</p>
+              <hr>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -15,14 +29,29 @@
 
 <script>
 import autenticadorSesion from '@/mixins/AutenticadorSesion';
+import axios from 'axios';
 
 export default {
   mixins: [autenticadorSesion],
-
   props: {
     nombre: {
       type: String,
       required: true
+    }
+  },
+  data() {
+    return {
+      cursos: [] // Almacenará los datos del curso
+    };
+  },
+  methods: {
+    async obtenerModulos() {
+      try {
+        const response = await axios.get('http://localhost:8081/getCurso');
+        this.cursos = response.data; // Asigna los datos a la propiedad 'cursos'
+      } catch (error) {
+        console.error(error);
+      }
     }
   }
 }
@@ -60,7 +89,6 @@ export default {
   max-width: 100%;
   padding: 60px 25px 25px 25px;
   transform-style: preserve-3d;
-
 }
 
 .content-box::before {
@@ -121,5 +149,23 @@ export default {
 
 .content-box .see-more:hover {
   transform: translate3d(0px, 0px, 60px);
+}
+
+/* Estilos para la lista de cursos */
+.content-box h3 {
+  margin-top: 20px;
+  color: #333;
+  font-size: 18px;
+}
+.content-box ul {
+  list-style-type: none;
+  padding: 0;
+}
+.content-box li {
+  margin-bottom: 15px;
+}
+.content-box p {
+  margin: 5px 0;
+  color: #555;
 }
 </style>

@@ -31,8 +31,22 @@ const importCurso = async (req, res) => {
     } catch (error) {
         res.send({ status: 400, success: false, message: error.message });
     }
-}
+};
+
+const getCurso = async (req, res) => {
+    try {
+        // Obtener los datos de la base de datos
+        var datosData = await datos.find();
+        console.log(datosData);
+        res.send({ status: 200, success: true, data: datosData });
+    } catch (error) {
+        res.send({ status: 400, success: false, message: error.message });
+    }
+};
+
 
 module.exports = {
-    importCurso
+    importCurso,
+    getCurso
+
 }
