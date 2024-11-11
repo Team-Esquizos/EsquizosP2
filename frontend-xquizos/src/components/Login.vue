@@ -134,15 +134,16 @@
       place-items: center;
       margin: 0;
       height: 90vh;
+      color: #f9f9f9;
+      background-color: rgba(255,255,255,0);
       padding: 0 24px;
       background-size: cover;
       font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-      color: #f9f9f9;
       animation: rotate 6s infinite linear;
   }
   
   .card {
-      width: 30%;
+      width: 20%;
       margin: 0 20px;
       padding: 70px 30px 44px;
       border-radius: 20px;
