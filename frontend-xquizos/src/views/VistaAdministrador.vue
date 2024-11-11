@@ -4,9 +4,8 @@
     <div class="content">
       <div class="transparent-box">
         <h1 class="highlight-title">Administrador de cursos</h1>
-
-          <div class="button-container">
-            <div class="button-wrapper">
+        <div class="button-container">
+          <div class="button-wrapper">
             <p class="button-name">Añadir archivo</p>
             <!-- Botón para abrir la ventana de selección de archivo -->
             <a href="#" @click.prevent="handleAddFile">
@@ -26,7 +25,7 @@
             />
           </div>
       
-            <div class="button-wrapper">
+          <div class="button-wrapper">
             <p class="button-name">Editar cursos</p>
             <button class="Btn" @click.prevent="handleEditCourses">
               Editar
@@ -51,60 +50,79 @@
 </template>
 
 <script>
-  import navBar from '@/components/AppNavbar.vue';
-  import autenticadorSesion from '@/mixins/AutenticadorSesion';
-  import axios from 'axios';
+import navBar from '@/components/AppNavbar.vue';
+import autenticadorSesion from '@/mixins/AutenticadorSesion';
+import axios from 'axios';
 
-
-  export default {
-    name: 'VistaAdministrador',
-    mixins: [autenticadorSesion],
-    components: {
-        navBar
-    },
-    data() {
-      return {
-        selectedFile: null,
-        message: "",
-      };
-    },
-    methods: {
-      handleAddFile() {
+export default {
+  name: 'VistaAdministrador',
+  mixins: [autenticadorSesion],
+  components: {
+    navBar
+  },
+  data() {
+    return {
+      selectedFile: null,
+      message: "",
+    };
+  },
+  methods: {
+    handleAddFile() {
       this.$refs.fileInput.click();
     },
     onFileSelected(event) {
       this.selectedFile = event.target.files[0];
-      this.uploadFile();
+      //this.uploadFile();
+      this.uploadCursoFile(); // Llama a la nueva función para enviar el archivo a importCurso
     },
-      async uploadFile() {
-        console.log('Subir archivo');
-        if (!this.selectedFile) {
-          this.message = "Por favor, selecciona un archivo primero.";
-          return;
-        }
-        
-        const formData = new FormData();
-        formData.append('file', this.selectedFile);
-        
-        try {
-          const response = await axios.post('http://localhost:8081/importDatos', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          });
-          this.message = response.data.message;
-        } catch (error) {
-          console.error('Error al subir el archivo:??');
-          
-        }
-      },
-      handleEditCourses() {
-        // Lógica para editar cursos
-        console.log('Editar cursos');
+    async uploadFile() {
+      console.log('Subir archivo');
+      if (!this.selectedFile) {
+        this.message = "Por favor, selecciona un archivo primero.";
+        return;
       }
+      
+      const formData = new FormData();
+      formData.append('file', this.selectedFile);
+      
+      try {
+        const response = await axios.post('http://localhost:8081/importDatos', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        this.message = response.data.message;
+      } catch (error) {
+        console.error('Error al subir el archivo:', error);
+      }
+    },
+    async uploadCursoFile() {
+      console.log('Subir archivo de curso');
+      if (!this.selectedFile) {
+        this.message = "Por favor, selecciona un archivo primero.";
+        return;
+      }
+      
+      const formData = new FormData();
+      formData.append('file', this.selectedFile);
+      
+      try {
+        const response = await axios.post('http://localhost:8081/importCurso', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        this.message = response.data.message;
+      } catch (error) {
+        console.error('Error al subir el archivo de curso:', error);
+      }
+    },
+    handleEditCourses() {
+      // Lógica para editar cursos
+      console.log('Editar cursos');
     }
   }
-
+};
 </script>
 
 <style scoped>
@@ -163,6 +181,42 @@
   font-weight: bold;
 }
 
+/* From Uiverse.io by cybrejon */
+a {
+  color: rgba(0, 0, 0, 0.692); /* Cambiado a negro */
+  padding: 30px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.397);
+  background: rgba(255, 255, 255, 0.068);
+  overflow: hidden;
+  font-size: 0.9rem;
+  font-weight: 600;
+  gap: 8px;
+  border-radius: 5px;
+  margin: 0 5px;
+  transition: 0.2s;
+  border: 1px solid transparent;
+}
+
+a:hover {
+  border-color: #007bff;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.144),
+    rgba(255, 255, 255, 0.247),
+    rgba(255, 255, 255, 0.39)
+  );
+  box-shadow: 0 6px #007bff;
+  transform: translateY(-6px);
+}
+
+a:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
 h1 {
   color: #333;
   font-size: 2em;
@@ -183,12 +237,12 @@ p {
   height: 60px;
   border: none;
   padding: 20px 20px;
-  background-color: #007bff;
+  background-color:#007bff;
   color: white;
   font-weight: 500;
   cursor: pointer;
   border-radius: 10px;
-  box-shadow: 5px 5px 0px #007bff;
+  box-shadow: 5px 5px 0px#007bff;
   transition-duration: .3s;
   top: 10px;
 }
@@ -215,18 +269,16 @@ p {
 }
 
 .Btn:active {
-  transform: translate(3px, 3px);
+  transform: translate(3px , 3px);
   transition-duration: .3s;
   box-shadow: 2px 2px 0px rgb(140, 32, 212);
 }
 
 .highlight-title {
   color: #333;
-  font-size: 2.5em;
-  margin-bottom: 20px;
-}
-
-.router-link-active {
-  text-decoration: none;
+  font-size: 2.5em; /* Aumenta el tamaño de la fuente */
+  font-weight: bold; /* Hace el texto más audaz */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Agrega una sombra al texto */
+  margin-bottom: 20px; /* Aumenta el espacio inferior */
 }
 </style>
