@@ -136,6 +136,7 @@
       padding: 0 24px;
       background-size: cover;
       font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+      background-color: rgba(255, 255, 255, 0);
       color: #f9f9f9;
       animation: rotate 6s infinite linear;
   }
