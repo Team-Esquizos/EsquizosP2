@@ -2,7 +2,8 @@
   <div class="parent">
     <div class="card">
       <div class="content-box">
-        <span class="card-title">Redes</span>
+        <!-- Mostrar el nombre del módulo recibido como prop -->
+        <span class="card-title">{{ nombre }}</span>
         <p class="card-content">
             Lorem ipsum dolor sit amet, consectetur adipisicing elit. 
         </p>
@@ -13,12 +14,14 @@
 </template>
 
 <script>
-import autenticadorSesion from '@/mixins/AutenticadorSesion';
-
 export default {
-  mixins: [autenticadorSesion]
+  props: {
+    nombre: {
+      type: String,
+      required: true
+    }
+  }
 }
-
 </script>
 
 <style scoped>

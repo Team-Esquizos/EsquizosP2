@@ -1,30 +1,40 @@
 <template>
     <div class="vista-docente">
-      <navBar/>
+      <navBar />
       <div class="body">
-        <modulos/>
-        <modulos/>
-        <modulos/>
-        <modulos/>
-        <modulos/>
-        <modulos/>
+        <!-- Usa v-for para iterar sobre los módulos y crear una tarjeta para cada uno -->
+        <modulos v-for="modulo in modulosDocente" :key="modulo.id" :nombre="modulo.nombre" />
       </div>
     </div>
   </template>
+  
 
 <script>
-import navBar from '@/components/AppNavbar.vue';
-import modulos from '@/components/modulos.vue';
-import autenticadorSesion from '@/mixins/AutenticadorSesion';
-
-export default {
+  import navBar from '@/components/AppNavbar.vue';
+  import modulos from '@/components/modulos.vue';
+  import autenticadorSesion from '@/mixins/AutenticadorSesion';
+  
+  export default {
     name: "VistaDocente",
     mixins: [autenticadorSesion],
     components: {
-        navBar,
-        modulos
+      navBar,
+      modulos
+    },
+    data() {
+      return {
+        // Lista de módulos con nombre y un identificador
+        modulosDocente: [
+          { id: 1, nombre: "Redes" },
+          { id: 2, nombre: "Matemáticas" },
+          { id: 3, nombre: "Física" },
+          { id: 4, nombre: "Química" },
+          { id: 5, nombre: "Programación" },
+          { id: 6, nombre: "Inglés" }
+        ]
+      };
     }
-}
+  }
 </script>
 
 <style scoped>
