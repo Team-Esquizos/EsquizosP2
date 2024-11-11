@@ -138,6 +138,7 @@
       background-size: cover;
       font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
       color: #f9f9f9;
+      background-color: rgba(255, 255, 255, 0);
       animation: rotate 6s infinite linear;
   }
   
