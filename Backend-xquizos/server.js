@@ -1,6 +1,5 @@
 const express = require('express');
-const mongoose = require('./mongooseConnection'); // Conexión a MongoDB
-const Upload = require('./models/Upload'); // Importa el modelo
+const mongoose = require('./src/routes/mongooseConnection'); // Conexión a MongoDB
 const multer = require('multer');
 const csv = require('csv-parser');
 const fs = require('fs');
