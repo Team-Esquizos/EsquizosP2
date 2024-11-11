@@ -5,7 +5,7 @@
             <span>Administración</span>
         </div>
         <ul class="navbar-links">
-            <li><a href="#" class="active">Inicio</a></li>
+            <li><a href="#" class="active" @click="irAInicio">Inicio</a></li>
             <li><a href="#">Services</a></li>
             <li><a href="#">Pricing</a></li>
             <li><a href="#" @click="cerrarSesion">Salir</a></li>
@@ -28,10 +28,18 @@ methods: {
       localStorage.removeItem('user');
       sessionStorage.removeItem('user');
       this.$router.push('/');
+    },
+    irAInicio() {
+      // Obtener los datos del usuario activo desde localStorage
+      const isAdmin = JSON.parse(localStorage.getItem('isAdmin'));
+
+      if (isAdmin === 'true' || isAdmin === true) {
+        this.$router.push({ name: 'VistaAdministrador' });
+      } else {
+        this.$router.push({ name: 'VistaDocente' });
+      }
     }
-
-}
-
+  }
 
 }
 </script>
