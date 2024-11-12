@@ -63,7 +63,7 @@
                 .catch(err => {
                     console.error(err);
                 });
-        }
+        } 
 
     },
     methods: {
