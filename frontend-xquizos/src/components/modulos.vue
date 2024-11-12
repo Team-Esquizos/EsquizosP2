@@ -1,28 +1,61 @@
 <template>
-    <div class="parent">
-            <div class="card">
-                <div class="content-box">
-                    <span class="card-title">3D Card</span>
-                    <p class="card-content">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. 
-                    </p>
-                    <span class="see-more">See More</span>
-                </div>
-                <div class="date-box">
-                    <span class="month">JUNE</span>
-                    <span class="date">29</span>
-                </div>
-            </div>
+  <div class="parent">
+    <div class="card">
+      <div class="content-box">
+        <!-- Mostrar el nombre del módulo recibido como prop -->
+        <span class="card-title">{{ nombre }}</span>
+        <p class="card-content">
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. 
+        </p>
+        <button class="see-more" @click.prevent="obtenerModulos">Entrar</button>
+
+        <!-- Mostrar la información obtenida -->
+        <div v-if="cursos.length">
+          <h3>Información del Curso:</h3>
+          <ul>
+            <li v-for="(curso, index) in cursos" :key="index">
+              <p><strong>ID:</strong> {{ curso.ID }}</p>
+              <p><strong>Curso:</strong> {{ curso.curso }}</p>
+              <p><strong>Nombre del Alumno:</strong> {{ curso.nombreAlumno }}</p>
+              <p><strong>Apellido del Alumno:</strong> {{ curso.apellidoAlumno }}</p>
+              <hr>
+            </li>
+          </ul>
         </div>
+        <router-link to="/alumnos"> <span class="see-more">Entrar</span></router-link>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
 import autenticadorSesion from '@/mixins/AutenticadorSesion';
+import axios from 'axios';
 
 export default {
-  mixins: [autenticadorSesion]
+  mixins: [autenticadorSesion],
+  props: {
+    nombre: {
+      type: String,
+      required: true
+    }
+  },
+  data() {
+    return {
+      cursos: [] // Almacenará los datos del curso
+    };
+  },
+  methods: {
+    async obtenerModulos() {
+      try {
+        const response = await axios.get('http://localhost:8081/getCurso');
+        this.cursos = response.data; // Asigna los datos a la propiedad 'cursos'
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }
 }
-
 </script>
 
 <style scoped>
@@ -34,14 +67,14 @@ export default {
 
 .card {
   padding-top: 50px;
-  /* border-radius: 10px; */
-  border: 3px solid rgb(255, 255, 255);
+  border-radius: 10px; 
+  border: 3px solid rgb(0, 0, 0);
   transform-style: preserve-3d;
-  background: linear-gradient(135deg,#0000 18.75%,#f3f3f3 0 31.25%,#0000 0),
-      repeating-linear-gradient(45deg,#f3f3f3 -6.25% 6.25%,#ffffff 0 18.75%);
+  background: linear-gradient(135deg,#00000000 18.75%,#353535 0 31.25%,#00000000 0),
+      repeating-linear-gradient(45deg,#353535 -6.25% 6.25%,#000000 0 18.75%);
   background-size: 60px 60px;
   background-position: 0 0, 0 0;
-  background-color: #f0f0f0;
+  background-color: #000000;
   width: 100%;
   box-shadow: rgba(142, 142, 142, 0.3) 0px 30px 30px -10px;
   transition: all 0.5s ease-in-out;
@@ -53,16 +86,29 @@ export default {
 }
 
 .content-box {
-  background: rgba(4, 193, 250, 0.732);
-  /* border-radius: 10px 100px 10px 10px; */
-  transition: all 0.5s ease-in-out;
+  position: relative;
+  max-width: 100%;
   padding: 60px 25px 25px 25px;
   transform-style: preserve-3d;
 }
 
+.content-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('../assets/red.png');
+  background-size: cover;
+  background-position: center;
+  filter: blur(2px); /* Ajusta el nivel de difuminado */
+  z-index: -1; /* Envía el fondo detrás del contenido */
+}
+
 .content-box .card-title {
   display: inline-block;
-  color: white;
+  color: rgb(0, 0, 0);
   font-size: 25px;
   font-weight: 900;
   transition: all 0.5s ease-in-out;
@@ -77,7 +123,7 @@ export default {
   margin-top: 10px;
   font-size: 12px;
   font-weight: 700;
-  color: #f2f2f2;
+  color: #000000;
   transition: all 0.5s ease-in-out;
   transform: translate3d(0px, 0px, 30px);
 }
@@ -93,47 +139,34 @@ export default {
   font-weight: 900;
   font-size: 9px;
   text-transform: uppercase;
-  color: rgb(7, 185, 255);
-  /* border-radius: 5px; */
+  color: rgb(0, 0, 0);
+  border-radius: 5px; 
   background: white;
   padding: 0.5rem 0.7rem;
   transition: all 0.5s ease-in-out;
   transform: translate3d(0px, 0px, 20px);
+  border: 0.5px solid #000000;
 }
 
 .content-box .see-more:hover {
   transform: translate3d(0px, 0px, 60px);
 }
 
-.date-box {
-  position: absolute;
-  top: 30px;
-  right: 30px;
-  height: 60px;
-  width: 60px;
-  background: white;
-  border: 1px solid rgb(7, 185, 255);
-  /* border-radius: 10px; */
-  padding: 10px;
-  transform: translate3d(0px, 0px, 80px);
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 17px 10px -10px;
+/* Estilos para la lista de cursos */
+.content-box h3 {
+  margin-top: 20px;
+  color: #333;
+  font-size: 18px;
 }
-
-.date-box span {
-  display: block;
-  text-align: center;
+.content-box ul {
+  list-style-type: none;
+  padding: 0;
 }
-
-.date-box .month {
-  color: rgb(4, 193, 250);
-  font-size: 9px;
-  font-weight: 700;
+.content-box li {
+  margin-bottom: 15px;
 }
-
-.date-box .date {
-  font-size: 20px;
-  font-weight: 900;
-  color: rgb(4, 193, 250);
+.content-box p {
+  margin: 5px 0;
+  color: #555;
 }
-
 </style>

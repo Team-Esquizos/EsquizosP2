@@ -4,7 +4,7 @@
     </head>
     
     <body>
-        <img src="../assets/fondo.svg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
+        <img src="../assets/fondo2.jpg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
         <div class="card">
             <h2>Login</h2>
             <h3>Ingresa tus credenciales</h3>
@@ -23,6 +23,7 @@
             <router-link to="/vistaAdministrador">Ir a Vista Administrador</router-link>
             <router-link to="/vistaDocente">Ir a Vista docente</router-link>
             <router-link to="/editor">Ir a editar cursos</router-link>
+            <router-link to="/temp">temp</router-link>
         </div>
     </body>
   </template>
@@ -132,16 +133,17 @@
       display: grid;
       place-items: center;
       margin: 0;
-      height: 100vh;
+      height: 90vh;
+      color: #f9f9f9;
+      background-color: rgba(255,255,255,0);
       padding: 0 24px;
       background-size: cover;
       font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-      color: #f9f9f9;
       animation: rotate 6s infinite linear;
   }
   
   .card {
-      width: 100%;
+      width: 20%;
       margin: 0 20px;
       padding: 70px 30px 44px;
       border-radius: 20px;
@@ -149,36 +151,7 @@
       backdrop-filter: blur(10px);
   }
   
-  @media (min-width: 448px) {
-      .card {
-          margin: 0;
-          width: 70%;
-          min-width: 400px;
-      }
-  }
-  
-  @media (min-width: 500px) {
-      body {
-          padding: 0;
-      }
-  }
-  
-  @media (min-width: 628px) {
-      .card {
-          position: fixed;
-          top: 0;
-          right: 0;
-          bottom: 0;
-          padding: 0 44px;
-          width: 50%;
-          max-width: 500px;
-          min-width: auto;
-          display: flex;
-          border-radius: 0;
-          flex-direction: column;
-          justify-content: center;
-      }
-  }
+
   
   .card>h2 {
       font-size: 36px;
