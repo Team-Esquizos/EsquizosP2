@@ -12,11 +12,11 @@
 <script>
   import navBar from '@/components/AppNavbar.vue';
   import modulos from '@/components/modulos.vue';
-  import autenticadorSesion from '@/mixins/AutenticadorSesion';
+  import autenticadorSesion from '@/mixins/AutenticadorSesion';   // Se debe agregar a nuevos componentes (Que puedan ser accedidos por ruta)
   
   export default {
     name: "VistaDocente",
-    mixins: [autenticadorSesion],
+    mixins: [autenticadorSesion],  // Se debe agregar a nuevos componentes (Que puedan ser accedidos por ruta)
     components: {
       navBar,
       modulos

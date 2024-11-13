@@ -5,7 +5,7 @@
             <span>Administración</span>
         </div>
         <ul class="navbar-links">
-            <li><a href="#" class="active">Inicio</a></li>
+            <li><a href="#" class="active" @click="irAInicio">Inicio</a></li>
             <li><a href="#">Services</a></li>
             <li><a href="#">Pricing</a></li>
             <li><a href="#" @click="cerrarSesion">Salir</a></li>
@@ -25,13 +25,25 @@ export default {
 
 methods: {
   cerrarSesion () {
+      localStorage.removeItem('email');
       localStorage.removeItem('user');
+      localStorage.removeItem('isAdmin');
+      sessionStorage.removeItem('email');
       sessionStorage.removeItem('user');
+      sessionStorage.removeItem('isAdmin');
       this.$router.push('/');
+    },
+    irAInicio() {
+      // Obtener los datos del usuario activo desde localStorage
+      const isAdmin = localStorage.getItem('isAdmin') || sessionStorage.getItem('isAdmin');
+
+      if (isAdmin === 'true') {
+          this.$router.push({ name: 'VistaAdministrador' });
+      } else {
+          this.$router.push({ name: 'VistaDocente' });
+      }
     }
-
-}
-
+  }
 
 }
 </script>

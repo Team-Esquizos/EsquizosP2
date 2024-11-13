@@ -23,4 +23,4 @@ const DatosSchema  = new Schema({
     estatura: String,
 });
 
-module.exports = new mongoose.model('datos', DatosSchema);
+module.exports = new mongoose.model('Student', DatosSchema);
