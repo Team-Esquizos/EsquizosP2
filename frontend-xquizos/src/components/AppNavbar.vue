@@ -25,18 +25,22 @@ export default {
 
 methods: {
   cerrarSesion () {
+      localStorage.removeItem('email');
       localStorage.removeItem('user');
+      localStorage.removeItem('isAdmin');
+      sessionStorage.removeItem('email');
       sessionStorage.removeItem('user');
+      sessionStorage.removeItem('isAdmin');
       this.$router.push('/');
     },
     irAInicio() {
       // Obtener los datos del usuario activo desde localStorage
-      const isAdmin = JSON.parse(localStorage.getItem('isAdmin'));
+      const isAdmin = localStorage.getItem('isAdmin') || sessionStorage.getItem('isAdmin');
 
-      if (isAdmin === 'true' || isAdmin === true) {
-        this.$router.push({ name: 'VistaAdministrador' });
+      if (isAdmin === 'true') {
+          this.$router.push({ name: 'VistaAdministrador' });
       } else {
-        this.$router.push({ name: 'VistaDocente' });
+          this.$router.push({ name: 'VistaDocente' });
       }
     }
   }
