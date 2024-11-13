@@ -1,10 +1,9 @@
-var datos=require('../models/datos');
+
+var datos=require('../teaching/teachingModel');
 var csv = require('csvtojson');
 
 
-const importDatos = async (req,res) => {
-    
-
+const importProfesor = async (req,res) => {
     try {
         var datosData = [];
 
@@ -12,17 +11,16 @@ const importDatos = async (req,res) => {
         .fromFile(req.file.path)
         .then(async(response)=>{
             console.log(response);
-               
+
                 // Iterar sobre el arreglo de objetos y guardarlos en el arreglo datosData
                 for(var i=0; i < response.length; i++){
                     datosData.push({
-                        nombre: response[i].nombre,
-                        apellido: response[i].apellido,
-                        
-                        pais: response[i].pais,
-                        ciudad: response[i].ciudad,
-                        fecha_nacimiento: response[i].fecha_nacimiento,
-                        estatura: response[i].estatura
+                        rut: response[i].rut,
+                        email: response[i].email,
+                        nombrePrimer: response[i].nombrePrimer,
+                        nombreSegundo: response[i].nombreSegundo ,
+                        apellidoP: response[i].apellidoP ,
+                        apellidoM: response[i].apellidoM,
                     });
                 }
                 // Insertar los datos en la base de datos
@@ -38,7 +36,6 @@ const importDatos = async (req,res) => {
     }
 }
 
-
 module.exports = {
-    importDatos
+    importProfesor
 }
