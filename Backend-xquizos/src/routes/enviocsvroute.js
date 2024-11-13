@@ -24,12 +24,15 @@ var storage = multer.diskStorage({
 
 var upload = multer({storage:storage});
 
-const datosController = require('../controllers/datosController');
+
 const cursoController = require('../controllers/cursoController');
 const profesorController = require('../controllers/ProfesorController');
+const estudianteController = require('../controllers/EstudianteController');
 
-datos.post('/importDatos',upload.single('file'),datosController.importDatos);
+
 datos.post('/importCurso',upload.single('file'),cursoController.importCurso);
 datos.post('/importProfesor',upload.single('file'),profesorController.importProfesor);
+datos.post('/importEstudiante',upload.single('file'),estudianteController.importEstudiante);
+
 datos.get('/getCurso',cursoController.getCurso);
 module.exports = datos;
