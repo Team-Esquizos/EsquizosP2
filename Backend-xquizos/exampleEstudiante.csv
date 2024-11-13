@@ -1,0 +1,5 @@
+matricula,rut,email,nombrePrimer,nombreSegundo,apellidoP,apellidoM,carrera,cursos
+12345678-9,12345678-9,john.doe@example.com,John,Doe,Smith,Computer Science,"COMP101,COMP102"
+98765432-1,98765432-1,jane.doe@example.com,Jane,Marie,Doe,Johnson,Mathematics,"MATH101,MATH102"
+11223344-5,11223344-5,bob.smith@example.com,Bob,Smith,Jones,Physics,"PHYS101,PHYS102"
+55667788-9,55667788-9,alice.jones@example.com,Alice,Ann,Jones,Brown,Chemistry,"CHEM101,CHEM102"

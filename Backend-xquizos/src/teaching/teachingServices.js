@@ -23,6 +23,12 @@ module.exports.registerTeachingDBService = (teachingData) => {
 };
 
 
+module.exports.registerTeachingDBServicetoCsv= (teachingData) => {
+    //logica
+}
+
+
+
 module.exports.searchTeachingDBService = async (teachingData) => {
     try {
         const result = await teachingModel.findOne({ matricula: teachingData.matricula });
