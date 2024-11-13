@@ -31,15 +31,6 @@
             <input type="text" :id="key" v-model="alumno[key]" class="form-control" :required="requiredFields.includes(key)" />
           </div>
 
-          <!-- Cursos -->
-          <div class="form-group mb-3">
-            <label for="cursos">Cursos:</label>
-            <div v-for="(curso, index) in alumno.cursos" :key="index" class="input-group mb-2">
-              <input type="text" v-model="alumno.cursos[index].nombre" class="form-control" :placeholder="'Curso ' + (index + 1)" />
-              <button type="button" class="btn btn-danger input-group-text" @click="removeCurso(index)">Eliminar</button>
-            </div>
-            <button type="button" class="btn btn-info" @click="addCurso">Agregar Curso</button>
-          </div>
 
           <!-- Botones de acción -->
           <div class="d-flex justify-content-between mt-4">
@@ -96,10 +87,12 @@
 
 <script>
 import axios from 'axios';
-import navBar from '@/components/AppNavbar.vue'
+import navBar from '@/components/AppNavbar.vue';
+import autenticadorSesion from '../mixins/AutenticadorSesion.js';
 
 export default {
   name: 'GestorAlumnos',
+  mixins: [autenticadorSesion],
   components: { navBar },
   data() {
     return {
@@ -171,14 +164,8 @@ export default {
       }
     },
     clearForm() {
-      this.alumno = { nombrePrimer: '', nombreSegundo: '', apellidoP: '', apellidoM: '', rut: '', email: '', matricula: '', carrera: '', cursos: [] };
+      this.alumno = { nombrePrimer: '', nombreSegundo: '', apellidoP: '', apellidoM: '', rut: '', email: '', matricula: '', carrera: '' };
       this.formVisible = false;
-    },
-    addCurso() {
-      this.alumno.cursos.push({ nombre: '' });
-    },
-    removeCurso(index) {
-      this.alumno.cursos.splice(index, 1);
     }
   }
 };

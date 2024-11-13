@@ -16,9 +16,14 @@ const cursoSchema  = new Schema({
         type: String,
         unique: true
     },
-    curso: String,
-    nombreAlumno: String,
-    apellidoAlumno: String,
+    nombreCurso: String,
+    alumnos: [
+        {
+            matricula: {type: String, required: true},
+            nombre: { type: String, required: true },
+            apellido: { type: String, required: true }
+        }
+    ]
 });
 
 module.exports = new mongoose.model('curso', cursoSchema);

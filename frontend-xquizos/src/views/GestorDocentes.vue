@@ -28,18 +28,9 @@
             <!-- Campos del formulario -->
             <div class="form-group mb-3" v-for="(label, key) in formFields" :key="key">
               <label :for="key">{{ label }}</label>
-              <input type="text" :id="key" v-model="alumno[key]" class="form-control" :required="requiredFields.includes(key)" />
+              <input type="text" :id="key" v-model="docente[key]" class="form-control" :required="requiredFields.includes(key)" />
             </div>
-  
-            <!-- Cursos -->
-            <div class="form-group mb-3">
-              <label for="cursos">Cursos:</label>
-              <div v-for="(curso, index) in alumno.cursos" :key="index" class="input-group mb-2">
-                <input type="text" v-model="alumno.cursos[index].nombre" class="form-control" :placeholder="'Curso ' + (index + 1)" />
-                <button type="button" class="btn btn-danger input-group-text" @click="removeCurso(index)">Eliminar</button>
-              </div>
-              <button type="button" class="btn btn-info" @click="addCurso">Agregar Curso</button>
-            </div>
+
   
             <!-- Botones de acción -->
             <div class="d-flex justify-content-between mt-4">
@@ -52,8 +43,8 @@
   
       <!-- Lista de alumnos con el botón Agregar Alumno a la derecha del título -->
       <div class="d-flex align-items-center justify-content-between section-title mb-4">
-        <h3 class="m-0">Lista de Alumnos</h3>
-        <button class="btn btn-primary" @click="toggleForm('add')"><i class="fa-solid fa-user-plus"></i> Agregar Alumno</button>
+        <h3 class="m-0">Lista de Docentes</h3>
+        <button class="btn btn-primary" @click="toggleForm('add')"><i class="fa-solid fa-user-plus"></i> Agregar Docente</button>
       </div>
   
       <div class="table-responsive">
@@ -63,26 +54,24 @@
               <th>Foto</th>
               <th>Nombre Completo</th>
               <th>Email</th>
-              <th>Carrera</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="alumno in alumnos" :key="alumno.matricula">
+            <tr v-for="docente in docentes" :key="docente.rut">
               <td class="align-middle">
                 <img class="img-fluid rounded-circle" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Avatar" style="width: 50px; height: 50px;" />
               </td>
-              <td class="align-middle">{{ alumno.nombrePrimer }} {{ alumno.apellidoP }} {{ alumno.apellidoM }}</td>
-              <td class="align-middle">{{ alumno.email }}</td>
-              <td class="align-middle">{{ alumno.carrera }}</td>
+              <td class="align-middle">{{ docente.nombrePrimer }} {{ docente.nombreSegundo }} {{ docente.apellidoP }} {{ docente.apellidoM }}</td>
+              <td class="align-middle">{{ docente.email }}</td>
               <td class="align-middle">
-                <button @click="viewAlumno(alumno)" class="btn btn-sm btn-primary mx-1">
+                <button @click="viewDocente(docente)" class="btn btn-sm btn-primary mx-1">
                   <i class="far fa-eye"></i>
                 </button>
-                <button @click="toggleForm('edit', alumno)" class="btn btn-sm btn-info mx-1">
+                <button @click="toggleForm('edit', docente)" class="btn btn-sm btn-info mx-1">
                   <i class="fas fa-pencil-alt"></i>
                 </button>
-                <button @click="deleteAlumno(alumno.matricula)" class="btn btn-sm btn-danger mx-1">
+                <button @click="deleteDocente(docente.rut)" class="btn btn-sm btn-danger mx-1">
                   <i class="far fa-trash-alt"></i>
                 </button>
               </td>
@@ -96,88 +85,84 @@
   
   <script>
   import axios from 'axios';
-  import navBar from '@/components/AppNavbar.vue'
+  import navBar from '@/components/AppNavbar.vue';
+  import autenticadorSesion from '../mixins/AutenticadorSesion.js';
   
   export default {
     name: 'GestorDocentes',
+    mixins: [autenticadorSesion],
     components: { navBar },
     data() {
       return {
         docentes: [],
         docente: {
           nombrePrimer: '', nombreSegundo: '', apellidoP: '', apellidoM: '',
-          rut: '', email: '', cursos: []
+          rut: '', email: ''
         },
         formVisible: false,
         isEditMode: false,
         formFields: {
           nombrePrimer: 'Primer Nombre', nombreSegundo: 'Segundo Nombre',
-          apellidoP: 'Apellido Paterno', apellidoM: 'Apellido Materno'
+          apellidoP: 'Apellido Paterno', apellidoM: 'Apellido Materno', rut: 'Rut', email: 'Email'
         },
-        requiredFields: ['nombrePrimer', 'apellidoP', 'rut', 'email']
+        requiredFields: ['nombrePrimer','nombreSegundo', 'apellidoP', 'apellidoM', 'rut', 'email']
       };
     },
     created() {
-      this.fetchAlumnos();
+      this.fetchDocentes();
     },
     methods: {
       goBack() {
         this.$router.push({ name: 'GestorDatos' });
       },
-      async fetchAlumnos() {
+      async fetchDocentes() {
         try {
-          const response = await axios.get('http://localhost:3333/student/get');
-          this.alumnos = response.data;
+          const response = await axios.get('http://localhost:3333/teaching/get');
+          this.docentes = response.data;
         } catch (error) {
-          console.error('Error al obtener alumnos:', error);
+          console.error('Error al obtener docentes:', error);
         }
       },
-      toggleForm(mode, alumno = {}) {
+      toggleForm(mode, docente = {}) {
         this.isEditMode = mode === 'edit';
-        this.alumno = { ...alumno };
+        this.docente = { ...docente };
         this.formVisible = !this.formVisible;
       },
       async handleSubmit() {
         if (this.isEditMode) {
-          await this.updateAlumno();
+          await this.updateDocente();
         } else {
-          await this.addAlumno();
+          await this.addDocente();
         }
         this.clearForm();
       },
-      async addAlumno() {
+      async addDocente() {
         try {
-          await axios.post('http://localhost:3333/student/register', this.alumno);
-          this.fetchAlumnos();
+          await axios.post('http://localhost:3333/teaching/register', this.docente);
+          this.fetchDocentes();
         } catch (error) {
-          console.error('Error al agregar alumno:', error);
+          console.error('Error al agregar docente:', error);
         }
       },
-      async updateAlumno() {
+      async updateDocente() {
         try {
-          await axios.put(`http://localhost:3333/student/${this.alumno.matricula}`, this.alumno);
-          this.fetchAlumnos();
+          await axios.put(`http://localhost:3333/teaching/${this.docente.rut}`, this.docente);
+          this.fetchDocentes();
         } catch (error) {
-          console.error('Error al actualizar alumno:', error);
+          console.error('Error al actualizar docente:', error);
         }
       },
-      async deleteAlumno(matricula) {
+      async deleteDocente(rut) {
         try {
-          await axios.delete(`http://localhost:3333/student/remove/${matricula}`);
-          this.fetchAlumnos();
+          await axios.delete(`http://localhost:3333/teaching/remove/${rut}`);
+          this.fetchDocentes();
         } catch (error) {
-          console.error('Error al eliminar alumno:', error);
+          console.error('Error al eliminar Docente:', error);
         }
       },
       clearForm() {
-        this.alumno = { nombrePrimer: '', nombreSegundo: '', apellidoP: '', apellidoM: '', rut: '', email: '', matricula: '', carrera: '', cursos: [] };
+        this.docente = { nombrePrimer: '', nombreSegundo: '', apellidoP: '', apellidoM: '', rut: '', email: '' };
         this.formVisible = false;
-      },
-      addCurso() {
-        this.alumno.cursos.push({ nombre: '' });
-      },
-      removeCurso(index) {
-        this.alumno.cursos.splice(index, 1);
       }
     }
   };

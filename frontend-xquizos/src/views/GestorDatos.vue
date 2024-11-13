@@ -37,9 +37,11 @@
   
   <script>
 import navBar from '@/components/AppNavbar.vue';
+import autenticadorSesion from '../mixins/AutenticadorSesion.js';
 
   export default {
     name: 'GestorDatos',
+    mixins: [autenticadorSesion],
     components: {
       navBar
     },

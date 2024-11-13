@@ -151,16 +151,16 @@
       backdrop-filter: blur(10px);
   }
   
-
   
   .card>h2 {
       font-size: 36px;
       font-weight: 400;
+      color: rgb(244, 243, 243);
       margin: 0 0 12px;
   }
   
   .card>h3 {
-      color: rgba(255, 255, 255, 0.38);
+      color: rgb(214, 212, 212);
       margin: 0 0 48px;
       font-size: 16px;
   }
