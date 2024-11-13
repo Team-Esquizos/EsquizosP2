@@ -1,13 +1,9 @@
-//Ejemplo de funcionamiento para enviar csv a la base de datos, debemos tener 
 
-
-var datos=require('../models/datos');
+var datos=require('../models/Profesor');
 var csv = require('csvtojson');
 
 
-const importDatos = async (req,res) => {
-    
-
+const importProfesor = async (req,res) => {
     try {
         var datosData = [];
 
@@ -15,17 +11,15 @@ const importDatos = async (req,res) => {
         .fromFile(req.file.path)
         .then(async(response)=>{
             console.log(response);
-               
+
                 // Iterar sobre el arreglo de objetos y guardarlos en el arreglo datosData
                 for(var i=0; i < response.length; i++){
+                    let cursos = JSON.parse(response[i].cursos);
                     datosData.push({
+                        rut: response[i].rut,
                         nombre: response[i].nombre,
-                        apellido: response[i].apellido,
-                        
-                        pais: response[i].pais,
-                        ciudad: response[i].ciudad,
-                        fecha_nacimiento: response[i].fecha_nacimiento,
-                        estatura: response[i].estatura
+                        email: response[i].email,
+                        cursos: cursos 
                     });
                 }
                 // Insertar los datos en la base de datos
@@ -43,5 +37,5 @@ const importDatos = async (req,res) => {
 
 
 module.exports = {
-    importDatos
+    importProfesor
 }

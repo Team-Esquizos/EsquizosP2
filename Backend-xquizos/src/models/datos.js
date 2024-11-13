@@ -1,3 +1,6 @@
+//Ejemplo de funcionamiento para enviar csv a la base de datos, debemos tener 
+
+
 var mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 

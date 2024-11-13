@@ -120,7 +120,7 @@ export default {
     },
     async fetchAlumnos() {
       try {
-        const response = await axios.get('http://localhost:3333/student/get');
+        const response = await axios.get('http://localhost:8081/student/get');
         this.alumnos = response.data;
       } catch (error) {
         console.error('Error al obtener alumnos:', error);
@@ -141,7 +141,7 @@ export default {
     },
     async addAlumno() {
       try {
-        await axios.post('http://localhost:3333/student/register', this.alumno);
+        await axios.post('http://localhost:8081/student/register', this.alumno);
         this.fetchAlumnos();
       } catch (error) {
         console.error('Error al agregar alumno:', error);
@@ -149,7 +149,7 @@ export default {
     },
     async updateAlumno() {
       try {
-        await axios.put(`http://localhost:3333/student/${this.alumno.matricula}`, this.alumno);
+        await axios.put(`http://localhost:8081/student/${this.alumno.matricula}`, this.alumno);
         this.fetchAlumnos();
       } catch (error) {
         console.error('Error al actualizar alumno:', error);
@@ -157,7 +157,7 @@ export default {
     },
     async deleteAlumno(matricula) {
       try {
-        await axios.delete(`http://localhost:3333/student/remove/${matricula}`);
+        await axios.delete(`http://localhost:8081/student/remove/${matricula}`);
         this.fetchAlumnos();
       } catch (error) {
         console.error('Error al eliminar alumno:', error);
