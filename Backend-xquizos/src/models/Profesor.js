@@ -9,4 +9,4 @@ const ProfesorSchema = new Schema({
     cursos: String,
 });
 
-module.exports = new mongoose.model('Profesor', ProfesorSchema);
+module.exports = mongoose.model('Teaching', ProfesorSchema,'Teaching');

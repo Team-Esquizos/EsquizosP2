@@ -75,7 +75,7 @@ export default {
       //this.uploadFile();
       this.uploadCursoFile(); // Llama a la nueva función para enviar el archivo a importCurso
     },
-    async uploadFile() {
+    /*async uploadFile() {
       console.log('Subir archivo');
       if (!this.selectedFile) {
         this.message = "Por favor, selecciona un archivo primero.";
@@ -95,7 +95,7 @@ export default {
       } catch (error) {
         console.error('Error al subir el archivo:', error);
       }
-    },
+    },*/
     async uploadCursoFile() {
       console.log('Subir archivo de curso');
       if (!this.selectedFile) {
@@ -107,7 +107,7 @@ export default {
       formData.append('file', this.selectedFile);
       
       try {
-        const response = await axios.post('http://localhost:3333/importCurso', formData, {
+        const response = await axios.post('http://localhost:3333/importProfesor', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
