@@ -13,7 +13,6 @@ module.exports.registerStudentDBService = (studentData) => {
         studentModelData.apellidoP = studentData.apellidoP;
         studentModelData.apellidoM = studentData.apellidoM;
         studentModelData.carrera = studentData.carrera;
-        studentModelData.cursos = studentData.cursos;
 
         try {
             await studentModelData.save();

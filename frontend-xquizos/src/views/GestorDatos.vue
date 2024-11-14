@@ -1,6 +1,9 @@
 <template>
+
+
+
     <div class="gestor-datos-container">
-      <h1 class="title">Gestor de Datos</h1>
+      <h1 class="header-title">Gestor de Datos</h1>
       <div class="card-container">
         <!-- Card Gestor de Alumnos -->
         <div class="card shadow-lg" @click="goToGestorAlumnos">
@@ -33,8 +36,15 @@
   </template>
   
   <script>
+
+import autenticadorSesion from '../mixins/AutenticadorSesion.js';
+
   export default {
     name: 'GestorDatos',
+    mixins: [autenticadorSesion],
+    components: {
+   
+    },
     methods: {
       goToGestorAlumnos() {
         this.$router.push('/gestorAlumnos');
@@ -55,6 +65,23 @@
     padding: 20px;
   }
   
+  .header-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #2c3e50;
+  padding: 15px;
+  border: 2px solid #eaeaea;
+  border-radius: 20vh;
+  background-color: #ffffff;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
+  flex-grow: 1; /* Permite al título ocupar el espacio restante */
+  margin-top: 3vh;
+  margin-bottom: 8vh;
+}
+
   .title {
     font-size: 2.5em;
     color: #333;
@@ -64,11 +91,12 @@
   .card-container {
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 50px;
   }
   
   .card {
-    width: 18rem;
+    width: 370px; /* Ajusta este valor para agrandar el ancho de la carta */
+    height: 400px; 
     cursor: pointer;
     transition: transform 0.3s, box-shadow 0.3s;
   }
@@ -79,30 +107,40 @@
   }
   
   .card-img-top {
-    height: 200px;
+    height: 220px;
     object-fit: cover;
-    border-bottom: 2px solid #007bff;
+    border-bottom: 2px solid #000000;
   }
   
   .card-body {
-    padding: 20px;
+    padding: 50px;
   }
   
   .card-title {
-    font-size: 1.25em;
-    color: #007bff;
+    font-size: 1.50em;
+    color: #000000;
+    font-weight: 600; 
   }
   
   .card-text {
     color: #666;
+    font-size: 1.25em;
   }
   
   .card:hover .card-title {
-    color: #0056b3;
+    color: #232323;
   }
   
   .card:hover .card-text {
     color: #333;
+  }
+
+  .card-container {
+    display: flex;
+    justify-content: center;
+    gap: 80px;
+    margin-top: 180px;
+    
   }
   </style>
   

@@ -11,16 +11,19 @@ const Schema = mongoose.Schema;
  * @property {String} fecha_nacimiento - Fecha de nacimiento.
  * @property {String} estatura - Estatura de la persona.
  */
-const DatosSchema  = new Schema({
-    nombre: {
+const cursoSchema  = new Schema({
+    ID: {
         type: String,
         unique: true
     },
-    apellido: String,
-    pais: String,
-    ciudad: String,
-    fecha_nacimiento:String,
-    estatura: String,
+    nombreCurso: String,
+    alumnos: [
+        {
+            matricula: {type: String, required: true},
+            nombre: { type: String, required: true },
+            apellido: { type: String, required: true }
+        }
+    ]
 });
 
-module.exports = new mongoose.model('datos', DatosSchema);
+module.exports = new mongoose.model('curso', cursoSchema);
