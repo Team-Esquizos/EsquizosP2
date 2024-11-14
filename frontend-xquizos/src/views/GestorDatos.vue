@@ -1,6 +1,6 @@
 <template>
 
-  <navBar/>
+
 
     <div class="gestor-datos-container">
       <h1 class="header-title">Gestor de Datos</h1>
@@ -36,14 +36,14 @@
   </template>
   
   <script>
-import navBar from '@/components/AppNavbar.vue';
+
 import autenticadorSesion from '../mixins/AutenticadorSesion.js';
 
   export default {
     name: 'GestorDatos',
     mixins: [autenticadorSesion],
     components: {
-      navBar
+   
     },
     methods: {
       goToGestorAlumnos() {
@@ -91,11 +91,12 @@ import autenticadorSesion from '../mixins/AutenticadorSesion.js';
   .card-container {
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 50px;
   }
   
   .card {
-    width: 18rem;
+    width: 370px; /* Ajusta este valor para agrandar el ancho de la carta */
+    height: 400px; 
     cursor: pointer;
     transition: transform 0.3s, box-shadow 0.3s;
   }
@@ -106,22 +107,24 @@ import autenticadorSesion from '../mixins/AutenticadorSesion.js';
   }
   
   .card-img-top {
-    height: 200px;
+    height: 220px;
     object-fit: cover;
     border-bottom: 2px solid #000000;
   }
   
   .card-body {
-    padding: 20px;
+    padding: 50px;
   }
   
   .card-title {
-    font-size: 1.25em;
+    font-size: 1.50em;
     color: #000000;
+    font-weight: 600; 
   }
   
   .card-text {
     color: #666;
+    font-size: 1.25em;
   }
   
   .card:hover .card-title {
@@ -130,6 +133,14 @@ import autenticadorSesion from '../mixins/AutenticadorSesion.js';
   
   .card:hover .card-text {
     color: #333;
+  }
+
+  .card-container {
+    display: flex;
+    justify-content: center;
+    gap: 80px;
+    margin-top: 180px;
+    
   }
   </style>
   
