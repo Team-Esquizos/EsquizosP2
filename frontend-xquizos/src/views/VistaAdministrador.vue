@@ -3,47 +3,8 @@
     <navBar/>
     <div class="content">
       <div class="transparent-box">
-        <h1 class="highlight-title">Administrador de cursos</h1>
-        <div class="button-container">
-          <div class="button-wrapper">
-            <p class="button-name">Añadir archivo</p>
-            <!-- Botón para abrir la ventana de selección de archivo -->
-            <a href="#" @click.prevent="handleAddFile">
-              <svg viewBox="0 0 256 256" height="32" width="38" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M74.34 85.66a8 8 0 0 1 11.32-11.32L120 108.69V24a8 8 0 0 1 16 0v84.69l34.34-34.35a8 8 0 0 1 11.32 11.32l-48 48a8 8 0 0 1-11.32 0ZM240 136v64a16 16 0 0 1-16 16H32a16 16 0 0 1-16-16v-64a16 16 0 0 1 16-16h52.4a4 4 0 0 1 2.83 1.17L111 145a24 24 0 0 0 34 0l23.8-23.8a4 4 0 0 1 2.8-1.2H224a16 16 0 0 1 16 16m-40 32a12 12 0 1 0-12 12a12 12 0 0 0 12-12"
-                  fill="currentColor"
-                ></path>
-              </svg>
-            </a>
-            <!-- Input file oculto -->
-            <input
-              type="file"
-              ref="fileInput"
-              style="display: none;"
-              @change="onFileSelected"
-            />
-          </div>
-      
-          <div class="button-wrapper">
-            <p class="button-name">Editar cursos</p>
-            <button class="Btn" @click.prevent="handleEditCourses">
-              Editar
-              <svg class="svg" viewBox="0 0 512 512">
-                <path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1v32c0 8.8 7.2 16 16 16h32zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"></path>
-              </svg>
-            </button>
-          </div>
-
-          <!--- Botón gestor de datos !--->
-          <div class="button-wrapper">
-            <router-link to="/gestorDatos" class="btn btn-primary">
-              <p class="Btn">Gestor de datos</p>
-            </router-link>
-          </div>
-
-
-        </div>
+      <gestor-datos></gestor-datos>
+   
       </div>
     </div>
   </div>
@@ -53,12 +14,14 @@
 import navBar from '@/components/AppNavbar.vue';
 import autenticadorSesion from '@/mixins/AutenticadorSesion';  // Se debe agregar a nuevos componentes (Que puedan ser accedidos por ruta)
 import axios from 'axios';
+import gestorDatos from '@/views/GestorDatos.vue';
 
 export default {
   name: 'VistaAdministrador',
   mixins: [autenticadorSesion],   // Se debe agregar a nuevos componentes (Que puedan ser accedidos por ruta)
   components: {
-    navBar
+    navBar,
+    gestorDatos
   },
   data() {
     return {
@@ -158,9 +121,9 @@ export default {
   box-shadow: 0 4px 8px #007bff;
   text-align: center;
   width: 80%; /* Ajusta el ancho del rectángulo */
-  max-width: 800px; /* Ancho máximo del rectángulo */
+  max-width: 1500px; /* Ancho máximo del rectángulo */
   height: auto; /* Ajusta la altura automáticamente */
-  min-height: 200px; /* Altura mínima del rectángulo */
+  min-height: 900px; /* Altura mínima del rectángulo */
 }
 
 .button-container {
