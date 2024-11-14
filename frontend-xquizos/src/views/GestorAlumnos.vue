@@ -44,7 +44,25 @@
     <!-- Lista de alumnos con el botón Agregar Alumno a la derecha del título -->
     <div class="d-flex align-items-center justify-content-between section-title mb-4">
       <h3 class="m-0">Lista de Alumnos</h3>
-      <button class="btn btn-primary" @click="toggleForm('add')"><i class="fa-solid fa-user-plus"></i> Agregar Alumno</button>
+      <div class="d-flex">
+        <button class="btn btn-primary" @click="toggleForm('add')"><i class="fa-solid fa-user-plus"></i> Agregar Alumno</button>
+        <!-- Botón de importar CSV -->
+        <div class="ms-2">
+          <input 
+            type="file" 
+            ref="fileInput"
+            @change="onFileSelected"
+            style="display: none;" 
+            accept=".csv"
+          />
+          <button 
+            class="btn btn-success" 
+            @click="triggerFileInput"
+          >
+            <i class="fa-solid fa-file-csv"></i> Importar desde CSV
+          </button>
+        </div>
+      </div>
     </div>
 
     <div class="table-responsive">
@@ -120,7 +138,7 @@ export default {
     },
     async fetchAlumnos() {
       try {
-        const response = await axios.get('http://localhost:8081/student/get');
+        const response = await axios.get('http://localhost:3333/api/student/get');
         this.alumnos = response.data;
       } catch (error) {
         console.error('Error al obtener alumnos:', error);
@@ -141,7 +159,7 @@ export default {
     },
     async addAlumno() {
       try {
-        await axios.post('http://localhost:8081/student/register', this.alumno);
+        await axios.post('http://localhost:3333/api/student/register', this.alumno);
         this.fetchAlumnos();
       } catch (error) {
         console.error('Error al agregar alumno:', error);
@@ -149,7 +167,7 @@ export default {
     },
     async updateAlumno() {
       try {
-        await axios.put(`http://localhost:8081/student/${this.alumno.matricula}`, this.alumno);
+        await axios.put(`http://localhost:3333/api/student/${this.alumno.matricula}`, this.alumno);
         this.fetchAlumnos();
       } catch (error) {
         console.error('Error al actualizar alumno:', error);
@@ -157,7 +175,7 @@ export default {
     },
     async deleteAlumno(matricula) {
       try {
-        await axios.delete(`http://localhost:8081/student/remove/${matricula}`);
+        await axios.delete(`http://localhost:3333/api/student/remove/${matricula}`);
         this.fetchAlumnos();
       } catch (error) {
         console.error('Error al eliminar alumno:', error);
@@ -166,7 +184,51 @@ export default {
     clearForm() {
       this.alumno = { nombrePrimer: '', nombreSegundo: '', apellidoP: '', apellidoM: '', rut: '', email: '', matricula: '', carrera: '' };
       this.formVisible = false;
-    }
+    },
+
+    triggerFileInput() {
+      this.$refs.fileInput.click();
+    },
+
+    handleAddFile() {
+      this.$refs.fileInput.click();
+    },
+
+    onFileSelected(event) {
+      this.selectedFile = event.target.files[0];
+      //this.uploadFile();
+      this.uploadAlumnoFile(); // Llama a la nueva función para enviar el archivo a importCurso
+    },
+
+    async uploadAlumnoFile() {
+      console.log('Subir archivo de curso');
+      if (!this.selectedFile) {
+        this.message = "Por favor, selecciona un archivo primero.";
+        return;
+      }
+      
+      const formData = new FormData();
+      formData.append('file', this.selectedFile);
+      
+      try {
+        const response = await axios.post('http://localhost:3333/csv/importEstudiante', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+
+        });
+        this.message = response.data.message;
+
+        if (response.data.success) {
+          this.fetchAlumnos();
+        } else {
+          console.error('Error en el archivo:', response.data.message);
+        }
+
+      } catch (error) {
+        console.error('Error al subir el archivo de curso:', error);
+      }
+    },
   }
 };
 </script>

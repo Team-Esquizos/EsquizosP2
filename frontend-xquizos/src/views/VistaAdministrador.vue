@@ -107,7 +107,7 @@ export default {
       formData.append('file', this.selectedFile);
       
       try {
-        const response = await axios.post('http://localhost:3333/importEstudiante', formData, {
+        const response = await axios.post('http://localhost:3333/csv/importProfesor', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },

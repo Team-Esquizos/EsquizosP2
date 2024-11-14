@@ -42,8 +42,26 @@
         <!-- Lista de alumnos con el botón Agregar Alumno a la derecha del título -->
         <div class="d-flex align-items-center justify-content-between section-title mb-4">
         <h3 class="m-0">Lista de Cursos</h3>
-        <button class="btn btn-primary" @click="toggleForm('add')"><i class="fa-solid fa-user-plus"></i> Agregar Curso</button>
+        <div class="d-flex">
+          <button class="btn btn-primary" @click="toggleForm('add')"><i class="fa-solid fa-user-plus"></i> Agregar Curso</button>
+          <!-- Botón de importar CSV -->
+          <div class="ms-2">
+            <input 
+              type="file" 
+              ref="fileInput"
+              @change="onFileSelected"
+              style="display: none;" 
+              accept=".csv"
+            />
+            <button 
+              class="btn btn-success" 
+              @click="triggerFileInput"
+            >
+              <i class="fa-solid fa-file-csv"></i> Importar desde CSV
+            </button>
+          </div>
         </div>
+    </div>
 
         <div class="table-responsive">
         <table class="table table-striped table-hover table-bordered text-center">
@@ -115,7 +133,7 @@
 
         async fetchCursos() {
             try {
-                const response = await axios.get('http://localhost:3333/courses/get');
+                const response = await axios.get('http://localhost:3333/api/courses/get');
                 this.cursos = response.data;
             } catch (error) {
                 console.error('Error al obtener cursos:', error);
@@ -138,7 +156,7 @@
 
         async addCurso() {
             try {
-                await axios.post('http://localhost:3333/courses/register', this.curso);
+                await axios.post('http://localhost:3333/api/courses/register', this.curso);
                 this.fetchCursos();
             } catch (error) {
                 console.error('Error al agregar Curso:', error);
@@ -146,7 +164,7 @@
         },
         async updateCurso() {
         try {
-            await axios.put(`http://localhost:3333/courses/${encodeURIComponent(this.curso.nombre)}/${this.curso.seccion}`, this.curso);
+            await axios.put(`http://localhost:3333/api/courses/${encodeURIComponent(this.curso.nombre)}/${this.curso.seccion}`, this.curso);
             this.fetchCursos();
         } catch (error) {
             console.error('Error al actualizar Curso:', error);
@@ -154,7 +172,7 @@
         },
         async deleteCurso(nombre,seccion) {
         try {
-            await axios.delete(`http://localhost:3333/courses/remove/${encodeURIComponent(nombre)}/${seccion}`);
+            await axios.delete(`http://localhost:3333/api/courses/remove/${encodeURIComponent(nombre)}/${seccion}`);
             this.fetchCursos();
         } catch (error) {
             console.error('Error al eliminar Curso:', error);
@@ -163,7 +181,53 @@
         clearForm() {
         this.curso = { nombre: '', seccion: '', area: '', docente: ''};
         this.formVisible = false;
-        }
+        },
+
+
+
+        triggerFileInput() {
+            this.$refs.fileInput.click();
+        },
+
+        handleAddFile() {
+            this.$refs.fileInput.click();
+        },
+
+        onFileSelected(event) {
+            this.selectedFile = event.target.files[0];
+            //this.uploadFile();
+            this.uploadCursoFile(); // Llama a la nueva función para enviar el archivo a importCurso
+        },
+
+        async uploadCursoFile() {
+            console.log('Subir archivo de curso');
+            if (!this.selectedFile) {
+                this.message = "Por favor, selecciona un archivo primero.";
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('file', this.selectedFile);
+            
+            try {
+                const response = await axios.post('http://localhost:3333/csv/importEstudiante', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+
+                });
+                this.message = response.data.message;
+
+                if (response.data.success) {
+                this.fetchCursos();
+                } else {
+                console.error('Error en el archivo:', response.data.message);
+                }
+
+            } catch (error) {
+                console.error('Error al subir el archivo de curso:', error);
+            }
+        },
     }
     };
     </script>
