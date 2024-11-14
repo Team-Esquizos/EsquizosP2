@@ -49,7 +49,7 @@
         const storedUser = localStorage.getItem('user') || sessionStorage.getItem('user');
         
         if (storedUser) {
-            axios.get(`http://localhost:3333/user/${storedUser}`)
+            axios.get(`http://localhost:3333/api/user/${storedUser}`)
                 .then(({ data }) => {
                     if (data) {
                         this.user = data; 
@@ -68,7 +68,7 @@
     },
     methods: {
       login() {
-        axios.post("http://localhost:3333/user/login", {
+        axios.post("http://localhost:3333/api/user/login", {
           email: this.user.email,
           password: this.user.password
         })
