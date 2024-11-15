@@ -103,7 +103,7 @@
   
   <script>
   import axios from 'axios';
-  import navBar from '@/components/AppNavbar.vue';
+  import navBar from '@/components/AppNavbarAdm.vue';
   import autenticadorSesion from '../mixins/AutenticadorSesion.js';
   
   export default {

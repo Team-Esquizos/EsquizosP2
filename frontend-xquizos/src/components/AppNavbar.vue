@@ -7,8 +7,6 @@
     </div>
     <ul class="navbar-links" :class="{ 'navbar-links-mobile': isMobileMenuOpen }">
       <li><a href="#" class="active" @click="irAInicio">Inicio</a></li>
-      <li><a href="#">Services</a></li>
-      <li><a href="#">Pricing</a></li>
       <li><a href="#" @click="cerrarSesion">Salir</a></li>
     </ul>
     <div class="navbar-toggle" @click="toggleMobileMenu">
