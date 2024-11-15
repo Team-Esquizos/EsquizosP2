@@ -1,4 +1,5 @@
 var teachingModel = require('./teachingModel.js');
+var userModel = require('./userModel.js');
 
 
 module.exports.registerTeachingDBService = (teachingData) => {
@@ -25,10 +26,25 @@ module.exports.registerTeachingDBService = (teachingData) => {
     });
 };
 
+module.exports.registerTeachingDBServicetoCsv = async (teachingData) => {
+    try {
+        const existingUser = await userModel.findOne({ email: teachingData.email });
 
-module.exports.registerTeachingDBServicetoCsv= (teachingData) => {
-    //logica
-}
+        if (!existingUser) {
+            const newUser = new userModel();
+            newUser.email = `${teachingData.nombrePrimer[0]}${teachingData.nombrePrimer[1]}${teachingData.apellidoP}@email.com`.toLowerCase();
+            newUser.password = "1234";
+            newUser.isAdmin = false;
+            newUser.username = `${teachingData.nombrePrimer}${teachingData.apellidoP}`.toLowerCase();
+            await newUser.save();
+            console.log("New user created:", newUser);
+        } else {
+            console.log("User already exists:", existingUser);
+        }
+    } catch (error) {
+        console.log("Error creating user:", error);
+    }
+};
 
 
 
