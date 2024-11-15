@@ -121,9 +121,9 @@
         isEditMode: false,
         formFields: {
           nombrePrimer: 'Primer Nombre', nombreSegundo: 'Segundo Nombre',
-          apellidoP: 'Apellido Paterno', apellidoM: 'Apellido Materno', rut: 'Rut', email: 'Email'
+          apellidoP: 'Apellido Paterno', apellidoM: 'Apellido Materno', rut: 'Rut',
         },
-        requiredFields: ['nombrePrimer','nombreSegundo', 'apellidoP', 'apellidoM', 'rut', 'email']
+        requiredFields: ['nombrePrimer','nombreSegundo', 'apellidoP', 'apellidoM', 'rut']
       };
     },
     created() {

@@ -1,4 +1,3 @@
-
 <template>
   <nav class="navbar">
     <div class="navbar-logo">
@@ -6,13 +5,14 @@
       <span>Administración</span>
     </div>
     <ul class="navbar-links" :class="{ 'navbar-links-mobile': isMobileMenuOpen }">
-      <li><a href="#" class="active" @click="irAInicio">Inicio</a></li>
+      <li><a href="#" @click="irAInicio">Inicio</a></li>
       <li><a href="#" @click="cerrarSesion">Salir</a></li>
     </ul>
     <div class="navbar-toggle" @click="toggleMobileMenu">
       <span class="navbar-toggle-icon"></span>
     </div>
     <Profile/>
+    <span >{{ userName }}</span>
   </nav>
 </template>
 
@@ -24,9 +24,13 @@ export default {
   components: {
     Profile,
   },
-
-methods: {
-  cerrarSesion () {
+  computed: {
+    userName() {
+      return localStorage.getItem('user') || sessionStorage.getItem('user') || 'Usuario';
+    }
+  },
+  methods: {
+    cerrarSesion() {
       localStorage.removeItem('email');
       localStorage.removeItem('user');
       localStorage.removeItem('isAdmin');
@@ -93,13 +97,14 @@ methods: {
   color: #333;
   text-decoration: none;
   font-weight: 500;
-  padding: 10px 15px;
-  border-radius: 5px;
+  padding: 12px 18px; /* Tamaño ligeramente más grande */
+  border: 1px solid #d3d3d3; /* Borde gris */
+  border-radius: 15px; /* Forma redondeada */
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .navbar-links a:hover {
-  background-color: #f0f0f0;
+  background-color: #d3d3d3; /* Color gris al pasar el mouse */
   color: #000;
 }
 

@@ -1,24 +1,30 @@
 var teachingModel = require('./teachingModel.js');
-var userModel = require('./userModel.js');
+var userModel = require('../user/userModel.js');
 
 
 module.exports.registerTeachingDBService = (teachingData) => {
     return new Promise(async function myFn(resolve, reject) {
 
         var teachingModelData = new teachingModel();
-        var userModelData = new userModel();
+        const newUser = new userModel();
+
+        newUser.email = `${teachingData.nombrePrimer[0]}${teachingData.nombrePrimer[1]}${teachingData.apellidoP}@email.com`.toLowerCase();
 
         teachingModelData.rut = teachingData.rut;
-        teachingModelData.email = teachingData.email;
+        teachingModelData.email = newUser.email;
         teachingModelData.nombrePrimer = teachingData.nombrePrimer;
         teachingModelData.nombreSegundo = teachingData.nombreSegundo;
         teachingModelData.apellidoP = teachingData.apellidoP;
         teachingModelData.apellidoM = teachingData.apellidoM;
         teachingModelData.cursos = teachingData.cursos;
 
-
+        newUser.password = "1234";  
+        newUser.isAdmin = false; 
+        newUser.username = `${teachingData.nombrePrimer}${teachingData.apellidoP}`.toLowerCase();
         try {
             await teachingModelData.save();
+            await newUser.save();
+            console.log("New user created:", newUser);
             resolve(true);
         } catch (error) {
             reject(error);
@@ -26,25 +32,6 @@ module.exports.registerTeachingDBService = (teachingData) => {
     });
 };
 
-module.exports.registerTeachingDBServicetoCsv = async (teachingData) => {
-    try {
-        const existingUser = await userModel.findOne({ email: teachingData.email });
-
-        if (!existingUser) {
-            const newUser = new userModel();
-            newUser.email = `${teachingData.nombrePrimer[0]}${teachingData.nombrePrimer[1]}${teachingData.apellidoP}@email.com`.toLowerCase();
-            newUser.password = "1234";
-            newUser.isAdmin = false;
-            newUser.username = `${teachingData.nombrePrimer}${teachingData.apellidoP}`.toLowerCase();
-            await newUser.save();
-            console.log("New user created:", newUser);
-        } else {
-            console.log("User already exists:", existingUser);
-        }
-    } catch (error) {
-        console.log("Error creating user:", error);
-    }
-};
 
 
 
