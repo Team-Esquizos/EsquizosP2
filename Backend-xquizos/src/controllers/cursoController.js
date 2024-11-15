@@ -1,9 +1,11 @@
-var datos = require('../models/curso');
+
+const fs = require('fs');
+var datos = require('../course/courseModel');
 var csv = require('csvtojson');
 
 const importCurso = async (req, res) => {
     try {
-        console.log('adrian chupalo');
+        
         var datosData = [];
 
         csv()
@@ -13,11 +15,13 @@ const importCurso = async (req, res) => {
 
             // Iterar sobre el arreglo de objetos y guardarlos en el arreglo datosData
             for (var i = 0; i < response.length; i++) {
+                const matriculas = response[i].matricula.split(',').map(matricula => ({ matricula: matricula.trim() }));
                 datosData.push({
-                    ID: response[i].ID,
-                    curso: response[i].curso,
-                    nombreAlumno: response[i].nombreAlumno,
-                    apellidoAlumno: response[i].apellidoAlumno
+                    nombre: response[i].nombre,
+                    seccion: response[i].seccion,
+                    area: response[i].area,
+                    docente: response[i].docente,
+                    alumnos: matriculas
                 });
             }
 
@@ -27,10 +31,22 @@ const importCurso = async (req, res) => {
             
             // Enviar respuesta al cliente
             res.send({ status: 200, success: true, message: 'Datos importados correctamente' });
+
+            // Eliminar el archivo después de procesarlo
+            fs.unlink(req.file.path, (err) => {
+                if (err) {
+                    console.error('Error al eliminar el archivo:', err);
+                } else {
+                    console.log('Archivo CSV eliminado');
+                }
+            });
+
         });
     } catch (error) {
         res.send({ status: 400, success: false, message: error.message });
     }
+
+    
 };
 
 const getCurso = async (req, res) => {
