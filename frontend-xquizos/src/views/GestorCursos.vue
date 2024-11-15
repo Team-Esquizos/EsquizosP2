@@ -128,7 +128,7 @@
     },
     methods: {
         goBack() {
-            this.$router.push({ name: 'GestorDatos' });
+            this.$router.push({ name: 'VistaAdministrador' });
         },
 
         async fetchCursos() {

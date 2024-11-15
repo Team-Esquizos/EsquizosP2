@@ -1,9 +1,11 @@
 var teachingModel = require('./teachingModel.js');
 
+
 module.exports.registerTeachingDBService = (teachingData) => {
     return new Promise(async function myFn(resolve, reject) {
 
         var teachingModelData = new teachingModel();
+        var userModelData = new userModel();
 
         teachingModelData.rut = teachingData.rut;
         teachingModelData.email = teachingData.email;
@@ -12,6 +14,7 @@ module.exports.registerTeachingDBService = (teachingData) => {
         teachingModelData.apellidoP = teachingData.apellidoP;
         teachingModelData.apellidoM = teachingData.apellidoM;
         teachingModelData.cursos = teachingData.cursos;
+
 
         try {
             await teachingModelData.save();
