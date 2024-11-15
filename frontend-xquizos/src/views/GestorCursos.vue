@@ -128,7 +128,7 @@
     },
     methods: {
         goBack() {
-            this.$router.push({ name: 'GestorDatos' });
+            this.$router.push({ name: 'VistaAdministrador' });
         },
 
         async fetchCursos() {
@@ -210,7 +210,7 @@
             formData.append('file', this.selectedFile);
             
             try {
-                const response = await axios.post('http://localhost:3333/csv/importEstudiante', formData, {
+                const response = await axios.post('http://localhost:3333/csv/importCurso', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

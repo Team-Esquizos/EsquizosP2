@@ -31,10 +31,19 @@ const importEstudiante = async (req, res) => {
                 // Insertar los datos en la base de datos
                 await datos.insertMany(datosData);
                 console.log('Datos importados correctamente');
-            });
 
-        // Enviar respuesta al cliente
-        res.send({ status: 200, success: true, message: 'Datos importados correctamente' });
+                // Enviar respuesta al cliente
+                res.send({ status: 200, success: true, message: 'Datos importados correctamente' });
+
+                // Eliminar el archivo después de procesarlo
+                fs.unlink(req.file.path, (err) => {
+                    if (err) {
+                        console.error('Error al eliminar el archivo:', err);
+                    } else {
+                        console.log('Archivo CSV eliminado');
+                    }
+                });
+        });
 
     } catch (error) {
         res.send({ status: 400, success: false, message: error.message });
