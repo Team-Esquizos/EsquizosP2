@@ -87,6 +87,7 @@ export default {
   justify-content: center;
   margin: 0;
   flex: 1;
+  justify-content: center; /* Center the links horizontally */
 }
 
 .navbar-links li {
