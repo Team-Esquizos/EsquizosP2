@@ -2,7 +2,7 @@
   <nav class="navbar">
     <div class="navbar-logo">
       <img src="../assets/school.svg" alt="Logo" />
-      <span>Administración</span>
+      <span>{{ userRole }}</span>
     </div>
     <ul class="navbar-links" :class="{ 'navbar-links-mobile': isMobileMenuOpen }">
       <li><a href="#" @click="irAInicio">Inicio</a></li>
@@ -27,7 +27,11 @@ export default {
   computed: {
     userName() {
       return localStorage.getItem('user') || sessionStorage.getItem('user') || 'Usuario';
-    }
+    },
+    userRole() {
+      const isAdmin = localStorage.getItem('isAdmin') || sessionStorage.getItem('isAdmin');
+      return isAdmin === 'true' ? 'Administrador' : 'Docente';
+    },
   },
   methods: {
     cerrarSesion() {
@@ -46,9 +50,9 @@ export default {
       } else {
         this.$router.push({ name: 'VistaDocente' });
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped>
