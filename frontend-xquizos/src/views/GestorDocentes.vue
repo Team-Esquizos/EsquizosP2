@@ -44,7 +44,25 @@
       <!-- Lista de alumnos con el botón Agregar Alumno a la derecha del título -->
       <div class="d-flex align-items-center justify-content-between section-title mb-4">
         <h3 class="m-0">Lista de Docentes</h3>
-        <button class="btn btn-primary" @click="toggleForm('add')"><i class="fa-solid fa-user-plus"></i> Agregar Docente</button>
+        <div class="d-flex">
+          <button class="btn btn-primary" @click="toggleForm('add')"><i class="fa-solid fa-user-plus"></i> Agregar Docente</button>
+          <!-- Botón de importar CSV -->
+          <div class="ms-2">
+            <input 
+              type="file" 
+              ref="fileInput"
+              @change="onFileSelected"
+              style="display: none;" 
+              accept=".csv"
+            />
+            <button 
+              class="btn btn-success" 
+              @click="triggerFileInput"
+            >
+              <i class="fa-solid fa-file-csv"></i> Importar desde CSV
+            </button>
+          </div>
+        </div>
       </div>
   
       <div class="table-responsive">
@@ -85,7 +103,7 @@
   
   <script>
   import axios from 'axios';
-  import navBar from '@/components/AppNavbar.vue';
+  import navBar from '@/components/AppNavbarAdm.vue';
   import autenticadorSesion from '../mixins/AutenticadorSesion.js';
   
   export default {
@@ -103,21 +121,22 @@
         isEditMode: false,
         formFields: {
           nombrePrimer: 'Primer Nombre', nombreSegundo: 'Segundo Nombre',
-          apellidoP: 'Apellido Paterno', apellidoM: 'Apellido Materno', rut: 'Rut', email: 'Email'
+          apellidoP: 'Apellido Paterno', apellidoM: 'Apellido Materno', rut: 'Rut',
         },
-        requiredFields: ['nombrePrimer','nombreSegundo', 'apellidoP', 'apellidoM', 'rut', 'email']
+        requiredFields: ['nombrePrimer','nombreSegundo', 'apellidoP', 'apellidoM', 'rut']
       };
     },
     created() {
       this.fetchDocentes();
     },
     methods: {
+
       goBack() {
-        this.$router.push({ name: 'GestorDatos' });
+        this.$router.push({ name: 'VistaAdministrador' });
       },
       async fetchDocentes() {
         try {
-          const response = await axios.get('http://localhost:3333/teaching/get');
+          const response = await axios.get('http://localhost:3333/api/teaching/get');
           this.docentes = response.data;
         } catch (error) {
           console.error('Error al obtener docentes:', error);
@@ -138,7 +157,7 @@
       },
       async addDocente() {
         try {
-          await axios.post('http://localhost:3333/teaching/register', this.docente);
+          await axios.post('http://localhost:3333/api/teaching/register', this.docente);
           this.fetchDocentes();
         } catch (error) {
           console.error('Error al agregar docente:', error);
@@ -146,7 +165,7 @@
       },
       async updateDocente() {
         try {
-          await axios.put(`http://localhost:3333/teaching/${this.docente.rut}`, this.docente);
+          await axios.put(`http://localhost:3333/api/teaching/${this.docente.rut}`, this.docente);
           this.fetchDocentes();
         } catch (error) {
           console.error('Error al actualizar docente:', error);
@@ -154,7 +173,7 @@
       },
       async deleteDocente(rut) {
         try {
-          await axios.delete(`http://localhost:3333/teaching/remove/${rut}`);
+          await axios.delete(`http://localhost:3333/api/teaching/remove/${rut}`);
           this.fetchDocentes();
         } catch (error) {
           console.error('Error al eliminar Docente:', error);
@@ -163,7 +182,52 @@
       clearForm() {
         this.docente = { nombrePrimer: '', nombreSegundo: '', apellidoP: '', apellidoM: '', rut: '', email: '' };
         this.formVisible = false;
-      }
+      },
+
+      triggerFileInput() {
+        this.$refs.fileInput.click();
+      },
+
+      handleAddFile() {
+        this.$refs.fileInput.click();
+      },
+
+      onFileSelected(event) {
+        this.selectedFile = event.target.files[0];
+        //this.uploadFile();
+        this.uploadDocenteFile(); // Llama a la nueva función para enviar el archivo a importCurso
+      },
+
+      async uploadDocenteFile() {
+        console.log('Subir archivo de curso');
+        if (!this.selectedFile) {
+          this.message = "Por favor, selecciona un archivo primero.";
+          return;
+        }
+        
+        const formData = new FormData();
+        formData.append('file', this.selectedFile);
+        
+        try {
+          const response = await axios.post('http://localhost:3333/csv/importProfesor', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+
+          });
+          this.message = response.data.message;
+
+          if (response.data.success) {
+            // Aquí llamamos a fetchDocentes después de la subida exitosa del archivo
+            this.fetchDocentes();
+          } else {
+            // En caso de que el servidor devuelva un error
+            console.error('Error en el archivo:', response.data.message);
+          }
+        } catch (error) {
+          console.error('Error al subir el archivo de curso:', error);
+        }
+      },
     }
   };
   </script>

@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import navBar from '@/components/AppNavbar.vue';
+import navBar from '@/components/AppNavbarAdm.vue';
 import autenticadorSesion from '@/mixins/AutenticadorSesion';  // Se debe agregar a nuevos componentes (Que puedan ser accedidos por ruta)
 import axios from 'axios';
 import gestorDatos from '@/views/GestorDatos.vue';
@@ -38,7 +38,7 @@ export default {
       //this.uploadFile();
       this.uploadCursoFile(); // Llama a la nueva función para enviar el archivo a importCurso
     },
-    async uploadFile() {
+    /*async uploadFile() {
       console.log('Subir archivo');
       if (!this.selectedFile) {
         this.message = "Por favor, selecciona un archivo primero.";
@@ -49,7 +49,7 @@ export default {
       formData.append('file', this.selectedFile);
       
       try {
-        const response = await axios.post('http://localhost:8081/importDatos', formData, {
+        const response = await axios.post('http://localhost:3333/importDatos', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
@@ -58,7 +58,7 @@ export default {
       } catch (error) {
         console.error('Error al subir el archivo:', error);
       }
-    },
+    },*/
     async uploadCursoFile() {
       console.log('Subir archivo de curso');
       if (!this.selectedFile) {
@@ -70,7 +70,7 @@ export default {
       formData.append('file', this.selectedFile);
       
       try {
-        const response = await axios.post('http://localhost:8081/importCurso', formData, {
+        const response = await axios.post('http://localhost:3333/csv/importProfesor', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
