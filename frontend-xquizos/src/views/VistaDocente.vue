@@ -3,15 +3,16 @@
       <navBara />
       <div class="body">
         <!-- Usa v-for para iterar sobre los módulos y crear una tarjeta para cada uno -->
-        <modulos v-for="modulo in modulosDocente" :key="modulo.id" :nombre="modulo.nombre" />
+        <modulos v-for="curso in cursos" :key="curso.id" :nombre="curso.nombre" :seccion="curso.seccion" :area="curso.area" />
       </div>
     </div>
   </template>
   
 
 <script>
-  import navBara from '@/components/AppNavbar.vue';
+  import navBara from '@/components/AppNavbarAdm.vue';
   import modulos from '@/components/modulos.vue';
+  import axios from 'axios';
   import autenticadorSesion from '@/mixins/AutenticadorSesion';   // Se debe agregar a nuevos componentes (Que puedan ser accedidos por ruta)
   
   export default {
@@ -22,19 +23,37 @@
       modulos
     },
     data() {
-      return {
-        // Lista de módulos con nombre y un identificador
-        modulosDocente: [
-          { id: 1, nombre: "Redes" },
-          { id: 2, nombre: "Matemáticas" },
-          { id: 3, nombre: "Física" },
-          { id: 4, nombre: "Química" },
-          { id: 5, nombre: "Programación" },
-          { id: 6, nombre: "Inglés" }
-        ]
-      };
+        return {
+        cursos: [],
+        curso: {
+            nombre: '', seccion: '', area: '', docente: '',
+            alumnos: ''
+        },
+        formFields: {
+            nombre: 'Nombre Curso', seccion: 'Sección',
+            area: 'Area', docente: 'Docente a cargo'
+        },
+        requiredFields: ['nombre','seccion', 'area']
+        };
+    },
+    created() {
+        this.fetchCursos();
+    },
+    methods: {
+        goBack() {
+            this.$router.push({ name: 'VistaDocente' });
+        },
+
+        async fetchCursos() {
+            try {
+                const response = await axios.get('http://localhost:3333/api/courses/get');
+                this.cursos = response.data;
+            } catch (error) {
+                console.error('Error al obtener cursos:', error);
+            }
+        },
     }
-  }
+  };
 </script>
 
 <style scoped>

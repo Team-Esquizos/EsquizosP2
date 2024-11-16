@@ -4,8 +4,9 @@
       <div class="content-box">
         <!-- Mostrar el nombre del módulo recibido como prop -->
         <span class="card-title">{{ nombre }}</span>
+        <span class="card-seccion"> {{ seccion }}</span>
         <p class="card-content">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. 
+          {{ area }}
         </p>
         <button class="see-more" @click.prevent="obtenerModulos">Entrar</button>
 
@@ -38,7 +39,16 @@ export default {
     nombre: {
       type: String,
       required: true
-    }
+    },
+    seccion: {
+      type: String,
+      required:true
+    },
+    area: {
+      type: String,
+      required:true
+    },
+
   },
   data() {
     return {
@@ -82,14 +92,12 @@ export default {
 
 .card:hover {
   background-position: -100px 100px, -100px 100px;
-  transform: rotate3d(0.5, 1, 0, 30deg);
 }
 
 .content-box {
   position: relative;
   max-width: 100%;
   padding: 60px 25px 25px 25px;
-  transform-style: preserve-3d;
 }
 
 .content-box::before {
@@ -112,12 +120,8 @@ export default {
   font-size: 25px;
   font-weight: 900;
   transition: all 0.5s ease-in-out;
-  transform: translate3d(0px, 0px, 50px);
 }
 
-.content-box .card-title:hover {
-  transform: translate3d(0px, 0px, 60px);
-}
 
 .content-box .card-content {
   margin-top: 10px;
@@ -125,12 +129,9 @@ export default {
   font-weight: 700;
   color: #000000;
   transition: all 0.5s ease-in-out;
-  transform: translate3d(0px, 0px, 30px);
 }
 
-.content-box .card-content:hover {
-  transform: translate3d(0px, 0px, 60px);
-}
+
 
 .content-box .see-more {
   cursor: pointer;
@@ -148,9 +149,6 @@ export default {
   border: 0.5px solid #000000;
 }
 
-.content-box .see-more:hover {
-  transform: translate3d(0px, 0px, 60px);
-}
 
 /* Estilos para la lista de cursos */
 .content-box h3 {

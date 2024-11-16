@@ -2,7 +2,7 @@
   <nav class="navbar">
     <div class="navbar-logo">
       <img src="../assets/school.svg" alt="Logo" />
-      <span>Administración</span>
+      <span>{{ userRole }}</span>
     </div>
     <ul class="navbar-links" :class="{ 'navbar-links-mobile': isMobileMenuOpen }">
       <li class="navbar-item"><a href="#" @click="irAInicio">Inicio</a></li>
@@ -14,8 +14,8 @@
     <div class="navbar-toggle" @click="toggleMobileMenu">
       <span class="navbar-toggle-icon"></span>
     </div>
-    <Profile/>
     <span >{{ userName }}</span>
+    <Profile/>
   </nav>
 </template>
 
@@ -32,7 +32,11 @@ export default {
   computed: {
     userName() {
       return localStorage.getItem('user') || sessionStorage.getItem('user') || 'Usuario';
-    }
+    },
+    userRole() {
+      const isAdmin = localStorage.getItem('isAdmin') || sessionStorage.getItem('isAdmin');
+      return isAdmin === 'true' ? 'Administrador' : 'Docente';
+    },
   },
   methods: {
     cerrarSesion() {
@@ -79,7 +83,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: transparent;
   padding: 20px 50px;
   color: #333;
   position: absolute;
