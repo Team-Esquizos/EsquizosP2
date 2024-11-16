@@ -1,6 +1,6 @@
 <template>
     <div class="vista-docente">
-      <navBar />
+      <navBara />
       <div class="body">
         <!-- Usa v-for para iterar sobre los módulos y crear una tarjeta para cada uno -->
         <modulos v-for="modulo in modulosDocente" :key="modulo.id" :nombre="modulo.nombre" />
@@ -10,7 +10,7 @@
   
 
 <script>
-  import navBar from '@/components/AppNavbar.vue';
+  import navBara from '@/components/AppNavbar.vue';
   import modulos from '@/components/modulos.vue';
   import autenticadorSesion from '@/mixins/AutenticadorSesion';   // Se debe agregar a nuevos componentes (Que puedan ser accedidos por ruta)
   
@@ -18,7 +18,7 @@
     name: "VistaDocente",
     mixins: [autenticadorSesion],  // Se debe agregar a nuevos componentes (Que puedan ser accedidos por ruta)
     components: {
-      navBar,
+      navBara,
       modulos
     },
     data() {

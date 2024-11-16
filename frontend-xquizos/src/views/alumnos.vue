@@ -1,6 +1,6 @@
 <template>
     <div class="vista-docente">
-        <navBar />
+        <navBara />
         <div class="body">
             <div class="table-container">
                 <!-- Search Input -->
@@ -68,14 +68,14 @@
 </template>
 
 <script>
-import navBar from '@/components/AppNavbar.vue';
+import navBara from '@/components/AppNavbar.vue';
 import autenticadorSesion from '@/mixins/AutenticadorSesion';
 
 export default {
     name: "alumnos",
     mixins: [autenticadorSesion],
     components: {
-      navBar,
+      navBara,
     },
     data() {
         return {
