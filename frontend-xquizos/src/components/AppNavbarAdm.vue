@@ -6,23 +6,23 @@
     </div>
     <ul class="navbar-links" :class="{ 'navbar-links-mobile': isMobileMenuOpen }">
       <li class="navbar-item"><a href="#" @click="irAInicio">Inicio</a></li>
-      <li class="navbar-item"><a href="#" @click="GestorAlumnos">Alumnos</a></li>
-      <li class="navbar-item"><a href="#" @click="GestorDocentes">Docentes</a></li>
-      <li class="navbar-item"><a href="#" @click="GestorCursos">Cursos</a></li>
-      <li class="navbar-item"><a href="#" @click="cerrarSesion">Salir</a></li>
+
+      <!-- Solo mostrar si isAdmin es true -->
+      <li v-if="isAdmin" class="navbar-item"><a href="#" @click="GestorAlumnos">Alumnos</a></li>
+      <li v-if="isAdmin" class="navbar-item"><a href="#" @click="GestorDocentes">Docentes</a></li>
+      <li v-if="isAdmin" class="navbar-item"><a href="#" @click="GestorCursos">Cursos</a></li>
+      <li v-if="isAdmin" class="navbar-item"><a href="#" @click="cerrarSesion">Salir</a></li>
+      
     </ul>
     <div class="navbar-toggle" @click="toggleMobileMenu">
       <span class="navbar-toggle-icon"></span>
     </div>
-    <span >{{ userName }}</span>
     <Profile/>
   </nav>
 </template>
 
 <script>
 import Profile from '@/components/Profile.vue';
-
-
 
 export default {
   name: 'AppNavbar',
@@ -37,6 +37,10 @@ export default {
       const isAdmin = localStorage.getItem('isAdmin') || sessionStorage.getItem('isAdmin');
       return isAdmin === 'true' ? 'Administrador' : 'Docente';
     },
+    // Computed property para verificar si el usuario es admin
+    isAdmin() {
+      return localStorage.getItem('isAdmin') === 'true' || sessionStorage.getItem('isAdmin') === 'true';
+    }
   },
   methods: {
     cerrarSesion() {

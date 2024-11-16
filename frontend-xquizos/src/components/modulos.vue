@@ -9,25 +9,11 @@
           {{ area }}
         </p>
         <button class="see-more" @click.prevent="obtenerModulos">Entrar</button>
-
-        <!-- Mostrar la información obtenida -->
-        <div v-if="cursos.length">
-          <h3>Información del Curso:</h3>
-          <ul>
-            <li v-for="(curso, index) in cursos" :key="index">
-              <p><strong>ID:</strong> {{ curso.ID }}</p>
-              <p><strong>Curso:</strong> {{ curso.curso }}</p>
-              <p><strong>Nombre del Alumno:</strong> {{ curso.nombreAlumno }}</p>
-              <p><strong>Apellido del Alumno:</strong> {{ curso.apellidoAlumno }}</p>
-              <hr>
-            </li>
-          </ul>
-        </div>
-        <router-link to="/alumnos"> <span class="see-more">Entrar</span></router-link>
       </div>
     </div>
   </div>
 </template>
+
 
 <script>
 import autenticadorSesion from '@/mixins/AutenticadorSesion';
@@ -70,24 +56,28 @@ export default {
 
 <style scoped>
 .parent {
-  width: 300px;
+  width: 300px; /* Ancho fijo para todas las tarjetas */
   padding: 20px;
-  perspective: 1000px;
+
 }
 
 .card {
-  padding-top: 50px;
-  border-radius: 10px; 
+  padding-top: 60px;
+  border-radius: 15px;
   border: 3px solid rgb(0, 0, 0);
   transform-style: preserve-3d;
-  background: linear-gradient(135deg,#00000000 18.75%,#353535 0 31.25%,#00000000 0),
-      repeating-linear-gradient(45deg,#353535 -6.25% 6.25%,#000000 0 18.75%);
+  background: linear-gradient(135deg, #00000000 18.75%, #353535 0 31.25%, #00000000 0),
+    repeating-linear-gradient(45deg, #353535 -6.25% 6.25%, #000000 0 18.75%);
   background-size: 60px 60px;
   background-position: 0 0, 0 0;
   background-color: #000000;
   width: 100%;
   box-shadow: rgba(142, 142, 142, 0.3) 0px 30px 30px -10px;
   transition: all 0.5s ease-in-out;
+  display: flex; /* Flexbox para alinear contenido */
+  flex-direction: column;
+  height: 310px; /* Altura fija para tarjetas uniformes */
+  overflow: hidden; /* Evita que el contenido sobresalga */
 }
 
 .card:hover {
@@ -96,8 +86,12 @@ export default {
 
 .content-box {
   position: relative;
-  max-width: 100%;
+  width: 100%;
+  height: 100%;
   padding: 60px 25px 25px 25px;
+  flex-direction: column; /* Alinear elementos en columna */
+  justify-content: space-between; /* Distribuir espacio entre los elementos */
+  background-size: cover;
 }
 
 .content-box::before {
@@ -115,11 +109,19 @@ export default {
 }
 
 .content-box .card-title {
-  display: inline-block;
+  display: block;
   color: rgb(0, 0, 0);
-  font-size: 25px;
+  font-size: 20px;
   font-weight: 900;
   transition: all 0.5s ease-in-out;
+}
+
+.content-box .card-seccion {
+  display: block; /* Forzar a ocupar una línea nueva */
+  font-size: 18px;
+  font-weight: 600;
+  color: #555;
+
 }
 
 
@@ -131,12 +133,10 @@ export default {
   transition: all 0.5s ease-in-out;
 }
 
-
-
 .content-box .see-more {
   cursor: pointer;
   margin-top: 1rem;
-  display: inline-block;
+  display:inline-flex;
   font-weight: 900;
   font-size: 9px;
   text-transform: uppercase;
@@ -147,24 +147,40 @@ export default {
   transition: all 0.5s ease-in-out;
   transform: translate3d(0px, 0px, 20px);
   border: 0.5px solid #000000;
+  align-items: flex-end;
 }
 
+/* Media queries para pantallas pequeñas */
+@media (max-width: 768px) {
+  .parent {
+    max-width: 90%; /* Reducir el ancho en pantallas pequeñas */
+  }
 
-/* Estilos para la lista de cursos */
-.content-box h3 {
-  margin-top: 20px;
-  color: #333;
-  font-size: 18px;
+  .content-box .card-title {
+    font-size: 20px; /* Ajustar tamaño de texto */
+  }
+
+  .content-box .card-seccion {
+    font-size: 16px; /* Ajustar tamaño de texto */
+  }
+
+  .content-box .see-more {
+    font-size: 10px; /* Ajustar tamaño del botón */
+  }
 }
-.content-box ul {
-  list-style-type: none;
-  padding: 0;
-}
-.content-box li {
-  margin-bottom: 15px;
-}
-.content-box p {
-  margin: 5px 0;
-  color: #555;
+
+/* Media queries para pantallas muy pequeñas */
+@media (max-width: 480px) {
+  .content-box {
+    padding: 40px 15px 15px 15px; /* Reducir el relleno */
+  }
+
+  .content-box .card-title {
+    font-size: 18px;
+  }
+
+  .content-box .card-seccion {
+    font-size: 14px;
+  }
 }
 </style>
