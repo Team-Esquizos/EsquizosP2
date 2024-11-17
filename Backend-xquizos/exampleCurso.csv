@@ -1,4 +1,4 @@
-nombre,seccion,area,docente,matricula
-"Introducción a la Programación","B","Computer Science","John Doe","12345678-9"
-"Programación Avanzada","C","Computer Science","John Doe","55667788-9"
-"Cálculo II","D","Mathematics","Jane Doe","98765432-1,55667788-9,12345678-9"
+nombre,seccion,area,docente,rut,matricula
+"Introducción a la Programación","B","Computer Science","John Doe",12345678-9,"55667788-9,12345678-9"
+"Programación Avanzada","C","Computer Science","John Doe",55667788-9,"55667788-9,12345678-9"
+"Cálculo II","D","Mathematics","Jane Doe",98765432-1, "55667788-9,12345678-9"
