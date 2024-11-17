@@ -20,6 +20,7 @@ const importCurso = async (req, res) => {
                     nombre: response[i].nombre,
                     seccion: response[i].seccion,
                     area: response[i].area,
+                    rut: response[i].rut,
                     docente: response[i].docente,
                     alumnos: matriculas
                 });
