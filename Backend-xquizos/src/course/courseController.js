@@ -55,6 +55,31 @@ var editCourseControllerFn = async (req, res) => {
     }
 }
 
+
+var getCourseByEmailControllerFn = async (req, res) => {
+
+
+    const email = req.params.email;
+    console.log(email);
+    try {
+        console.log("entrando a db Services");
+        const result = await courseService.getCoursesByEmailDBService(email);
+
+        if (result.status) {
+            res.status(200).json(result);
+        } else {
+            res.status(404).json(result);
+        }
+    } catch (error) {
+        console.error('Error en la actualización del curso:', error);
+        res.status(500).json({ status: false, msg: "Error en el servidor" });
+    }
+}
+
+
+
+
+
 var removeCourseControllerFn = async (req, res) => {
     const nombreCurso = req.params.nombre; 
     const seccion = req.params.seccion;
@@ -99,4 +124,4 @@ var searchCourseControllerFn = async (req, res) => {
     }
 }
 
-module.exports = {registerCourseControllerFn, searchCourseControllerFn, getCoursesControllerFn, editCourseControllerFn, removeCourseControllerFn};
+module.exports = {registerCourseControllerFn, searchCourseControllerFn, getCoursesControllerFn, editCourseControllerFn, removeCourseControllerFn, getCourseByEmailControllerFn};

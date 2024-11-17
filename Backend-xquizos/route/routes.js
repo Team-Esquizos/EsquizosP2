@@ -24,5 +24,6 @@
     router.route('/courses/get').get(courseController.getCoursesControllerFn);
     router.route('/courses/:nombre/:seccion').put(courseController.editCourseControllerFn);
     router.route('/courses/remove/:nombre/:seccion').delete(courseController.removeCourseControllerFn);
+    router.route('/courses/getbyemail/:email').get(courseController.getCourseByEmailControllerFn);
 
     module.exports = router; 

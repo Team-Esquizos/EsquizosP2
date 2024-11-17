@@ -14,7 +14,6 @@
   </div>
 </template>
 
-
 <script>
 import autenticadorSesion from '@/mixins/AutenticadorSesion';
 import axios from 'axios';
