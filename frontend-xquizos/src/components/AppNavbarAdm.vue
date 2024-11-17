@@ -98,7 +98,7 @@ export default {
   backdrop-filter: blur(10px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease;
-  opacity: 0.9;
+  
 }
 
 .navbar-logo {
