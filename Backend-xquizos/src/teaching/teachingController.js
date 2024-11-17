@@ -78,9 +78,9 @@ var removeTeachingControllerFn = async (req, res) => {
 var searchTeachingControllerFn = async (req, res) => {
     try {
 
-        const nameSearch = req.params.nombrePrimer;
-        
-        var result = await teachingService.searchTeachingDBService( {name: nameSearch} );
+        const email = req.params.email;
+        console.log(email);
+        // var result = await teachingService.searchTeachingDBService( {email} );
 
         if(result.status){
             res.json(result.user);

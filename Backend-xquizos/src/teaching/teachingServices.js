@@ -37,7 +37,7 @@ module.exports.registerTeachingDBService = (teachingData) => {
 
 module.exports.searchTeachingDBService = async (teachingData) => {
     try {
-        const result = await teachingModel.findOne({ matricula: teachingData.matricula });
+        const result = await teachingModel.findOne({ email: teachingData.email });
 
         if (result) {
             console.log("Docente encontrado");
