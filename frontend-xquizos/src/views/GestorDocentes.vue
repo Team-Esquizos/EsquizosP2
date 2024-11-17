@@ -1,252 +1,261 @@
 <template>
-    <navBar />
-  
-  
-  
-    <div class="gestor-docentes-container container my-5">
-  
+<img src="../assets/fondogestor2.jpg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
+<navBar />
+
+<div class="gestor-docentes-container container my-5" style="opacity: 0.9;">
+
     <!-- Contenedor principal para el botón y el título -->
     <div class="header-container container my-5">
-      <div class="d-flex align-items-center">
-        <!-- Botón de retroceso a la izquierda -->
-        <button class="btn btn-secondary back-button" @click="goBack">
-          <i class="fa-solid fa-circle-left"></i> Volver a GestorDatos
-        </button>
-  
-        <!-- Título centrado -->
-        <h1 class="title">Gestor de Docentes</h1>
-      </div>
+        <div class="d-flex align-items-center">
+            <!-- Botón de retroceso a la izquierda -->
+            <button class="btn btn-secondary back-button" @click="goBack">
+                <i class="fa-solid fa-circle-left"></i> Volver a GestorDatos
+            </button>
+
+            <!-- Título centrado -->
+            <h1 class="title" style="border-radius: 15px;">Gestor de Docentes</h1>
+        </div>
     </div>
-  
-  
-      <!-- Modal del formulario para agregar/editar alumno -->
-      <div v-if="formVisible" class="modal-overlay" @click.self="clearForm">
+
+    <!-- Modal del formulario para agregar/editar alumno -->
+    <div v-if="formVisible" class="modal-overlay" @click.self="clearForm">
         <div class="modal-content">
-          <form @submit.prevent="handleSubmit">
-            <h3 class="text-center mb-4">{{ isEditMode ? 'Editar Docente' : 'Agregar Docente' }}</h3>
-  
-            <!-- Campos del formulario -->
-            <div class="form-group mb-3" v-for="(label, key) in formFields" :key="key">
-              <label :for="key">{{ label }}</label>
-              <input type="text" :id="key" v-model="docente[key]" class="form-control" :required="requiredFields.includes(key)" />
+            <form @submit.prevent="handleSubmit">
+                <h3 class="text-center mb-4">{{ isEditMode ? 'Editar Docente' : 'Agregar Docente' }}</h3>
+
+                <!-- Campos del formulario -->
+                <div class="form-group mb-3" v-for="(label, key) in formFields" :key="key">
+                    <label :for="key">{{ label }}</label>
+                    <input type="text" :id="key" v-model="docente[key]" class="form-control" :required="requiredFields.includes(key)" />
+                </div>
+
+                <!-- Botones de acción -->
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="submit" class="btn btn-success">{{ isEditMode ? 'Actualizar' : 'Agregar' }}</button>
+                    <button type="button" class="btn btn-secondary" @click="clearForm">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Lista de alumnos con el botón Agregar Alumno a la derecha del título -->
+    <div class="d-flex align-items-center justify-content-between section-title mb-4">
+        <h3 style="border-radius: 15px;">Lista de Docentes</h3>
+        <div class="d-flex">
+            <button class="btn btn-primary" @click="toggleForm('add')"><i class="fa-solid fa-user-plus"></i> Agregar Docente</button>
+            <!-- Botón de importar CSV -->
+            <div class="ms-2">
+                <input type="file" ref="fileInput" @change="onFileSelected" style="display: none;" accept=".csv" />
+                <button class="btn btn-success" @click="triggerFileInput">
+                    <i class="fa-solid fa-file-csv"></i> Importar desde CSV
+                </button>
             </div>
+        </div>
+    </div>
+
+    <div class="table-responsive" ref="tableContainer" style="border-radius: 15px; max-height: 500px; overflow-y: auto; position: relative;">
+    <table class="table table-striped table-hover table-bordered text-center">
+      <thead class="thead-light" style="position: sticky; top: 0; z-index: 1; background-color: white;">
+        <tr>
+          <th>Foto</th>
+          <th>Nombre Completo</th>
+          <th>Email</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="docente in docentes" :key="docente.rut">
+          <td class="align-middle">
+            <img class="img-fluid rounded-circle" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Avatar" style="width: 50px; height: 50px;" />
+          </td>
+          <td class="align-middle">{{ docente.nombrePrimer }} {{ docente.nombreSegundo }} {{ docente.apellidoP }} {{ docente.apellidoM }}</td>
+          <td class="align-middle">{{ docente.email }}</td>
+          <td class="align-middle">
+            <button @click="viewDocente(docente)" class="btn btn-sm btn-primary mx-1">
+              <i class="far fa-eye"></i>
+            </button>
+            <button @click="toggleForm('edit', docente)" class="btn btn-sm btn-info mx-1">
+              <i class="fas fa-pencil-alt"></i>
+            </button>
+            <button @click="deleteDocente(docente.rut)" class="btn btn-sm btn-danger mx-1">
+              <i class="far fa-trash-alt"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</template>
 
   
-            <!-- Botones de acción -->
-            <div class="d-flex justify-content-between mt-4">
-              <button type="submit" class="btn btn-success">{{ isEditMode ? 'Actualizar' : 'Agregar' }}</button>
-              <button type="button" class="btn btn-secondary" @click="clearForm">Cancelar</button>
-            </div>
-          </form>
-        </div>
-      </div>
-  
-      <!-- Lista de alumnos con el botón Agregar Alumno a la derecha del título -->
-      <div class="d-flex align-items-center justify-content-between section-title mb-4">
-        <h3 class="m-0">Lista de Docentes</h3>
-        <div class="d-flex">
-          <button class="btn btn-primary" @click="toggleForm('add')"><i class="fa-solid fa-user-plus"></i> Agregar Docente</button>
-          <!-- Botón de importar CSV -->
-          <div class="ms-2">
-            <input 
-              type="file" 
-              ref="fileInput"
-              @change="onFileSelected"
-              style="display: none;" 
-              accept=".csv"
-            />
-            <button 
-              class="btn btn-success" 
-              @click="triggerFileInput"
-            >
-              <i class="fa-solid fa-file-csv"></i> Importar desde CSV
-            </button>
-          </div>
-        </div>
-      </div>
-  
-      <div class="table-responsive">
-        <table class="table table-striped table-hover table-bordered text-center">
-          <thead class="thead-light">
-            <tr>
-              <th>Foto</th>
-              <th>Nombre Completo</th>
-              <th>Email</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="docente in docentes" :key="docente.rut">
-              <td class="align-middle">
-                <img class="img-fluid rounded-circle" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Avatar" style="width: 50px; height: 50px;" />
-              </td>
-              <td class="align-middle">{{ docente.nombrePrimer }} {{ docente.nombreSegundo }} {{ docente.apellidoP }} {{ docente.apellidoM }}</td>
-              <td class="align-middle">{{ docente.email }}</td>
-              <td class="align-middle">
-                <button @click="viewDocente(docente)" class="btn btn-sm btn-primary mx-1">
-                  <i class="far fa-eye"></i>
-                </button>
-                <button @click="toggleForm('edit', docente)" class="btn btn-sm btn-info mx-1">
-                  <i class="fas fa-pencil-alt"></i>
-                </button>
-                <button @click="deleteDocente(docente.rut)" class="btn btn-sm btn-danger mx-1">
-                  <i class="far fa-trash-alt"></i>
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </template>
-  
-  
-  <script>
-  import axios from 'axios';
-  import navBar from '@/components/AppNavbarAdm.vue';
-  import autenticadorSesion from '../mixins/AutenticadorSesion.js';
-  
-  export default {
+<script>
+import axios from 'axios';
+import navBar from '@/components/AppNavbarAdm.vue';
+import autenticadorSesion from '../mixins/AutenticadorSesion.js';
+
+export default {
     name: 'GestorDocentes',
     mixins: [autenticadorSesion],
-    components: { navBar },
+    components: {
+        navBar
+    },
     data() {
-      return {
-        docentes: [],
-        docente: {
-          nombrePrimer: '', nombreSegundo: '', apellidoP: '', apellidoM: '',
-          rut: '', email: ''
-        },
-        formVisible: false,
-        isEditMode: false,
-        formFields: {
-          nombrePrimer: 'Primer Nombre', nombreSegundo: 'Segundo Nombre',
-          apellidoP: 'Apellido Paterno', apellidoM: 'Apellido Materno', rut: 'Rut',
-        },
-        requiredFields: ['nombrePrimer','nombreSegundo', 'apellidoP', 'apellidoM', 'rut']
-      };
+        return {
+            docentes: [],
+            docente: {
+                nombrePrimer: '',
+                nombreSegundo: '',
+                apellidoP: '',
+                apellidoM: '',
+                rut: '',
+                email: ''
+            },
+            formVisible: false,
+            isEditMode: false,
+            formFields: {
+                nombrePrimer: 'Primer Nombre',
+                nombreSegundo: 'Segundo Nombre',
+                apellidoP: 'Apellido Paterno',
+                apellidoM: 'Apellido Materno',
+                rut: 'Rut',
+            },
+            requiredFields: ['nombrePrimer', 'nombreSegundo', 'apellidoP', 'apellidoM', 'rut']
+        };
     },
     created() {
-      this.fetchDocentes();
+        this.fetchDocentes();
     },
     methods: {
 
-      goBack() {
-        this.$router.push({ name: 'VistaAdministrador' });
-      },
-      async fetchDocentes() {
-        try {
-          const response = await axios.get('http://localhost:3333/api/teaching/get');
-          this.docentes = response.data;
-        } catch (error) {
-          console.error('Error al obtener docentes:', error);
-        }
-      },
-      toggleForm(mode, docente = {}) {
-        this.isEditMode = mode === 'edit';
-        this.docente = { ...docente };
-        this.formVisible = !this.formVisible;
-      },
-      async handleSubmit() {
-        if (this.isEditMode) {
-          await this.updateDocente();
-        } else {
-          await this.addDocente();
-        }
-        this.clearForm();
-      },
-      async addDocente() {
-        try {
-          await axios.post('http://localhost:3333/api/teaching/register', this.docente);
-          this.fetchDocentes();
-        } catch (error) {
-          console.error('Error al agregar docente:', error);
-        }
-      },
-      async updateDocente() {
-        try {
-          await axios.put(`http://localhost:3333/api/teaching/${this.docente.rut}`, this.docente);
-          this.fetchDocentes();
-        } catch (error) {
-          console.error('Error al actualizar docente:', error);
-        }
-      },
-      async deleteDocente(rut) {
-        try {
-          await axios.delete(`http://localhost:3333/api/teaching/remove/${rut}`);
-          this.fetchDocentes();
-        } catch (error) {
-          console.error('Error al eliminar Docente:', error);
-        }
-      },
-      clearForm() {
-        this.docente = { nombrePrimer: '', nombreSegundo: '', apellidoP: '', apellidoM: '', rut: '', email: '' };
-        this.formVisible = false;
-      },
+        goBack() {
+            this.$router.push({
+                name: 'VistaAdministrador'
+            });
+        },
+        async fetchDocentes() {
+            try {
+                const response = await axios.get('http://localhost:3333/api/teaching/get');
+                this.docentes = response.data;
+            } catch (error) {
+                console.error('Error al obtener docentes:', error);
+            }
+        },
+        toggleForm(mode, docente = {}) {
+            this.isEditMode = mode === 'edit';
+            this.docente = {
+                ...docente
+            };
+            this.formVisible = !this.formVisible;
+        },
+        async handleSubmit() {
+            if (this.isEditMode) {
+                await this.updateDocente();
+            } else {
+                await this.addDocente();
+            }
+            this.clearForm();
+        },
+        async addDocente() {
+            try {
+                await axios.post('http://localhost:3333/api/teaching/register', this.docente);
+                this.fetchDocentes();
+            } catch (error) {
+                console.error('Error al agregar docente:', error);
+            }
+        },
+        async updateDocente() {
+            try {
+                await axios.put(`http://localhost:3333/api/teaching/${this.docente.rut}`, this.docente);
+                this.fetchDocentes();
+            } catch (error) {
+                console.error('Error al actualizar docente:', error);
+            }
+        },
+        async deleteDocente(rut) {
+            try {
+                await axios.delete(`http://localhost:3333/api/teaching/remove/${rut}`);
+                this.fetchDocentes();
+            } catch (error) {
+                console.error('Error al eliminar Docente:', error);
+            }
+        },
+        clearForm() {
+            this.docente = {
+                nombrePrimer: '',
+                nombreSegundo: '',
+                apellidoP: '',
+                apellidoM: '',
+                rut: '',
+                email: ''
+            };
+            this.formVisible = false;
+        },
 
-      triggerFileInput() {
-        this.$refs.fileInput.click();
-      },
+        triggerFileInput() {
+            this.$refs.fileInput.click();
+        },
 
-      handleAddFile() {
-        this.$refs.fileInput.click();
-      },
+        handleAddFile() {
+            this.$refs.fileInput.click();
+        },
 
-      onFileSelected(event) {
-        this.selectedFile = event.target.files[0];
-        //this.uploadFile();
-        this.uploadDocenteFile(); // Llama a la nueva función para enviar el archivo a importCurso
-      },
+        onFileSelected(event) {
+            this.selectedFile = event.target.files[0];
+            //this.uploadFile();
+            this.uploadDocenteFile(); // Llama a la nueva función para enviar el archivo a importCurso
+        },
 
-      async uploadDocenteFile() {
-        console.log('Subir archivo de curso');
-        if (!this.selectedFile) {
-          this.message = "Por favor, selecciona un archivo primero.";
-          return;
-        }
-        
-        const formData = new FormData();
-        formData.append('file', this.selectedFile);
-        
-        try {
-          const response = await axios.post('http://localhost:3333/csv/importProfesor', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
+        async uploadDocenteFile() {
+            console.log('Subir archivo de curso');
+            if (!this.selectedFile) {
+                this.message = "Por favor, selecciona un archivo primero.";
+                return;
+            }
 
-          });
-          this.message = response.data.message;
+            const formData = new FormData();
+            formData.append('file', this.selectedFile);
 
-          if (response.data.success) {
-            // Aquí llamamos a fetchDocentes después de la subida exitosa del archivo
-            this.fetchDocentes();
-          } else {
-            // En caso de que el servidor devuelva un error
-            console.error('Error en el archivo:', response.data.message);
-          }
-        } catch (error) {
-          console.error('Error al subir el archivo de curso:', error);
-        }
-      },
+            try {
+                const response = await axios.post('http://localhost:3333/csv/importProfesor', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+
+                });
+                this.message = response.data.message;
+
+                if (response.data.success) {
+                    // Aquí llamamos a fetchDocentes después de la subida exitosa del archivo
+                    this.fetchDocentes();
+                } else {
+                    // En caso de que el servidor devuelva un error
+                    console.error('Error en el archivo:', response.data.message);
+                }
+            } catch (error) {
+                console.error('Error al subir el archivo de curso:', error);
+            }
+        },
     }
-  };
-  </script>
+};
+</script>
+
   
-  <style scoped>
-  .gestor-docentes-container {
+<style scoped>
+.gestor-docentes-container {
     padding-top: 30px;
     padding-bottom: 50px;
-  }
-  
-  .d-flex {
-    justify-content:left;
-  }
-  
-  .back-button {
+}
+
+.d-flex {
+    justify-content: left;
+}
+
+.back-button {
     margin-right: 20px;
-  }
-  
-  .title {
+}
+
+.title {
     font-size: 2.5rem;
     font-weight: bold;
     color: #2c3e50;
@@ -258,10 +267,11 @@
     text-transform: uppercase;
     letter-spacing: 1px;
     text-align: center;
-    flex-grow: 1; /* Permite al título ocupar el espacio restante */
-  }
-  
-  .section-title h3 {
+    flex-grow: 1;
+    /* Permite al título ocupar el espacio restante */
+}
+
+.section-title h3 {
     font-size: 1.8rem;
     font-weight: 600;
     color: #34495e;
@@ -270,9 +280,9 @@
     background-color: #ffffff;
     display: inline-block;
     border-radius: 4px;
-  }
-  
-  .section-title h3 {
+}
+
+.section-title h3 {
     font-size: 1.8rem;
     font-weight: 600;
     color: #34495e;
@@ -282,18 +292,19 @@
     background-color: #ffffff;
     display: inline-block;
     border-radius: 4px;
-  }
-  
-  .table td, .table th {
+}
+
+.table td,
+.table th {
     vertical-align: middle;
-  }
-  
-  .img-fluid.rounded-circle {
+}
+
+.img-fluid.rounded-circle {
     width: 50px;
     height: 50px;
-  }
-  
-  .modal-overlay {
+}
+
+.modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -304,14 +315,14 @@
     align-items: center;
     justify-content: center;
     z-index: 1000;
-  }
-  
-  .modal-content {
+}
+
+.modal-content {
     background: #fff;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     max-width: 600px;
     width: 100%;
-  }
-  </style>
+}
+</style>
