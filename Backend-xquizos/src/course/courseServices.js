@@ -1,4 +1,5 @@
 var courseModel = require('./courseModel.js');
+var teachingModel = require('../teaching/teachingModel.js');
 
 module.exports.registerCourseDBService = (courseData) => {
     return new Promise(async function myFn(resolve, reject) {
@@ -99,4 +100,39 @@ module.exports.removeCourseDBService = async (nombre, seccion) => {
     }
 };
 
+module.exports.getCoursesByEmailDBService = async (email) => {
 
+   
+    
+    try {
+        const teacher = await teachingModel.findOne({ email });
+        if (!teacher) {
+            console.log("Profesor no encontrado");
+            return { status: false, msg: "Profesor no encontrado" };
+        }
+    
+        console.log("Profesor encontrado:", teacher);
+    
+       
+    
+
+        // Acceder al atributo 'rut' del profesor
+         const teacherRut = teacher.rut;
+         console.log(teacherRut);
+
+// Buscar cursos asociados al profesor
+        const result = await courseModel.find({ rut: teacherRut });
+
+        if (result.length > 0) {
+            console.log("Cursos encontrados");
+            return { status: true, msg: "Cursos encontrados", courses: result };
+        } else {
+            console.log("No se encontraron Cursos");
+            return { status: false, msg: "No se encontraron Cursos" };
+        }
+
+    } catch (error) {
+        console.log("Error al obtener Cursos:", error);
+        return { status: false, msg: "Error al obtener Cursos" };
+    }
+};
