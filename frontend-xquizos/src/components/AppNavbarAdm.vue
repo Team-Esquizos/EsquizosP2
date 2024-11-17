@@ -2,28 +2,28 @@
   <nav class="navbar">
     <div class="navbar-logo">
       <img src="../assets/school.svg" alt="Logo" />
-      <span>Administración</span>
+      <span>{{ userRole }}</span>
     </div>
     <ul class="navbar-links" :class="{ 'navbar-links-mobile': isMobileMenuOpen }">
       <li class="navbar-item"><a href="#" @click="irAInicio">Inicio</a></li>
-      <li class="navbar-item"><a href="#" @click="GestorAlumnos">Alumnos</a></li>
-      <li class="navbar-item"><a href="#" @click="GestorDocentes">Docentes</a></li>
-      <li class="navbar-item"><a href="#" @click="GestorCursos">Cursos</a></li>
-      <li class="navbar-item"><a href="#" @click="cerrarSesion">Salir</a></li>
+
+      <!-- Solo mostrar si isAdmin es true -->
+      <li v-if="isAdmin" class="navbar-item"><a href="#" @click="GestorAlumnos">Alumnos</a></li>
+      <li v-if="isAdmin" class="navbar-item"><a href="#" @click="GestorDocentes">Docentes</a></li>
+      <li v-if="isAdmin" class="navbar-item"><a href="#" @click="GestorCursos">Cursos</a></li>
+      <li v-if="isAdmin" class="navbar-item"><a href="#" @click="cerrarSesion">Salir</a></li>
+      
     </ul>
     <div class="navbar-toggle" @click="toggleMobileMenu">
       <span class="navbar-toggle-icon"></span>
     </div>
     <span >{{ userName }}</span>
     <Profile/>
-    
   </nav>
 </template>
 
 <script>
 import Profile from '@/components/Profile.vue';
-
-
 
 export default {
   name: 'AppNavbar',
@@ -33,6 +33,14 @@ export default {
   computed: {
     userName() {
       return localStorage.getItem('user') || sessionStorage.getItem('user') || 'Usuario';
+    },
+    userRole() {
+      const isAdmin = localStorage.getItem('isAdmin') || sessionStorage.getItem('isAdmin');
+      return isAdmin === 'true' ? 'Administrador' : 'Docente';
+    },
+    // Computed property para verificar si el usuario es admin
+    isAdmin() {
+      return localStorage.getItem('isAdmin') === 'true' || sessionStorage.getItem('isAdmin') === 'true';
     }
   },
   methods: {
@@ -80,7 +88,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: transparent;
   padding: 20px 50px;
   color: #333;
   position: absolute;
