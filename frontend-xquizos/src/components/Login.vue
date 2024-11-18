@@ -20,10 +20,7 @@
                 </label>
                 <button type="submit">Logearse</button>
             </form>
-            <router-link to="/vistaAdministrador">Ir a Vista Administrador</router-link>
-            <router-link to="/vistaDocente">Ir a Vista docente</router-link>
-            <router-link to="/editor">Ir a editar cursos</router-link>
-            <router-link to="/temp">temp</router-link>
+           
         </div>
     </body>
   </template>
@@ -49,7 +46,7 @@
         const storedUser = localStorage.getItem('user') || sessionStorage.getItem('user');
         
         if (storedUser) {
-            axios.get(`http://localhost:3333/user/${storedUser}`)
+            axios.get(`http://localhost:3333/api/user/${storedUser}`)
                 .then(({ data }) => {
                     if (data) {
                         this.user = data; 
@@ -63,12 +60,12 @@
                 .catch(err => {
                     console.error(err);
                 });
-        }
+        } 
 
     },
     methods: {
       login() {
-        axios.post("http://localhost:3333/user/login", {
+        axios.post("http://localhost:3333/api/user/login", {
           email: this.user.email,
           password: this.user.password
         })
@@ -151,16 +148,16 @@
       backdrop-filter: blur(10px);
   }
   
-
   
   .card>h2 {
       font-size: 36px;
       font-weight: 400;
+      color: rgb(244, 243, 243);
       margin: 0 0 12px;
   }
   
   .card>h3 {
-      color: rgba(255, 255, 255, 0.38);
+      color: rgb(214, 212, 212);
       margin: 0 0 48px;
       font-size: 16px;
   }

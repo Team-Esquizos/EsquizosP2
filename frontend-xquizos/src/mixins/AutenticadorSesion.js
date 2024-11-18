@@ -1,7 +1,7 @@
 export default {
-    mounted() {
-        if (!localStorage.getItem('user') && !sessionStorage.getItem('user')) {
-            this.$router.push({ name: 'Login' });
+    created() {
+        if (!localStorage.getItem('email') && !sessionStorage.getItem('email')) {
+            this.$router.push('/');
         }
     }
 };
