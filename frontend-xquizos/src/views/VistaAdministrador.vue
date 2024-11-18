@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import navBar from '@/components/NavbarVacia.vue';
+import navBar from '@/components/AppNavbarAdm.vue';
 import autenticadorSesion from '@/mixins/AutenticadorSesion';  // Se debe agregar a nuevos componentes (Que puedan ser accedidos por ruta)
 import axios from 'axios';
 import gestorDatos from '@/views/GestorDatos.vue';

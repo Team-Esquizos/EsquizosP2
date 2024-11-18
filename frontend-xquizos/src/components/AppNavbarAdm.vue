@@ -17,6 +17,7 @@
     <div class="navbar-toggle" @click="toggleMobileMenu">
       <span class="navbar-toggle-icon"></span>
     </div>
+    <span >{{ userName }}</span>
     <Profile/>
   </nav>
 </template>
@@ -87,7 +88,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: transparent;
+  background-color: rgb(255, 255, 255);
   padding: 20px 50px;
   color: #333;
   position: absolute;
@@ -97,7 +98,7 @@ export default {
   backdrop-filter: blur(10px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease;
-  
+  opacity: 0.9;
 }
 
 .navbar-logo {
