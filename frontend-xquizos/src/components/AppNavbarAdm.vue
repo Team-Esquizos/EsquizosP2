@@ -17,7 +17,6 @@
     <div class="navbar-toggle" @click="toggleMobileMenu">
       <span class="navbar-toggle-icon"></span>
     </div>
-    <span >{{ userName }}</span>
     <Profile/>
   </nav>
 </template>

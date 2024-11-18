@@ -97,4 +97,22 @@ var searchStudentControllerFn = async (req, res) => {
     }
 }
 
-module.exports = {registerStudentControllerFn, searchStudentControllerFn, getStudentsControllerFn, editStudentControllerFn, removeStudentControllerFn};
+var getCourseByNomControllerFn = async (req, res) => {
+    const nombre = req.params.nombre; 
+    const seccion = req.params.seccion;
+
+    try {
+        const result = await studentService.getCourseByNomDBService(nombre, seccion);
+
+        if (result.status) {
+            res.status(200).json(result);
+        } else {
+            res.status(404).json(result);
+        }
+    } catch (error) {
+        console.error('Error en la busqueda del curso:', error);
+        res.status(500).json({ status: false, msg: "Error en el servidor" });
+    }
+}
+
+module.exports = {registerStudentControllerFn, searchStudentControllerFn, getStudentsControllerFn, editStudentControllerFn, removeStudentControllerFn, getCourseByNomControllerFn};
