@@ -101,6 +101,16 @@ export default {
     components: {
         navBar
     },
+    computed: {
+        userRole() {
+        const isAdmin = localStorage.getItem('isAdmin') || sessionStorage.getItem('isAdmin');
+        return isAdmin === 'true' ? 'Administrador' : 'Docente';
+        },
+        // Computed property para verificar si el usuario es admin
+        isAdmin() {
+        return localStorage.getItem('isAdmin') === 'true' || sessionStorage.getItem('isAdmin') === 'true';
+        }
+    },
     data() {
         return {
             alumnos: [],

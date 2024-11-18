@@ -14,6 +14,7 @@
     router.route('/student/get').get(studentController.getStudentsControllerFn);
     router.route('/student/:matricula').put(studentController.editStudentControllerFn);
     router.route('/student/remove/:matricula').delete(studentController.removeStudentControllerFn);
+    router.route('/student/getcoursebynom/:nombre/:seccion').get(studentController.getCourseByNomControllerFn);
 
     router.route('/teaching/register').post(teachingController.registerTeachingControllerFn);
     router.route('/teaching/get').get(teachingController.getTeachingsControllerFn);
@@ -25,5 +26,6 @@
     router.route('/courses/:nombre/:seccion').put(courseController.editCourseControllerFn);
     router.route('/courses/remove/:nombre/:seccion').delete(courseController.removeCourseControllerFn);
     router.route('/courses/getbyemail/:email').get(courseController.getCourseByEmailControllerFn);
+    
 
     module.exports = router; 

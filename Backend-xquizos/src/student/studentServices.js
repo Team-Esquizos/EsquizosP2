@@ -1,4 +1,6 @@
 var studentModel = require('./studentModel.js');
+var courseModel = require('../course/courseModel.js');
+
 
 module.exports.registerStudentDBService = (studentData) => {
     return new Promise(async function myFn(resolve, reject) {
@@ -100,4 +102,77 @@ module.exports.removeStudentDBService = async (matricula) => {
     }
 };
 
+/*module.exports.getCourseByIdDBService = async (_id) => {
+    try {
+        // Buscar el curso por su ID
+        const course = await courseModel.findOne({ _id });
+        if (!course) {
+            console.log("Curso no encontrado");
+            return { status: false, msg: "Curso no encontrado" };
+        }
 
+        console.log("Curso encontrado:", course);
+
+        // Filtrar a los alumnos del curso según la matrícula
+        
+    } catch (error) {
+        console.log("Error al obtener el curso y los alumnos:", error);
+        return { status: false, msg: "Error al obtener el curso y los alumnos" };
+    }
+};*/
+
+/*module.exports.getCourseByNomDBService = async (nombre, seccion) => {
+    try {
+        console.log(nombre);  // Verifica el valor de nombre aquí
+        const course = await courseModel.findOne({ nombre, seccion });
+        console.log(course)
+
+        if (course) {
+            const students = course.alumnos.filter((alumno) => alumno.matricula === course.students.matricula);
+            if (students.length === 0) {
+                console.log("No se encontraron alumnos con la matrícula especificada");
+                return { status: false, msg: "No se encontraron alumnos con esa matrícula" };
+            }
+
+            console.log("Alumnos encontrados:", students);
+            return { status: true, msg: "Alumnos encontrados", students };
+        } else {
+            console.log("Alumnos no encontrado");
+            return { status: false, msg: "Curso no encontrado" };
+        }
+    } catch (error) {
+        console.log("Error al actualizar el Curso:", error);
+        return { status: false, msg: "Error al actualizar el Curso" };
+    }
+};*/
+
+module.exports.getCourseByNomDBService = async (nombre, seccion) => {
+    try {
+        console.log(nombre);  // Verifica el valor de nombre aquí
+        const course = await courseModel.findOne({ nombre, seccion });
+        console.log(course);
+
+        if (course) {
+            // Extraer todas las matrículas de los alumnos
+            const matriculas = course.alumnos.map(alumno => alumno.matricula);
+            console.log("Matrículas del curso:", matriculas);
+
+            // Buscar alumnos que tengan una matrícula dentro de las matrículas del curso
+            const students = await studentModel.find({ matricula: { $in: matriculas } });
+
+            if (students.length === 0) {
+                console.log("No se encontraron alumnos con las matrículas especificadas");
+                return { status: false, msg: "No se encontraron alumnos con esas matrículas" };
+            }
+
+            console.log("Alumnos encontrados:", students);
+            return { status: true, msg: "Alumnos encontrados", students };
+        } else {
+            console.log("Curso no encontrado");
+            return { status: false, msg: "Curso no encontrado" };
+        }
+    } catch (error) {
+        console.log("Error al obtener el curso:", error);
+        return { status: false, msg: "Error al obtener el curso" };
+    }
+};
