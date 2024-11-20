@@ -6,11 +6,11 @@ module.exports.registerCourseDBService = (courseData) => {
 
         var courseModelData = new courseModel();
 
+        courseModelData.codigo = courseData.codigo.toUpperCase();
+        courseModelData.carrera = courseData.carrera.toUpperCase();
         courseModelData.nombre = courseData.nombre.toUpperCase();
+        courseModelData.semestre = courseData.semestre.toUpperCase();
         courseModelData.seccion = courseData.seccion.toUpperCase();
-        courseModelData.area = courseData.area.toUpperCase();
-        courseModelData.docente = courseData.docente;
-        courseModelData.alumnos = courseData.alumnos;
 
         try {
             await courseModelData.save();
@@ -59,10 +59,9 @@ module.exports.getCoursesDBService = async () => {
     }
 };
 
-module.exports.editCourseDBService = async (nombre, seccion, updatedData) => {
+module.exports.editCourseDBService = async (codigo, updatedData) => {
     try {
-        console.log(nombre);  // Verifica el valor de nombre aquí
-        const course = await courseModel.findOne({ nombre, seccion });
+        const course = await courseModel.findOne({ codigo });
 
         if (course) {
             Object.assign(course, updatedData);

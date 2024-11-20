@@ -37,12 +37,11 @@ var getCoursesControllerFn = async (req, res) => {
 };
 
 var editCourseControllerFn = async (req, res) => {
-    const nombre = req.params.nombre; 
-    const seccion = req.params.seccion;
+    const codigo = req.params.codigo; 
     const updatedData = req.body; 
 
     try {
-        const result = await courseService.editCourseDBService(nombre, seccion, updatedData);
+        const result = await courseService.editCourseDBService(codigo, updatedData);
 
         if (result.status) {
             res.status(200).json(result);

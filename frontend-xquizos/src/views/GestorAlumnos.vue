@@ -59,8 +59,10 @@
                 <tr>
                     <th>Foto</th>
                     <th>Nombre Completo</th>
-                    <th>Email</th>
-                    <th>Carrera</th>
+                    <th>Rut</th>
+                    <th>Matricula</th>
+                    <th>Fecha Nacimiento</th>
+                    <th>Fecha Ingreso</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -69,9 +71,11 @@
                     <td class="align-middle">
                         <img class="img-fluid rounded-circle" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Avatar" style="width: 50px; height: 50px;" />
                     </td>
-                    <td class="align-middle">{{ alumno.nombrePrimer }} {{ alumno.apellidoP }} {{ alumno.apellidoM }}</td>
-                    <td class="align-middle">{{ alumno.email }}</td>
-                    <td class="align-middle">{{ alumno.carrera }}</td>
+                    <td class="align-middle">{{ alumno.nombres }} {{ alumno.apellidoP }} {{ alumno.apellidoM }}</td>
+                    <td class="align-middle">{{ alumno.rut }}</td>
+                    <td class="align-middle">{{ alumno.matricula }}</td>
+                    <td class="align-middle">{{ alumno.fecNac }}</td>
+                    <td class="align-middle">{{ alumno.fecIng }}</td>
                     <td class="align-middle">
                         <button @click="viewAlumno(alumno)" class="btn btn-sm btn-primary mx-1">
                             <i class="far fa-eye"></i>
@@ -115,29 +119,26 @@ export default {
         return {
             alumnos: [],
             alumno: {
-                nombrePrimer: '',
-                nombreSegundo: '',
+                nombres: '',
                 apellidoP: '',
                 apellidoM: '',
                 rut: '',
-                email: '',
                 matricula: '',
-                carrera: '',
-                cursos: []
+                fecNac: '',
+                fecIng: '',
             },
             formVisible: false,
             isEditMode: false,
             formFields: {
-                nombrePrimer: 'Primer Nombre',
-                nombreSegundo: 'Segundo Nombre',
+                nombres: 'Nombre(s) del alumno',
                 apellidoP: 'Apellido Paterno',
                 apellidoM: 'Apellido Materno',
                 rut: 'RUT',
-                email: 'Email',
-                matricula: 'Matrícula',
-                carrera: 'Carrera'
+                matricula: 'Numero de matrícula',
+                fecNac: 'Fecha de nacimiento',
+                fecIng: 'Fecha de ingreso'
             },
-            requiredFields: ['nombrePrimer', 'apellidoP', 'rut', 'email', 'matricula', 'carrera']
+            requiredFields: ['nombres', 'apellidoP','apellidoM', 'rut', 'matricula', 'fecNac', 'fecIng']
         };
     },
     created() {
