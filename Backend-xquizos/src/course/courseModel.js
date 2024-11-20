@@ -10,6 +10,7 @@ var courseSchema = new Schema ({
     },
     area: {type: String, required: true, unique: false},
     docente: {type: String, required: false, unique: false},
+    rut: {type: String},
     alumnos: [
         {
             matricula: { type: String, required: false }
