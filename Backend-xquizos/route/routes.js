@@ -23,7 +23,7 @@
 
     router.route('/courses/register').post(courseController.registerCourseControllerFn);
     router.route('/courses/get').get(courseController.getCoursesControllerFn);
-    router.route('/courses/:nombre/:seccion').put(courseController.editCourseControllerFn);
+    router.route('/courses/:codigo').put(courseController.editCourseControllerFn);
     router.route('/courses/remove/:nombre/:seccion').delete(courseController.removeCourseControllerFn);
     router.route('/courses/getbyemail/:email').get(courseController.getCourseByEmailControllerFn);
     

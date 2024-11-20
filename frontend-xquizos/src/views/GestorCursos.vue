@@ -57,20 +57,22 @@
     <table class="table table-striped table-hover table-bordered text-center">
       <thead class="thead-light" style="position: sticky; top: 0; z-index: 1; background-color: white;">
         <tr>
+          <th>Código</th>
+          <th>Carrera</th>
           <th>Nombre</th>
+          <th>Semestre</th>
           <th>Sección</th>
-          <th>Área</th>
-          <th>Docente</th>
           <th>Acciones</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="curso in cursos" :key="curso.nombre + '-' + curso.seccion">
-          <td class="align-middle">{{ curso.nombre }}</td>
-          <td class="align-middle">{{ curso.seccion }}</td>
-          <td class="align-middle">{{ curso.area }}</td>
-          <td class="align-middle">{{ curso.docente }}</td>
-          <td class="align-middle">
+            <td class="align-middle">{{ curso.codigo }}</td>
+            <td class="align-middle">{{ curso.carrera }}</td>
+            <td class="align-middle">{{ curso.nombre }}</td>
+            <td class="align-middle">{{ curso.semestre }}</td>
+            <td class="align-middle">{{ curso.seccion }}</td>
+            <td class="align-middle">
             <button @click="viewCurso(curso)" class="btn btn-sm btn-primary mx-1">
               <i class="far fa-eye"></i>
             </button>
@@ -104,21 +106,22 @@ export default {
         return {
             cursos: [],
             curso: {
+                codigo: '',
+                carrera: '',
                 nombre: '',
-                seccion: '',
-                area: '',
-                docente: '',
-                alumnos: ''
+                semestre: '',
+                seccion: ''
             },
             formVisible: false,
             isEditMode: false,
             formFields: {
+                codigo: 'Código del curso',
+                carrera: 'Carrera',
                 nombre: 'Nombre Curso',
-                seccion: 'Sección',
-                area: 'Area',
-                docente: 'Docente a cargo'
+                semestre: 'Semestre',
+                seccion: 'Sección'
             },
-            requiredFields: ['nombre', 'seccion', 'area']
+            requiredFields: ['codigo', 'carrera', 'nombre', 'semestre', 'seccion']
         };
     },
     created() {
@@ -166,7 +169,7 @@ export default {
         },
         async updateCurso() {
             try {
-                await axios.put(`http://localhost:3333/api/courses/${encodeURIComponent(this.curso.nombre)}/${this.curso.seccion}`, this.curso);
+                await axios.put(`http://localhost:3333/api/courses/${this.curso.codigo}`, this.curso);
                 this.fetchCursos();
             } catch (error) {
                 console.error('Error al actualizar Curso:', error);

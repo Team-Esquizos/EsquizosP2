@@ -7,14 +7,13 @@ module.exports.registerStudentDBService = (studentData) => {
 
         var studentModelData = new studentModel();
 
-        studentModelData.matricula = studentData.matricula;
-        studentModelData.rut = studentData.rut;
-        studentModelData.email = studentData.email;
-        studentModelData.nombrePrimer = studentData.nombrePrimer;
-        studentModelData.nombreSegundo = studentData.nombreSegundo;
+        studentModelData.nombres = studentData.nombres;
         studentModelData.apellidoP = studentData.apellidoP;
         studentModelData.apellidoM = studentData.apellidoM;
-        studentModelData.carrera = studentData.carrera;
+        studentModelData.rut = studentData.rut;
+        studentModelData.matricula = studentData.matricula;
+        studentModelData.fecNac = studentData.fecNac;
+        studentModelData.fecIng = studentData.fecIng;
 
         try {
             await studentModelData.save();
