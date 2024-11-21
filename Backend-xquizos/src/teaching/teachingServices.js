@@ -8,7 +8,6 @@ module.exports.registerTeachingDBService = (teachingData) => {
         var teachingModelData = new teachingModel();
         const newUser = new userModel();
 
-        newUser.email = `${teachingData.nombres[0]}${teachingData.nombres[1]}${teachingData.apellidoP}@email.com`.toLowerCase();
 
         teachingModelData.nombres = teachingData.nombres;
         teachingModelData.apellidoP = teachingData.apellidoP;
@@ -17,9 +16,12 @@ module.exports.registerTeachingDBService = (teachingData) => {
         teachingModelData.titulo = teachingData.titulo;
         teachingModelData.gradoMax = teachingData.gradoMax;
 
+
+        newUser.email = `${teachingData.nombres[0]}${teachingData.nombres[1]}${teachingData.apellidoP}@email.com`.toLowerCase();
+        console.log(newUser.email);
         newUser.password = "1234";  
         newUser.isAdmin = false; 
-        newUser.username = `${teachingData.nombreS}${teachingData.apellidoP}`.toLowerCase();
+        newUser.username = `${teachingData.nombres}${teachingData.apellidoP}`.toLowerCase();
 
         try {
             await teachingModelData.save();

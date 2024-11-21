@@ -187,12 +187,12 @@ export default {
         },
         clearForm() {
             this.docente = {
-                nombrePrimer: '',
-                nombreSegundo: '',
+                nombres: '',
                 apellidoP: '',
                 apellidoM: '',
                 rut: '',
-                email: ''
+                titulo: '',
+                gradoMax: ''
             };
             this.formVisible = false;
         },

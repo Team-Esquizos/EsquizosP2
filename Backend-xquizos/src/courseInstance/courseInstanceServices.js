@@ -19,13 +19,14 @@ module.exports.registerCourseInstanceDBService = (courseData) => {
 };
 
 
-module.exports.searchCourseDBService = async (courseData) => {
+module.exports.getCourseInstanceDBService = async (curso) => {
     try {
-        const result = await courseModel.findOne({ nombre: courseData.nombre, seccion: courseData.seccion });
-
+        console.log(curso.codCurso);
+        const result = await courseInstanceModel.findOne({ codCurso: curso.codCurso });
+        console.log(result);
         if (result) {
             console.log("Curso encontrado");
-            return { status: true, msg: "Curso encontrado", user: result  };
+            return { status: true, msg: "Curso encontrado", courseInstance: result  };
         } else {
             console.log("INVALID DATA");
             return { status: false, msg: "INVALID DATA" };
@@ -37,26 +38,71 @@ module.exports.searchCourseDBService = async (courseData) => {
     }
 };
 
-module.exports.getCoursesDBService = async () => {
+module.exports.getStudentsFromCourseInstanceDBService = async (curso) => {
     try {
-        const result = await courseModel.find();
+        console.log("Código del curso:", curso);
 
-
-        if (result.length > 0) {
-            console.log("Cursos encontrados");
-            return { status: true, msg: "Cursos encontrados", courses: result };
-        } else {
-            console.log("No se encontraron Cursos");
-            return { status: false, msg: "No se encontraron Cursos" };
+        // Obtener la instancia del curso
+        const result = await this.getCourseInstanceDBService(curso);
+        if (!result) {
+            console.log("No se encontró la instancia del curso.");
+            return { status: false, msg: "Curso no encontrado" };
         }
 
+        console.log("Instancia del curso encontrada:", result.courseInstance);
+
+        // Verificar si el arreglo de alumnos existe y tiene elementos
+        if (!result.courseInstance.alumnos || result.courseInstance.alumnos.length === 0) {
+            console.log("No hay alumnos registrados en el curso.");
+            return { status: false, msg: "No hay alumnos registrados en el curso" };
+        }
+
+        // Extraer las matrículas de los alumnos
+        const matriculas = result.courseInstance.alumnos.map((alumno) => alumno.matricula);
+        console.log("Matrículas de alumnos:", matriculas);
+
+        // Buscar los estudiantes en la base de datos usando sus matrículas
+        const students = await studentModel.find({ matricula: { $in: matriculas } });
+        console.log("Datos de los estudiantes encontrados:", students);
+
+        if (students.length > 0) {
+            return { status: true, msg: "Estudiantes encontrados", students: students };
+        } else {
+            console.log("No se encontraron estudiantes con las matrículas proporcionadas.");
+            return { status: false, msg: "No se encontraron estudiantes con las matrículas proporcionadas" };
+        }
     } catch (error) {
-        console.log("Error al obtener Cursos:", error);
-        return { status: false, msg: "Error al obtener Cursos" };
+        console.error("Error al obtener los estudiantes:", error);
+        return { status: false, msg: "Error al obtener los estudiantes", error: error.message };
     }
 };
 
-module.exports.editCourseDBService = async (codigo, updatedData) => {
+
+module.exports.getTeachingFromCourseInstanceDBService = async (curso) => {
+    try {
+        console.log(curso);
+        const result = await this.getCourseInstanceDBService(curso);
+        
+        console.log("Instancia de curso: ",result.courseInstance);
+        console.log("Codigo del docente: ",result.courseInstance.codDocente);
+        const teaching = await teachingModel.findOne({ rut: result.courseInstance.codDocente });
+        console.log(teaching);
+        if (teaching) {
+            console.log("Profesor encontrado");
+            return { status: true, msg: "Profesor encontrado", teaching: teaching  };
+        } else {
+            console.log("INVALID DATA");
+            return { status: false, msg: "INVALID DATA" };
+        }
+
+    } catch (error) {
+        console.log("INVALID DATA");
+        return { status: false, msg: "INVALID DATA" };
+    }
+};
+
+
+module.exports.editCourseInstanceDBService = async (codigo, updatedData) => {
     try {
         const course = await courseModel.findOne({ codigo });
 
@@ -77,7 +123,7 @@ module.exports.editCourseDBService = async (codigo, updatedData) => {
 };
 
 
-module.exports.removeCourseDBService = async (nombre, seccion) => {
+module.exports.removeCourseInstanceDBService = async (nombre, seccion) => {
     try {
         const course = await courseModel.findOne({ nombre, seccion });
 
@@ -96,41 +142,5 @@ module.exports.removeCourseDBService = async (nombre, seccion) => {
     }
 };
 
-module.exports.getCoursesByEmailDBService = async (email) => {
-
-   
-    
-    try {
-        const teacher = await teachingModel.findOne({ email });
-        if (!teacher) {
-            console.log("Profesor no encontrado");
-            return { status: false, msg: "Profesor no encontrado" };
-        }
-    
-        console.log("Profesor encontrado:", teacher);
-    
-       
-    
-
-        // Acceder al atributo 'rut' del profesor
-         const teacherRut = teacher.rut;
-         console.log(teacherRut);
-
-// Buscar cursos asociados al profesor
-        const result = await courseModel.find({ rut: teacherRut });
-
-        if (result.length > 0) {
-            console.log("Cursos encontrados");
-            return { status: true, msg: "Cursos encontrados", courses: result };
-        } else {
-            console.log("No se encontraron Cursos");
-            return { status: false, msg: "No se encontraron Cursos" };
-        }
-
-    } catch (error) {
-        console.log("Error al obtener Cursos:", error);
-        return { status: false, msg: "Error al obtener Cursos" };
-    }
-};
 
 
