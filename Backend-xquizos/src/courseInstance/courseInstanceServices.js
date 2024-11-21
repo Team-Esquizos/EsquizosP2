@@ -1,24 +1,16 @@
-var courseModel = require('./courseModel.js');
+var courseInstanceModel = require('./courseInstanceModel.js');
 var teachingModel = require('../teaching/teachingModel.js');
-var courseInstanceDBService = require('../courseInstance/courseInstanceServices.js')
 
-module.exports.registerCourseDBService = (courseData) => {
+module.exports.registerCourseInstanceDBService = (courseData) => {
     return new Promise(async function myFn(resolve, reject) {
 
-        var courseModelData = new courseModel();
+        var courseInstanceModelData = new courseInstanceModel();
 
-        courseModelData.codigo = courseData.codigo.toUpperCase();
-        courseModelData.carrera = courseData.carrera.toUpperCase();
-        courseModelData.nombre = courseData.nombre.toUpperCase();
-        courseModelData.semestre = courseData.semestre.toUpperCase();
-        courseModelData.seccion = courseData.seccion.toUpperCase();
-
-        // Llama a la función y maneja el resultado
-        const instanceStatus = await courseInstanceDBService.registerCourseInstanceDBService(courseData);
-        console.log("Estado de la instancia:", instanceStatus);
+        courseInstanceModelData.codCurso = courseData.codigo.toUpperCase();
+        courseInstanceModelData.codDocente = "XD";
 
         try {
-            await courseModelData.save();
+            await courseInstanceModelData.save();
             resolve(true);
         } catch (error) {
             reject(error);
