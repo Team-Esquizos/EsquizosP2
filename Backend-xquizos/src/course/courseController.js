@@ -37,12 +37,11 @@ var getCoursesControllerFn = async (req, res) => {
 };
 
 var editCourseControllerFn = async (req, res) => {
-    const nombre = req.params.nombre; 
-    const seccion = req.params.seccion;
+    const codigo = req.params.codigo; 
     const updatedData = req.body; 
 
     try {
-        const result = await courseService.editCourseDBService(nombre, seccion, updatedData);
+        const result = await courseService.editCourseDBService(codigo, updatedData);
 
         if (result.status) {
             res.status(200).json(result);
@@ -54,6 +53,31 @@ var editCourseControllerFn = async (req, res) => {
         res.status(500).json({ status: false, msg: "Error en el servidor" });
     }
 }
+
+
+var getCourseByEmailControllerFn = async (req, res) => {
+
+
+    const email = req.params.email;
+    console.log(email);
+    try {
+        console.log("entrando a db Services");
+        const result = await courseService.getCoursesByEmailDBService(email);
+
+        if (result.status) {
+            res.status(200).json(result);
+        } else {
+            res.status(404).json(result);
+        }
+    } catch (error) {
+        console.error('Error en la actualización del curso:', error);
+        res.status(500).json({ status: false, msg: "Error en el servidor" });
+    }
+}
+
+
+
+
 
 var removeCourseControllerFn = async (req, res) => {
     const nombreCurso = req.params.nombre; 
@@ -99,4 +123,4 @@ var searchCourseControllerFn = async (req, res) => {
     }
 }
 
-module.exports = {registerCourseControllerFn, searchCourseControllerFn, getCoursesControllerFn, editCourseControllerFn, removeCourseControllerFn};
+module.exports = {registerCourseControllerFn, searchCourseControllerFn, getCoursesControllerFn, editCourseControllerFn, removeCourseControllerFn, getCourseByEmailControllerFn};

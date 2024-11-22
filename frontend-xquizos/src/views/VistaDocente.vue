@@ -3,7 +3,7 @@
       <navBara />
       <div class="body">
         <!-- Usa v-for para iterar sobre los módulos y crear una tarjeta para cada uno -->
-        <modulos v-for="curso in cursos" :key="curso.id" :nombre="curso.nombre" :seccion="curso.seccion" :area="curso.area" />
+        <modulos v-for="curso in cursos" :key="curso.id" :nombre="curso.nombre" :seccion="curso.seccion" :area="curso.area"  :alumnos="curso.alumnos" :id="curso._id"  />
       </div>
     </div>
   </template>
@@ -40,18 +40,24 @@
         this.fetchCursos();
     },
     methods: {
-        goBack() {
-            this.$router.push({ name: 'VistaDocente' });
-        },
+      goBack() {
+          this.$router.push({ name: 'VistaDocente' });
+      },
 
-        async fetchCursos() {
-            try {
-                const response = await axios.get('http://localhost:3333/api/courses/get');
-                this.cursos = response.data;
-            } catch (error) {
-                console.error('Error al obtener cursos:', error);
-            }
-        },
+      async fetchCursos() {
+        try {
+          const storedUser = localStorage.getItem('email') || sessionStorage.getItem('email');
+          console.log('Email:', storedUser);
+          const response = await axios.get(`http://localhost:3333/api/courses/getbyemail/${storedUser}`);
+          if (response.data.status) {
+            this.cursos = response.data.courses;
+          } else {
+            console.error(response.data.msg);
+          }
+        } catch (error) {
+          console.error('Error al obtener cursos:', error);
+        }
+      },
     }
   };
 </script>

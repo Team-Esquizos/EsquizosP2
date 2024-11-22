@@ -59,7 +59,9 @@
         <tr>
           <th>Foto</th>
           <th>Nombre Completo</th>
-          <th>Email</th>
+          <th>Rut</th>
+          <th>Título</th>
+          <th>Grado Máximo</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -68,8 +70,10 @@
           <td class="align-middle">
             <img class="img-fluid rounded-circle" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Avatar" style="width: 50px; height: 50px;" />
           </td>
-          <td class="align-middle">{{ docente.nombrePrimer }} {{ docente.nombreSegundo }} {{ docente.apellidoP }} {{ docente.apellidoM }}</td>
-          <td class="align-middle">{{ docente.email }}</td>
+          <td class="align-middle">{{ docente.nombres }} {{ docente.apellidoP }} {{ docente.apellidoM }}</td>
+          <td class="align-middle">{{ docente.rut }}</td>
+          <td class="align-middle">{{ docente.titulo }}</td>
+          <td class="align-middle">{{ docente.gradoMax }}</td>
           <td class="align-middle">
             <button @click="viewDocente(docente)" class="btn btn-sm btn-primary mx-1">
               <i class="far fa-eye"></i>
@@ -104,23 +108,24 @@ export default {
         return {
             docentes: [],
             docente: {
-                nombrePrimer: '',
-                nombreSegundo: '',
+                nombres: '',
                 apellidoP: '',
                 apellidoM: '',
                 rut: '',
-                email: ''
+                titulo: '',
+                gradoMax: ''
             },
             formVisible: false,
             isEditMode: false,
             formFields: {
-                nombrePrimer: 'Primer Nombre',
-                nombreSegundo: 'Segundo Nombre',
+                nombres: 'Nombre(s) del docente',
                 apellidoP: 'Apellido Paterno',
                 apellidoM: 'Apellido Materno',
                 rut: 'Rut',
+                titulo: 'Título',
+                gradoMax: 'Grado Máximo',
             },
-            requiredFields: ['nombrePrimer', 'nombreSegundo', 'apellidoP', 'apellidoM', 'rut']
+            requiredFields: ['nombres', 'apellidoP', 'apellidoM', 'rut', 'titulo', 'gradoMax']
         };
     },
     created() {
@@ -182,12 +187,12 @@ export default {
         },
         clearForm() {
             this.docente = {
-                nombrePrimer: '',
-                nombreSegundo: '',
+                nombres: '',
                 apellidoP: '',
                 apellidoM: '',
                 rut: '',
-                email: ''
+                titulo: '',
+                gradoMax: ''
             };
             this.formVisible = false;
         },
