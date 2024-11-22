@@ -124,7 +124,7 @@ module.exports.getCoursesByEmailDBService = async (email) => {
          const teacherRut = teacher.rut;
          console.log(teacherRut);
 
-// Buscar cursos asociados al profesor
+        // Buscar cursos asociados al profesor
         const result = await courseModel.find({ rut: teacherRut });
 
         if (result.length > 0) {

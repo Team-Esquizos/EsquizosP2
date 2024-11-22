@@ -4,6 +4,7 @@
     var studentController = require('../src/student/studentController');
     var teachingController = require('../src/teaching/teachingController');
     var courseController = require('../src/course/courseController');
+    var courseInstanceController = require('../src/courseInstance/courseInstanceController');
     const router = express.Router();
 
     router.route('/user/login').post(userController.loginUserControllerFn);
@@ -26,6 +27,11 @@
     router.route('/courses/:codigo').put(courseController.editCourseControllerFn);
     router.route('/courses/remove/:nombre/:seccion').delete(courseController.removeCourseControllerFn);
     router.route('/courses/getbyemail/:email').get(courseController.getCourseByEmailControllerFn);
-    
 
+    router.route('/courseInstance/register').post(courseInstanceController.registerCourseInstanceControllerFn);
+    router.route('/courseInstance/get/:codCurso').get(courseInstanceController.getCourseInstanceControllerFn);
+    router.route('/courseInstance/get/teacher/:codCurso').get(courseInstanceController.getTeachingFromCourseInstanceControllerFn);
+    router.route('/courseInstance/get/students/:codCurso').get(courseInstanceController.getStudentsFromCourseInstanceControllerFn);
+    router.route('/courseInstance/setTeaching/:codCurso/:codDocente').put(courseInstanceController.updateCodDocenteInCourseInstanceControllerFn); 
+    router.route('/courseInstance/addStudent/:codCurso/:matricula').put(courseInstanceController.addStudentToCourseInstanceControllerFn);
     module.exports = router; 
