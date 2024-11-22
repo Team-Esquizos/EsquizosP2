@@ -42,7 +42,6 @@ module.exports.getStudentsFromCourseInstanceDBService = async (curso) => {
     try {
         console.log("Código del curso:", curso);
 
-        // Obtener la instancia del curso
         const result = await this.getCourseInstanceDBService(curso);
         if (!result) {
             console.log("No se encontró la instancia del curso.");
@@ -51,17 +50,14 @@ module.exports.getStudentsFromCourseInstanceDBService = async (curso) => {
 
         console.log("Instancia del curso encontrada:", result.courseInstance);
 
-        // Verificar si el arreglo de alumnos existe y tiene elementos
         if (!result.courseInstance.alumnos || result.courseInstance.alumnos.length === 0) {
             console.log("No hay alumnos registrados en el curso.");
             return { status: false, msg: "No hay alumnos registrados en el curso" };
         }
 
-        // Extraer las matrículas de los alumnos
         const matriculas = result.courseInstance.alumnos.map((alumno) => alumno.matricula);
         console.log("Matrículas de alumnos:", matriculas);
 
-        // Buscar los estudiantes en la base de datos usando sus matrículas
         const students = await studentModel.find({ matricula: { $in: matriculas } });
         console.log("Datos de los estudiantes encontrados:", students);
 
@@ -102,25 +98,80 @@ module.exports.getTeachingFromCourseInstanceDBService = async (curso) => {
 };
 
 
-module.exports.editCourseInstanceDBService = async (codigo, updatedData) => {
+
+module.exports.updateCodDocenteInCourseInstance = async (curso, newCodDocente) => {
     try {
-        const course = await courseModel.findOne({ codigo });
+        // Busca la instancia del curso por su código
+        console.log(curso);
+        console.log(newCodDocente);
+        const result = await this.getCourseInstanceDBService(curso);
+        console.log(result.courseInstance);
 
-        if (course) {
-            Object.assign(course, updatedData);
-            await course.save();
+        if (result) {
+            result.courseInstance.codDocente = newCodDocente.codDocente; 
+            await result.courseInstance.save();
 
-            console.log("Curso actualizado:", course);
-            return { status: true, msg: "Curso actualizado correctamente", course };
+            console.log("codDocente actualizado:", result.courseInstance.codDocente);
+            return { status: true, msg: "codDocente actualizado correctamente", codDocente : result.courseInstance.codDocente };
         } else {
             console.log("Curso no encontrado");
             return { status: false, msg: "Curso no encontrado" };
         }
     } catch (error) {
-        console.log("Error al actualizar el Curso:", error);
-        return { status: false, msg: "Error al actualizar el Curso" };
+        console.log("Error al actualizar codDocente:", error);
+        return { status: false, msg: "Error al actualizar codDocente" };
     }
 };
+
+module.exports.addStudentToCourseInstanceDBService = async (curso, alumno) => {
+    try {
+        // Busca la instancia del curso por su código
+        console.log("Curso:", curso);
+        const newAlumno = alumno.alumno;
+        console.log("Nuevo alumno:", newAlumno);
+
+        const result = await this.getCourseInstanceDBService(curso);
+
+        if (result && result.courseInstance) {
+            const courseInstance = result.courseInstance;
+
+            // Verifica si ya existe un alumno con la misma matrícula
+            const isAlumnoExist = courseInstance.alumnos.some(
+                (a) => a.matricula === newAlumno
+            );
+
+            if (isAlumnoExist) {
+                return {
+                    status: false,
+                    msg: "El alumno ya está matriculado en el curso",
+                };
+            }
+
+            // Agrega el nuevo alumno al arreglo, asegurándose de pasar un objeto con los campos correctos
+            courseInstance.alumnos.push({
+                matricula: newAlumno,
+            });
+
+            await courseInstance.save();
+
+            console.log("Alumno agregado:", newAlumno);
+            return {
+                status: true,
+                msg: "Alumno agregado correctamente",
+                alumnos: courseInstance.alumnos,
+            };
+        } else {
+            console.log("Curso no encontrado");
+            return { status: false, msg: "Curso no encontrado" };
+        }
+    } catch (error) {
+        console.log("Error al agregar alumno:", error);
+        return { status: false, msg: "Error al agregar alumno" };
+    }
+};
+
+
+
 
 
 module.exports.removeCourseInstanceDBService = async (nombre, seccion) => {
