@@ -1,16 +1,21 @@
 var courseModel = require('./courseModel.js');
 var teachingModel = require('../teaching/teachingModel.js');
+var courseInstanceDBService = require('../courseInstance/courseInstanceServices.js')
 
 module.exports.registerCourseDBService = (courseData) => {
     return new Promise(async function myFn(resolve, reject) {
 
         var courseModelData = new courseModel();
 
+        courseModelData.codigo = courseData.codigo.toUpperCase();
+        courseModelData.carrera = courseData.carrera.toUpperCase();
         courseModelData.nombre = courseData.nombre.toUpperCase();
+        courseModelData.semestre = courseData.semestre.toUpperCase();
         courseModelData.seccion = courseData.seccion.toUpperCase();
-        courseModelData.area = courseData.area.toUpperCase();
-        courseModelData.docente = courseData.docente;
-        courseModelData.alumnos = courseData.alumnos;
+
+        // Llama a la función y maneja el resultado
+        const instanceStatus = await courseInstanceDBService.registerCourseInstanceDBService(courseData);
+        console.log("Estado de la instancia:", instanceStatus);
 
         try {
             await courseModelData.save();
@@ -59,10 +64,9 @@ module.exports.getCoursesDBService = async () => {
     }
 };
 
-module.exports.editCourseDBService = async (nombre, seccion, updatedData) => {
+module.exports.editCourseDBService = async (codigo, updatedData) => {
     try {
-        console.log(nombre);  // Verifica el valor de nombre aquí
-        const course = await courseModel.findOne({ nombre, seccion });
+        const course = await courseModel.findOne({ codigo });
 
         if (course) {
             Object.assign(course, updatedData);
@@ -120,7 +124,7 @@ module.exports.getCoursesByEmailDBService = async (email) => {
          const teacherRut = teacher.rut;
          console.log(teacherRut);
 
-// Buscar cursos asociados al profesor
+        // Buscar cursos asociados al profesor
         const result = await courseModel.find({ rut: teacherRut });
 
         if (result.length > 0) {
