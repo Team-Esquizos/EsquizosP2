@@ -77,7 +77,7 @@
                     <td class="align-middle">{{ alumno.fecNac }}</td>
                     <td class="align-middle">{{ alumno.fecIng }}</td>
                     <td class="align-middle">
-                        <button @click="goperfilalumno(alumno.matricula, alumno.nombres)" class="btn btn-sm btn-primary mx-1">
+                        <button @click="goperfilalumno(alumno.matricula,alumno.nombres)" class="btn btn-sm btn-primary mx-1">
                             <i class="far fa-eye"></i>
                         </button>
                         <button @click="toggleForm('edit', alumno)" class="btn btn-sm btn-info mx-1">
@@ -189,6 +189,7 @@ export default {
                 this.fetchAlumnos();
                 alert('Alumno agregado exitosamente.');
             } catch (error) {
+                console.log(error);
                 if (error.response && error.response.status === 409) {
                     alert('El alumno ya está registrado. Verifica los datos.');
                 } else {

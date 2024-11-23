@@ -65,7 +65,7 @@ const routes = [
     component: GestorCursos
   },
   { 
-    path: '/perfilalumno',
+    path: '/perfilalumno/:matriculaalum/:nombrealum',
     name: 'PerfilAlumno',
     component: PerfilAlumno,
     props: true
