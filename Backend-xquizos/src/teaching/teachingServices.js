@@ -8,19 +8,21 @@ module.exports.registerTeachingDBService = (teachingData) => {
         var teachingModelData = new teachingModel();
         const newUser = new userModel();
 
-        newUser.email = `${teachingData.nombrePrimer[0]}${teachingData.nombrePrimer[1]}${teachingData.apellidoP}@email.com`.toLowerCase();
 
-        teachingModelData.rut = teachingData.rut;
-        teachingModelData.email = newUser.email;
-        teachingModelData.nombrePrimer = teachingData.nombrePrimer;
-        teachingModelData.nombreSegundo = teachingData.nombreSegundo;
+        teachingModelData.nombres = teachingData.nombres;
         teachingModelData.apellidoP = teachingData.apellidoP;
         teachingModelData.apellidoM = teachingData.apellidoM;
-        teachingModelData.cursos = teachingData.cursos;
+        teachingModelData.rut = teachingData.rut;
+        teachingModelData.titulo = teachingData.titulo;
+        teachingModelData.gradoMax = teachingData.gradoMax;
 
+
+        newUser.email = `${teachingData.nombres[0]}${teachingData.nombres[1]}${teachingData.apellidoP}@email.com`.toLowerCase();
+        console.log(newUser.email);
         newUser.password = "1234";  
         newUser.isAdmin = false; 
-        newUser.username = `${teachingData.nombrePrimer}${teachingData.apellidoP}`.toLowerCase();
+        newUser.username = `${teachingData.nombres}${teachingData.apellidoP}`.toLowerCase();
+
         try {
             await teachingModelData.save();
             await newUser.save();
@@ -110,3 +112,5 @@ module.exports.removeTeachingDBService = async (rut) => {
         return { status: false, msg: "Error al eliminar el Docente" };
     }
 };
+
+

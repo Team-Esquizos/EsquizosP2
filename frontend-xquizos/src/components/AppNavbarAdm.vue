@@ -88,7 +88,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: transparent;
+  background-color: rgb(255, 255, 255);
   padding: 20px 50px;
   color: #333;
   position: absolute;
