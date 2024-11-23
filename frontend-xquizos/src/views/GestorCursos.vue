@@ -48,8 +48,15 @@
                 <input type="file" ref="fileInput" @change="onFileSelected" style="display: none;" accept=".csv" />
                 <button class="btn btn-success" @click="triggerFileInput">
                     <i class="fa-solid fa-file-csv"></i> Importar desde CSV
+            
+                
+                </button>
+                <input type="file" ref="fileInput" @change="onFileAlumnos" style="display: none;" accept=".csv" />
+                <button class="btn btn-success" @click="triggerFileInput">
+                    <i class="fa-solid fa-file-csv"></i> Importar alumnos por CSV
                 </button>
             </div>
+            
         </div>
     </div>
 
@@ -205,6 +212,40 @@ export default {
             this.selectedFile = event.target.files[0];
             //this.uploadFile();
             this.uploadCursoFile(); // Llama a la nueva función para enviar el archivo a importCurso
+        },
+        onFileAlumnos(event) {
+            this.selectedFile = event.target.files[0];
+            //this.uploadFile();
+            this.uploadalumnosFile(); // Llama a la nueva función para enviar el archivo a importCurso
+        },
+        async uploadalumnosFile() {
+            console.log('Subir archivo de curso');
+            if (!this.selectedFile) {
+                this.message = "Por favor, selecciona un archivo primero.";
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', this.selectedFile);
+
+            try {
+                const response = await axios.post('http://localhost:3333/csv/importCursoInstance', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+
+                });
+                this.message = response.data.message;
+
+                if (response.data.success) {
+                    this.fetchCursos();
+                } else {
+                    console.error('Error en el archivo:', response.data.message);
+                }
+
+            } catch (error) {
+                console.error('Error al subir el archivo de curso:', error);
+            }
         },
 
         async uploadCursoFile() {
