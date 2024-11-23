@@ -54,43 +54,42 @@
     </div>
 
     <div class="table-responsive" ref="tableContainer" style="border-radius: 15px; max-height: 300px; overflow-y: auto; position: relative;">
-    <table class="table table-striped table-hover table-bordered text-center">
-      <thead class="thead-light" style="position: sticky; top: 0; z-index: 1; background-color: white;">
-        <tr>
-          <th>Código</th>
-          <th>Carrera</th>
-          <th>Nombre</th>
-          <th>Semestre</th>
-          <th>Sección</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="curso in cursos" :key="curso.nombre + '-' + curso.seccion">
-            <td class="align-middle">{{ curso.codigo }}</td>
-            <td class="align-middle">{{ curso.carrera }}</td>
-            <td class="align-middle">{{ curso.nombre }}</td>
-            <td class="align-middle">{{ curso.semestre }}</td>
-            <td class="align-middle">{{ curso.seccion }}</td>
-            <td class="align-middle">
-            <button @click="viewCurso(curso)" class="btn btn-sm btn-primary mx-1">
-              <i class="far fa-eye"></i>
-            </button>
-            <button @click="toggleForm('edit', curso)" class="btn btn-sm btn-info mx-1">
-              <i class="fas fa-pencil-alt"></i>
-            </button>
-            <button @click="deleteCurso(curso.nombre, curso.seccion)" class="btn btn-sm btn-danger mx-1">
-              <i class="far fa-trash-alt"></i>
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+        <table class="table table-striped table-hover table-bordered text-center">
+            <thead class="thead-light" style="position: sticky; top: 0; z-index: 1; background-color: white;">
+                <tr>
+                    <th>Código</th>
+                    <th>Carrera</th>
+                    <th>Nombre</th>
+                    <th>Semestre</th>
+                    <th>Sección</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="curso in cursos" :key="curso.nombre + '-' + curso.seccion">
+                    <td class="align-middle">{{ curso.codigo }}</td>
+                    <td class="align-middle">{{ curso.carrera }}</td>
+                    <td class="align-middle">{{ curso.nombre }}</td>
+                    <td class="align-middle">{{ curso.semestre }}</td>
+                    <td class="align-middle">{{ curso.seccion }}</td>
+                    <td class="align-middle">
+                        <button @click="viewCurso(curso)" class="btn btn-sm btn-primary mx-1">
+                            <i class="far fa-eye"></i>
+                        </button>
+                        <button @click="toggleForm('edit', curso)" class="btn btn-sm btn-info mx-1">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                        <button @click="deleteCurso(curso.nombre, curso.seccion)" class="btn btn-sm btn-danger mx-1">
+                            <i class="far fa-trash-alt"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 </template>
 
-    
 <script>
 import axios from 'axios';
 import navBar from '@/components/AppNavbarAdm.vue';
@@ -163,8 +162,14 @@ export default {
             try {
                 await axios.post('http://localhost:3333/api/courses/register', this.curso);
                 this.fetchCursos();
+                alert('Curso agregado exitosamente.');
             } catch (error) {
-                console.error('Error al agregar Curso:', error);
+                if (error.response && error.response.status === 409) {
+                    alert('El curso ya está registrado. Verifica los datos.');
+                } else {
+                    console.error('Error al agregar curso:', error);
+                    alert('Ocurrió un error al agregar el curso. Intenta nuevamente.');
+                }
             }
         },
         async updateCurso() {
@@ -240,9 +245,8 @@ export default {
 };
 </script>
 
-    
 <style scoped>
-.gestor-cursos-container{
+.gestor-cursos-container {
     padding-top: 30px;
     padding-bottom: 50px;
 }

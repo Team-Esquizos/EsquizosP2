@@ -10,6 +10,7 @@ import GestorAlumnos from '@/views/GestorAlumnos.vue';
 import GestorDocentes from '@/views/GestorDocentes.vue';
 import GestorCursos from '@/views/GestorCursos.vue';
 import VistaAlumnos from '@/views/VistaAlumnos.vue';
+import PerfilAlumno from '@/views/PerfilAlumno.vue';
 
 const routes = [
   {
@@ -63,7 +64,12 @@ const routes = [
     name: 'GestorCursos',
     component: GestorCursos
   },
-
+  { 
+    path: '/perfilalumno',
+    name: 'PerfilAlumno',
+    component: PerfilAlumno,
+    props: true
+  }
 ];
 
 const router = createRouter({
