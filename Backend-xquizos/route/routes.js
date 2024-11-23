@@ -5,6 +5,8 @@
     var teachingController = require('../src/teaching/teachingController');
     var courseController = require('../src/course/courseController');
     var courseInstanceController = require('../src/courseInstance/courseInstanceController');
+    var commentController = require('../src/comment/commentController');
+
     const router = express.Router();
 
     router.route('/user/login').post(userController.loginUserControllerFn);
@@ -35,5 +37,10 @@
     router.route('/courseInstance/get/students/:codCurso').get(courseInstanceController.getStudentsFromCourseInstanceControllerFn);
     router.route('/courseInstance/setTeaching/:codCurso/:codDocente').put(courseInstanceController.updateCodDocenteInCourseInstanceControllerFn); 
     router.route('/courseInstance/addStudent/:codCurso/:matricula').put(courseInstanceController.addStudentToCourseInstanceControllerFn);
-   
+    
+    router.route('/comments/add').post(commentController.addCommentControllerFn);
+    router.route('/comments/remove/:_id').delete(commentController.removeCommentControllerFn);
+    router.route('/comments/getFromMatricula/:matricula').get(commentController.getCommentsControllerFn);
+    
+    
     module.exports = router; 
