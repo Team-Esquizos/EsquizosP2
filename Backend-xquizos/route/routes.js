@@ -18,7 +18,8 @@
     router.route('/student/:matricula').put(studentController.editStudentControllerFn);
     router.route('/student/remove/:matricula').delete(studentController.removeStudentControllerFn);
     router.route('/student/getcoursebynom/:nombre/:seccion').get(studentController.getCourseByNomControllerFn);
-
+    router.route('/student/addaccion/:matricula').put(studentController.addlista_de_accionesControllerFn);
+    
     router.route('/teaching/register').post(teachingController.registerTeachingControllerFn);
     router.route('/teaching/get').get(teachingController.getTeachingsControllerFn);
     router.route('/teaching/:rut').put(teachingController.editTeachingControllerFn);
