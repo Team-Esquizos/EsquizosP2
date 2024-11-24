@@ -6,7 +6,7 @@
         <span class="card-title">{{ nombre }}</span>
         <span class="card-seccion"> {{ seccion }}</span>
         <p class="card-content">
-          {{ area }}
+          {{ carrera }}
         </p>
         <button class="see-more"  @click="irAlumnos(nombre,seccion)">Entrar</button>
       </div>
@@ -29,11 +29,11 @@ export default {
       type: String,
       required:true
     },
-    area: {
+    carrera: {
       type: String,
       required:true
     },
-    id: {
+    codigo: {
       type: String,
       required:true
     },

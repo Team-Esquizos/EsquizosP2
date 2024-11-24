@@ -1,5 +1,6 @@
 var courseInstanceModel = require('./courseInstanceModel.js');
 var teachingModel = require('../teaching/teachingModel.js');
+var courseModel = require('../course/courseModel.js');
 
 module.exports.registerCourseInstanceDBService = (courseData) => {
     return new Promise(async function myFn(resolve, reject) {
@@ -190,6 +191,37 @@ module.exports.removeCourseInstanceDBService = async (nombre, seccion) => {
     } catch (error) {
         console.log("Error al eliminar el Curso:", error);
         return { status: false, msg: "Error al eliminar el Curso" };
+    }
+};
+
+
+module.exports.getTeacherCourseInstanceDBService = async (rut) => {
+    try {
+        console.log(rut.rut);
+
+        // Encuentra las instancias de cursos asociadas al profesor
+        const courseInstances = await courseInstanceModel.find({ codDocente: rut });
+        console.log(courseInstances);
+
+        if (courseInstances && courseInstances.length > 0) {
+            // Extrae los codCurso únicos de las instancias
+            const courseCodes = courseInstances.map(instance => instance.codCurso);
+            console.log("Course Codes:", courseCodes);
+
+            // Busca los detalles de los cursos con los codCurso
+            const courses = await courseModel.find({ codigo: { $in: courseCodes } });
+            console.log("Courses:", courses);
+
+            // Retorna solo los cursos encontrados
+            return { status: true, msg: "Cursos encontrados", courses };
+        } else {
+            console.log("INVALID DATA");
+            return { status: false, msg: "INVALID DATA" };
+        }
+
+    } catch (error) {
+        console.error("Error:", error);
+        return { status: false, msg: "INVALID DATA" };
     }
 };
 
