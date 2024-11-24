@@ -73,23 +73,27 @@ var removeStudentControllerFn = async (req, res) => {
 
 
 var addlista_de_accionesControllerFn = async (req, res) => {
-    const matricula = req.params.matricula; 
-    const accion = req.body.lista_de_acciones;
+    const { matricula } = req.params;
+    const { lista_de_acciones } = req.body;
 
-    try {
-        const result = await studentService.addlista_de_accionesDBService(matricula, accion);
-
-        if (result.status) {
-            res.status(200).json(result);
-        } else {
-            res.status(404).json(result);
-        }
-    } catch (error) {
-        console.error('Error en la actualización del estudiante:', error);
-        res.status(500).json({ status: false, msg: "Error en el servidor" });
+    if (!matricula || !lista_de_acciones) {
+        return res.status(400).json({ status: false, msg: "Matricula o lista de acciones faltante" });
     }
 
-}
+    try {
+        const result = await studentService.addlista_de_accionesDBService(matricula, lista_de_acciones);
+
+        if (result.status) {
+            return res.status(200).json(result);
+        } else {
+            return res.status(404).json(result);
+        }
+    } catch (error) {
+        console.error("Error en la actualización del estudiante:", error);
+        return res.status(500).json({ status: false, msg: "Error en el servidor" });
+    }
+};
+
 
 
 

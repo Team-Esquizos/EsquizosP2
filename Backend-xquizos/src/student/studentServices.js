@@ -86,23 +86,25 @@ module.exports.editStudentDBService = async (matricula, updatedData) => {
 
 module.exports.addlista_de_accionesDBService = async (matricula, accion) => {
     try {
-        const student = await studentModel.findOne({ matricula });
-        if (student) {
-            db.collection('Student').updateOne(
-                { matricula: matricula },
-                { $push: { lista_de_acciones: accion } }
-              );
-            console.log("lista de acciones agregadas a estudiante:", student);
-            return { status: true, msg: "Estudiante actualizado correctamente", student };
-    }else{
-        console.log("Estudiante no encontrado");
-        return { status: false, msg: "Estudiante no encontrado" };
-    }
-    } catch (error) {
-        console.log("Error al actualizar el estudiante:", error);
-        return { status: false, msg: "Error al actualizar el estudiante" };
+        const student = await studentModel.findOneAndUpdate(
+            { matricula },
+            { $push: { lista_de_acciones: accion } }, // Agrega la acción
+            { new: true } // Devuelve el documento actualizado
+        );
 
-    }};
+        if (student) {
+            console.log("Lista de acciones agregadas al estudiante:", student);
+            return { status: true, msg: "Estudiante actualizado correctamente", student };
+        } else {
+            console.log("Estudiante no encontrado");
+            return { status: false, msg: "Estudiante no encontrado" };
+        }
+    } catch (error) {
+        console.error("Error al actualizar el estudiante:", error);
+        return { status: false, msg: "Error al actualizar el estudiante" };
+    }
+};
+
 
 module.exports.removeStudentDBService = async (matricula) => {
     try {
