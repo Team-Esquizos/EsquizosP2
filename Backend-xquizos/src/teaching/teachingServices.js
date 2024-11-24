@@ -22,6 +22,8 @@ module.exports.registerTeachingDBService = (teachingData) => {
         newUser.password = "1234";  
         newUser.isAdmin = false; 
         newUser.username = `${teachingData.nombres}${teachingData.apellidoP}`.toLowerCase();
+        newUser.rut = teachingData.rut;
+        console.log(newUser.email);
 
         try {
             await teachingModelData.save();
