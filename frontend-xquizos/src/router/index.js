@@ -10,6 +10,7 @@ import GestorAlumnos from '@/views/GestorAlumnos.vue';
 import GestorDocentes from '@/views/GestorDocentes.vue';
 import GestorCursos from '@/views/GestorCursos.vue';
 import VistaAlumnos from '@/views/VistaAlumnos.vue';
+import VistaEstadisticas from '@/views/VistaEstadisticas.vue';
 
 const routes = [
   {
@@ -63,6 +64,10 @@ const routes = [
     name: 'GestorCursos',
     component: GestorCursos
   },
+  { path: '/vistaEstadisticas',
+    name: 'VistaEstadisticas',
+    component: VistaEstadisticas
+  }
 
 ];
 
