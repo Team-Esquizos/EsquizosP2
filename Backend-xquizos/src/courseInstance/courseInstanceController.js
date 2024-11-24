@@ -1,5 +1,6 @@
 var courseInstanceService = require('./courseInstanceServices.js');
-
+var datos = require('./courseInstanceModel.js');
+var csv = require('csvtojson');
 var registerCourseInstanceControllerFn = async (req, res) => {
     try {
         var status = await courseInstanceService.registerCourseInstanceDBService(req.body);
@@ -54,7 +55,6 @@ var removeCourseControllerFn = async (req, res) => {
         res.status(500).json({ status: false, msg: "Error en el servidor" });
     }
 }
-
 
 
 
@@ -174,5 +174,49 @@ var addStudentToCourseInstanceControllerFn = async (req, res) => {
     }
 };
 
+var getTeacherCourseInstanceControllerFn = async (req, res) => {
+    try {
+        const rut = req.params.rut; 
+
+        console.log("Rut:", rut);
+
+        // Llama al servicio para actualizar codDocente
+        const result = await courseInstanceService.getTeacherCourseInstanceDBService(rut);
+
+        if (result.status) {
+            res.json(result); // Responde con el resultado del servicio
+            console.log("Curso encontrado");
+        } else {
+            res.status(404).send({ status: false, msg: "Profesor no encontrado" });
+            console.log("Profesor no encontrado");
+        }
+    } catch (err) {
+        res.status(500).send({ status: false, msg: "Error en el servidor" });
+        console.log("Error en el servidor:", err);
+    }
+};
+
+var getStudentCourseInstanceControllerFn = async (req, res) => {
+    try {
+        const rut = req.params.rut; 
+
+        console.log("Rut:", rut);
+
+        // Llama al servicio para actualizar codDocente
+        const result = await courseInstanceService.getStudentCourseInstanceDBService(rut);
+
+        if (result.status) {
+            res.json(result); // Responde con el resultado del servicio
+            console.log("Curso encontrado");
+        } else {
+            res.status(404).send({ status: false, msg: "Profesor no encontrado" });
+            console.log("Profesor no encontrado");
+        }
+    } catch (err) {
+        res.status(500).send({ status: false, msg: "Error en el servidor" });
+        console.log("Error en el servidor:", err);
+    }
+};
+
 module.exports = {registerCourseInstanceControllerFn, getCourseInstanceControllerFn, updateCodDocenteInCourseInstanceControllerFn, removeCourseControllerFn,
-    getStudentsFromCourseInstanceControllerFn, getTeachingFromCourseInstanceControllerFn, addStudentToCourseInstanceControllerFn};
+    getStudentsFromCourseInstanceControllerFn, getTeachingFromCourseInstanceControllerFn, addStudentToCourseInstanceControllerFn, getTeacherCourseInstanceControllerFn, getStudentCourseInstanceControllerFn};

@@ -48,49 +48,55 @@
                 <input type="file" ref="fileInput" @change="onFileSelected" style="display: none;" accept=".csv" />
                 <button class="btn btn-success" @click="triggerFileInput">
                     <i class="fa-solid fa-file-csv"></i> Importar desde CSV
+            
+                
+                </button>
+                <input type="file" ref="fileInput" @change="onFileAlumnos" style="display: none;" accept=".csv" />
+                <button class="btn btn-success" @click="triggerFileInput">
+                    <i class="fa-solid fa-file-csv"></i> Importar alumnos por CSV
                 </button>
             </div>
+            
         </div>
     </div>
 
     <div class="table-responsive" ref="tableContainer" style="border-radius: 15px; max-height: 300px; overflow-y: auto; position: relative;">
-    <table class="table table-striped table-hover table-bordered text-center">
-      <thead class="thead-light" style="position: sticky; top: 0; z-index: 1; background-color: white;">
-        <tr>
-          <th>Código</th>
-          <th>Carrera</th>
-          <th>Nombre</th>
-          <th>Semestre</th>
-          <th>Sección</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="curso in cursos" :key="curso.nombre + '-' + curso.seccion">
-            <td class="align-middle">{{ curso.codigo }}</td>
-            <td class="align-middle">{{ curso.carrera }}</td>
-            <td class="align-middle">{{ curso.nombre }}</td>
-            <td class="align-middle">{{ curso.semestre }}</td>
-            <td class="align-middle">{{ curso.seccion }}</td>
-            <td class="align-middle">
-            <button @click="viewCurso(curso)" class="btn btn-sm btn-primary mx-1">
-              <i class="far fa-eye"></i>
-            </button>
-            <button @click="toggleForm('edit', curso)" class="btn btn-sm btn-info mx-1">
-              <i class="fas fa-pencil-alt"></i>
-            </button>
-            <button @click="deleteCurso(curso.nombre, curso.seccion)" class="btn btn-sm btn-danger mx-1">
-              <i class="far fa-trash-alt"></i>
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+        <table class="table table-striped table-hover table-bordered text-center">
+            <thead class="thead-light" style="position: sticky; top: 0; z-index: 1; background-color: white;">
+                <tr>
+                    <th>Código</th>
+                    <th>Carrera</th>
+                    <th>Nombre</th>
+                    <th>Semestre</th>
+                    <th>Sección</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="curso in cursos" :key="curso.nombre + '-' + curso.seccion">
+                    <td class="align-middle">{{ curso.codigo }}</td>
+                    <td class="align-middle">{{ curso.carrera }}</td>
+                    <td class="align-middle">{{ curso.nombre }}</td>
+                    <td class="align-middle">{{ curso.semestre }}</td>
+                    <td class="align-middle">{{ curso.seccion }}</td>
+                    <td class="align-middle">
+                        <button @click="viewCurso(curso)" class="btn btn-sm btn-primary mx-1">
+                            <i class="far fa-eye"></i>
+                        </button>
+                        <button @click="toggleForm('edit', curso)" class="btn btn-sm btn-info mx-1">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                        <button @click="deleteCurso(curso.nombre, curso.seccion)" class="btn btn-sm btn-danger mx-1">
+                            <i class="far fa-trash-alt"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 </template>
 
-    
 <script>
 import axios from 'axios';
 import navBar from '@/components/AppNavbarAdm.vue';
@@ -163,8 +169,14 @@ export default {
             try {
                 await axios.post('http://localhost:3333/api/courses/register', this.curso);
                 this.fetchCursos();
+                alert('Curso agregado exitosamente.');
             } catch (error) {
-                console.error('Error al agregar Curso:', error);
+                if (error.response && error.response.status === 409) {
+                    alert('El curso ya está registrado. Verifica los datos.');
+                } else {
+                    console.error('Error al agregar curso:', error);
+                    alert('Ocurrió un error al agregar el curso. Intenta nuevamente.');
+                }
             }
         },
         async updateCurso() {
@@ -206,6 +218,40 @@ export default {
             //this.uploadFile();
             this.uploadCursoFile(); // Llama a la nueva función para enviar el archivo a importCurso
         },
+        onFileAlumnos(event) {
+            this.selectedFile = event.target.files[0];
+            //this.uploadFile();
+            this.uploadalumnosFile(); // Llama a la nueva función para enviar el archivo a importCurso
+        },
+        async uploadalumnosFile() {
+            console.log('Subir archivo de curso');
+            if (!this.selectedFile) {
+                this.message = "Por favor, selecciona un archivo primero.";
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', this.selectedFile);
+
+            try {
+                const response = await axios.post('http://localhost:3333/csv/importCursoInstance', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+
+                });
+                this.message = response.data.message;
+
+                if (response.data.success) {
+                    this.fetchCursos();
+                } else {
+                    console.error('Error en el archivo:', response.data.message);
+                }
+
+            } catch (error) {
+                console.error('Error al subir el archivo de curso:', error);
+            }
+        },
 
         async uploadCursoFile() {
             console.log('Subir archivo de curso');
@@ -240,9 +286,8 @@ export default {
 };
 </script>
 
-    
 <style scoped>
-.gestor-cursos-container{
+.gestor-cursos-container {
     padding-top: 30px;
     padding-bottom: 50px;
 }

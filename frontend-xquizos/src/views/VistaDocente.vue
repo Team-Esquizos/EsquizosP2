@@ -3,7 +3,7 @@
       <navBara />
       <div class="body">
         <!-- Usa v-for para iterar sobre los módulos y crear una tarjeta para cada uno -->
-        <modulos v-for="curso in cursos" :key="curso.id" :nombre="curso.nombre" :seccion="curso.seccion" :area="curso.area"  :alumnos="curso.alumnos" :id="curso._id"  />
+        <modulos v-for="curso in cursos" :key="curso.id" :nombre="curso.nombre" :seccion="curso.seccion" :area="curso.carrera"  :codigo="curso.codigo" />
       </div>
     </div>
   </template>
@@ -26,14 +26,14 @@
         return {
         cursos: [],
         curso: {
-            nombre: '', seccion: '', area: '', docente: '',
-            alumnos: ''
+            nombre: '', seccion: '', carrera: '', codigo: '',
+            semestre: ''
         },
         formFields: {
             nombre: 'Nombre Curso', seccion: 'Sección',
-            area: 'Area', docente: 'Docente a cargo'
+            carrera: 'Carrera', codigo: 'Docente a cargo'
         },
-        requiredFields: ['nombre','seccion', 'area']
+        requiredFields: ['nombre','seccion', 'carrera']
         };
     },
     created() {
@@ -46,9 +46,9 @@
 
       async fetchCursos() {
         try {
-          const storedUser = localStorage.getItem('email') || sessionStorage.getItem('email');
-          console.log('Email:', storedUser);
-          const response = await axios.get(`http://localhost:3333/api/courses/getbyemail/${storedUser}`);
+          const storedUser = localStorage.getItem('rut') || sessionStorage.getItem('rut');
+          console.log('Rut:', storedUser);
+          const response = await axios.get(`http://localhost:3333/api/courseInstance/getteacherinstance/${storedUser}`);
           if (response.data.status) {
             this.cursos = response.data.courses;
           } else {

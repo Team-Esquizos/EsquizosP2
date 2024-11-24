@@ -17,12 +17,11 @@ const importCurso = async (req, res) => {
             for (var i = 0; i < response.length; i++) {
                 const matriculas = response[i].matricula.split(',').map(matricula => ({ matricula: matricula.trim() }));
                 datosData.push({
+                    codigo: response[i].codigo,
+                    carrera: response[i].carrera,
                     nombre: response[i].nombre,
+                    semestre: response[i].semestre,
                     seccion: response[i].seccion,
-                    area: response[i].area,
-                    rut: response[i].rut,
-                    docente: response[i].docente,
-                    alumnos: matriculas
                 });
             }
 

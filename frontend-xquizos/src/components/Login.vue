@@ -81,6 +81,9 @@
             storage.setItem('email', this.user.email);
             storage.setItem('user', data.username);
             storage.setItem('isAdmin', data.isAdmin);
+            console.log(data.rut)
+            console.log(data    )
+            storage.setItem('rut', data.rut);
   
             if (data.isAdmin === 'true' || data.isAdmin === true) {
                 this.$router.push({ name: 'VistaAdministrador' });
