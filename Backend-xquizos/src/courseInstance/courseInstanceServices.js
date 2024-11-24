@@ -1,5 +1,6 @@
 var courseInstanceModel = require('./courseInstanceModel.js');
 var teachingModel = require('../teaching/teachingModel.js');
+var courseModel = require('../course/courseModel.js');
 
 module.exports.registerCourseInstanceDBService = (courseData) => {
     return new Promise(async function myFn(resolve, reject) {
@@ -194,4 +195,75 @@ module.exports.removeCourseInstanceDBService = async (nombre, seccion) => {
 };
 
 
+module.exports.getTeacherCourseInstanceDBService = async (rut) => {
+    try {
+        console.log(rut.rut);
 
+        // Encuentra las instancias de cursos asociadas al profesor
+        const courseInstances = await courseInstanceModel.find({ codDocente: rut });
+        console.log(courseInstances);
+
+        if (courseInstances && courseInstances.length > 0) {
+            // Extrae los codCurso únicos de las instancias
+            const courseCodes = courseInstances.map(instance => instance.codCurso);
+            console.log("Course Codes:", courseCodes);
+
+            // Busca los detalles de los cursos con los codCurso
+            const courses = await courseModel.find({ codigo: { $in: courseCodes } });
+            console.log("Courses:", courses);
+
+            // Retorna solo los cursos encontrados
+            return { status: true, msg: "Cursos encontrados", courses };
+        } else {
+            console.log("INVALID DATA");
+            return { status: false, msg: "INVALID DATA" };
+        }
+
+    } catch (error) {
+        console.error("Error:", error);
+        return { status: false, msg: "INVALID DATA" };
+    }
+};
+
+
+module.exports.getStudentCourseInstanceDBService = async (rut) => {
+    try {
+        console.log(rut.rut);
+
+        // Encuentra las instancias de cursos asociadas al profesor
+        const courseInstances = await courseInstanceModel.find({ codDocente: rut });
+        console.log("Course Instances:", courseInstances);
+
+        if (courseInstances && courseInstances.length > 0) {
+            // Crea un mapa de cada curso a su lista de alumnos
+            const courseToStudentsMap = courseInstances.map(instance => ({
+                codCurso: instance.codCurso,
+                alumnos: instance.alumnos || [], // Maneja el caso donde alumnos pueda ser undefined
+            }));
+            console.log("Course to Students Map:", courseToStudentsMap);
+
+            // Consulta para obtener todos los estudiantes únicos
+            const uniqueStudentIds = [...new Set(courseToStudentsMap.flatMap(course => course.alumnos))];
+            console.log("Unique Student IDs:", uniqueStudentIds);
+
+            // Busca los estudiantes por sus matrículas
+            const students = await studentModel.find({ matricula: { $in: uniqueStudentIds } });
+            console.log("Students Found:", students);
+
+            // Asocia cada curso con los estudiantes correspondientes
+            const result = courseToStudentsMap.map(course => ({
+                codCurso: course.codCurso,
+                alumnos: students.filter(student => course.alumnos.includes(student.matricula)),
+            }));
+
+            return { status: true, msg: "Cursos y estudiantes encontrados", data: result };
+        } else {
+            console.log("INVALID DATA");
+            return { status: false, msg: "INVALID DATA" };
+        }
+
+    } catch (error) {
+        console.error("Error:", error);
+        return { status: false, msg: "INVALID DATA" };
+    }
+};

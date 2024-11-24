@@ -26,7 +26,7 @@ var loginUserControllerFn = async (req, res) => {
         result = await userService.loginUserDBService(req.body);
 
         if(result.status){
-            res.send({"status": true, "message": result.msg, "username": result.username, "isAdmin": result.isAdmin, });
+            res.send({"status": true, "message": result.msg, "username": result.username, "isAdmin": result.isAdmin, "rut": result.rut});
             console.log("primer if");
         } else {
             res.send({"status": false, "message": result.msg});
