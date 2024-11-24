@@ -57,7 +57,7 @@
     export default {
         name: 'VistaAlumnos',
         mixins: [autenticadorSesion],
-        props: ['nombreCurso, seccionCurso'], // Recibe el parámetro 'idCurso' como prop
+        props: ['nombreCurso, seccionCurso, codigo'], 
         mounted() {
         console.log(this.$route.params.nombreCurso);
         },
@@ -108,6 +108,7 @@
         created() {
             this.nombreCurso = this.$route.params.nombreCurso || 'Sin nombre';
             this.seccionCurso = this.$route.params.seccionCurso || 'Sin sección';
+            this.codigo = this.$route.params.codigo || 'Sin sección';
             this.fetchCursos();
         },
         methods: {

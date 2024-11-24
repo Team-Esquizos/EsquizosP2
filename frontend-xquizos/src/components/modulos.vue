@@ -8,7 +8,7 @@
         <p class="card-content">
           {{ carrera }}
         </p>
-        <button class="see-more"  @click="irAlumnos(nombre,seccion)">Entrar</button>
+        <button class="see-more"  @click="irAlumnos(nombre, seccion, codigo)">Entrar</button>
       </div>
     </div>
   </div>
@@ -53,9 +53,9 @@ export default {
         console.error(error);
       }
     },
-    irAlumnos(nombre, seccion) {
+    irAlumnos(nombre, seccion, codigo) {
       // Pasa la id del curso al navegar a la vista de alumnos
-      this.$router.push({ name: 'VistaAlumnos', params: { nombreCurso: nombre, seccionCurso: seccion } });
+      this.$router.push({ name: 'VistaAlumnos', params: { nombreCurso: nombre, seccionCurso: seccion , codigo: codigo} });
     }
   },
   created() {
