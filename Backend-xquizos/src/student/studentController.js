@@ -72,7 +72,24 @@ var removeStudentControllerFn = async (req, res) => {
 }
 
 
+var addlista_de_accionesControllerFn = async (req, res) => {
+    const matricula = req.params.matricula; 
+    const accion = req.body.lista_de_acciones;
 
+    try {
+        const result = await studentService.addlista_de_accionesDBService(matricula, accion);
+
+        if (result.status) {
+            res.status(200).json(result);
+        } else {
+            res.status(404).json(result);
+        }
+    } catch (error) {
+        console.error('Error en la actualización del estudiante:', error);
+        res.status(500).json({ status: false, msg: "Error en el servidor" });
+    }
+
+}
 
 
 
@@ -115,4 +132,4 @@ var getCourseByNomControllerFn = async (req, res) => {
     }
 }
 
-module.exports = {registerStudentControllerFn, searchStudentControllerFn, getStudentsControllerFn, editStudentControllerFn, removeStudentControllerFn, getCourseByNomControllerFn};
+module.exports = {registerStudentControllerFn, searchStudentControllerFn, getStudentsControllerFn, editStudentControllerFn, removeStudentControllerFn, getCourseByNomControllerFn, addlista_de_accionesControllerFn};

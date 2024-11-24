@@ -1,5 +1,6 @@
 var courseInstanceService = require('./courseInstanceServices.js');
-
+var datos = require('./courseInstanceModel.js');
+var csv = require('csvtojson');
 var registerCourseInstanceControllerFn = async (req, res) => {
     try {
         var status = await courseInstanceService.registerCourseInstanceDBService(req.body);
@@ -54,7 +55,6 @@ var removeCourseControllerFn = async (req, res) => {
         res.status(500).json({ status: false, msg: "Error en el servidor" });
     }
 }
-
 
 
 
