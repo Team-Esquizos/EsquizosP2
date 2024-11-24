@@ -41,6 +41,14 @@ const insertCsvcourseInstanceControllerFn = async (req, res) => {
             success: true,
             message: 'Matrículas de los alumnos asociadas a sus cursos correctamente',
         });
+        
+        fs.unlink(req.file.path, (err) => {
+            if (err) {
+                console.error('Error al eliminar el archivo:', err);
+            } else {
+                console.log('Archivo CSV eliminado');
+            }
+        });
     } catch (error) {
         console.error('Error al procesar la solicitud:', error.message);
         res.status(500).send({
