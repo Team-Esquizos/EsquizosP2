@@ -77,7 +77,7 @@
                     <td class="align-middle">{{ alumno.fecNac }}</td>
                     <td class="align-middle">{{ alumno.fecIng }}</td>
                     <td class="align-middle">
-                        <button @click="viewAlumno(alumno)" class="btn btn-sm btn-primary mx-1">
+                        <button @click="goperfilalumno(alumno.matricula,alumno.nombres)" class="btn btn-sm btn-primary mx-1">
                             <i class="far fa-eye"></i>
                         </button>
                         <button @click="toggleForm('edit', alumno)" class="btn btn-sm btn-info mx-1">
@@ -107,12 +107,12 @@ export default {
     },
     computed: {
         userRole() {
-        const isAdmin = localStorage.getItem('isAdmin') || sessionStorage.getItem('isAdmin');
-        return isAdmin === 'true' ? 'Administrador' : 'Docente';
+            const isAdmin = localStorage.getItem('isAdmin') || sessionStorage.getItem('isAdmin');
+            return isAdmin === 'true' ? 'Administrador' : 'Docente';
         },
         // Computed property para verificar si el usuario es admin
         isAdmin() {
-        return localStorage.getItem('isAdmin') === 'true' || sessionStorage.getItem('isAdmin') === 'true';
+            return localStorage.getItem('isAdmin') === 'true' || sessionStorage.getItem('isAdmin') === 'true';
         }
     },
     data() {
@@ -138,13 +138,23 @@ export default {
                 fecNac: 'Fecha de nacimiento',
                 fecIng: 'Fecha de ingreso'
             },
-            requiredFields: ['nombres', 'apellidoP','apellidoM', 'rut', 'matricula', 'fecNac', 'fecIng']
+            requiredFields: ['nombres', 'apellidoP', 'apellidoM', 'rut', 'matricula', 'fecNac', 'fecIng']
         };
     },
     created() {
         this.fetchAlumnos();
     },
     methods: {
+        goperfilalumno(matricula, nombrePrimer) {
+            console.log('Datos enviados:', matricula, nombrePrimer); // Debug para confirmar los valores
+            this.$router.push({
+                name: 'PerfilAlumno',
+                params: {
+                    matriculaalum: matricula,
+                    nombrealum: nombrePrimer
+                }
+            });
+        },
         goBack() {
             this.$router.push({
                 name: 'VistaAdministrador'
@@ -177,8 +187,15 @@ export default {
             try {
                 await axios.post('http://localhost:3333/api/student/register', this.alumno);
                 this.fetchAlumnos();
+                alert('Alumno agregado exitosamente.');
             } catch (error) {
-                console.error('Error al agregar alumno:', error);
+                console.log(error);
+                if (error.response && error.response.status === 409) {
+                    alert('El alumno ya está registrado. Verifica los datos.');
+                } else {
+                    console.error('Error al agregar alumno:', error);
+                    alert('Ocurrió un error al agregar el alumno. Intenta nuevamente.');
+                }
             }
         },
         async updateAlumno() {

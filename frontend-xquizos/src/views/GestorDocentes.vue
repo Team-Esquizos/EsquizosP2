@@ -54,45 +54,44 @@
     </div>
 
     <div class="table-responsive" ref="tableContainer" style="border-radius: 15px; max-height: 500px; overflow-y: auto; position: relative;">
-    <table class="table table-striped table-hover table-bordered text-center">
-      <thead class="thead-light" style="position: sticky; top: 0; z-index: 1; background-color: white;">
-        <tr>
-          <th>Foto</th>
-          <th>Nombre Completo</th>
-          <th>Rut</th>
-          <th>Título</th>
-          <th>Grado Máximo</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="docente in docentes" :key="docente.rut">
-          <td class="align-middle">
-            <img class="img-fluid rounded-circle" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Avatar" style="width: 50px; height: 50px;" />
-          </td>
-          <td class="align-middle">{{ docente.nombres }} {{ docente.apellidoP }} {{ docente.apellidoM }}</td>
-          <td class="align-middle">{{ docente.rut }}</td>
-          <td class="align-middle">{{ docente.titulo }}</td>
-          <td class="align-middle">{{ docente.gradoMax }}</td>
-          <td class="align-middle">
-            <button @click="viewDocente(docente)" class="btn btn-sm btn-primary mx-1">
-              <i class="far fa-eye"></i>
-            </button>
-            <button @click="toggleForm('edit', docente)" class="btn btn-sm btn-info mx-1">
-              <i class="fas fa-pencil-alt"></i>
-            </button>
-            <button @click="deleteDocente(docente.rut)" class="btn btn-sm btn-danger mx-1">
-              <i class="far fa-trash-alt"></i>
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+        <table class="table table-striped table-hover table-bordered text-center">
+            <thead class="thead-light" style="position: sticky; top: 0; z-index: 1; background-color: white;">
+                <tr>
+                    <th>Foto</th>
+                    <th>Nombre Completo</th>
+                    <th>Rut</th>
+                    <th>Título</th>
+                    <th>Grado Máximo</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="docente in docentes" :key="docente.rut">
+                    <td class="align-middle">
+                        <img class="img-fluid rounded-circle" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Avatar" style="width: 50px; height: 50px;" />
+                    </td>
+                    <td class="align-middle">{{ docente.nombres }} {{ docente.apellidoP }} {{ docente.apellidoM }}</td>
+                    <td class="align-middle">{{ docente.rut }}</td>
+                    <td class="align-middle">{{ docente.titulo }}</td>
+                    <td class="align-middle">{{ docente.gradoMax }}</td>
+                    <td class="align-middle">
+                        <button @click="viewDocente(docente)" class="btn btn-sm btn-primary mx-1">
+                            <i class="far fa-eye"></i>
+                        </button>
+                        <button @click="toggleForm('edit', docente)" class="btn btn-sm btn-info mx-1">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                        <button @click="deleteDocente(docente.rut)" class="btn btn-sm btn-danger mx-1">
+                            <i class="far fa-trash-alt"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 </template>
 
-  
 <script>
 import axios from 'axios';
 import navBar from '@/components/AppNavbarAdm.vue';
@@ -165,8 +164,14 @@ export default {
             try {
                 await axios.post('http://localhost:3333/api/teaching/register', this.docente);
                 this.fetchDocentes();
+                alert('Docente agregado exitosamente.');
             } catch (error) {
-                console.error('Error al agregar docente:', error);
+                if (error.response && error.response.status === 409) {
+                    alert('El docente ya está registrado. Verifica los datos.');
+                } else {
+                    console.error('Error al agregar docente:', error);
+                    alert('Ocurrió un error al agregar el docente. Intenta nuevamente.');
+                }
             }
         },
         async updateDocente() {
@@ -245,7 +250,6 @@ export default {
 };
 </script>
 
-  
 <style scoped>
 .gestor-docentes-container {
     padding-top: 30px;
