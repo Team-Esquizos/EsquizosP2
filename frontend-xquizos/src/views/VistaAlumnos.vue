@@ -71,17 +71,17 @@
                 </div>
                 <div class="action-value-container">
                     <label for="valorAccion">Valor acción</label>
-                    <input id="valorAccion" type="text" v-model="alumno.valorAccion" class="form-control" placeholder="Ingrese valor" />
+                    <input id="valorAccion" type="text" v-model="newComment.peso" class="form-control" placeholder="Ingrese valor" />
                 </div>
                 </div>
 
                 <div class="comment-container">
-                <label for="comentario">Comentario</label>
-                <textarea id="comentario" v-model="alumno.comentario" class="form-control" placeholder="Escribe tu comentario aquí..." rows="4"></textarea>
+                <label for="comentario" >Comentario</label>
+                <textarea id="comentario" v-model="newComment.comentario" class="form-control" placeholder="Escribe tu comentario aquí..." rows="4"></textarea>
                 </div>
 
                 <div class="d-flex justify-content-between mt-4">
-                <button type="submit" class="btn btn-success">{{ isEditMode ? 'Actualizar' : 'Agregar' }}</button>
+                <button type="submit" class="btn btn-success" @click="addComment">Agregar comentario</button>
                 <button type="button" class="btn btn-secondary" @click="clearForm">Cancelar</button>
                 </div>
             </form>
@@ -131,6 +131,12 @@
                     fecNac: '',
                     fecIng: '',
                 },
+                newComment: {
+                    matricula: '',
+                    codDocente: '',
+                    comentario: '',
+                    peso: '',
+                },
                 formVisible: false,
                 isEditMode: false,
                 formFields: {
@@ -142,8 +148,10 @@
                     fecNac: 'Fecha Nacimiento',
                     fecIng: 'Fecha Ingreso',
                 },
-                requiredFields: ['nombrePrimer', 'apellidoP', 'rut', 'matricula', 'fecNac', 'fecIng']
+                requiredFields: ['nombrePrimer', 'apellidoP', 'rut', 'matricula', 'fecNac', 'fecIng'],
+                
             };
+            
         },
         created() {
             this.nombreCurso = this.$route.params.nombreCurso || 'Sin nombre';
@@ -152,6 +160,17 @@
             this.fetchCursos();
         },
         methods: {
+            async addComment() {
+                try {
+                    this.newComment.matricula = this.alumno.matricula;
+                    this.newComment.codDocente = localStorage.getItem('rut') || sessionStorage.getItem('rut');
+
+                    await axios.post('http://localhost:3333/api/comments/add', this.newComment);
+                    this.newComment = {};
+                } catch (error) {
+                    console.error('Error adding comment:', error);
+                }
+            },
             goBack() {
                 this.$router.push({
                     name: 'VistaDocente'
