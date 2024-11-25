@@ -38,7 +38,6 @@
     router.route('/courseInstance/setTeaching/:codCurso/:codDocente').put(courseInstanceController.updateCodDocenteInCourseInstanceControllerFn); 
     router.route('/courseInstance/addStudent/:codCurso/:matricula').put(courseInstanceController.addStudentToCourseInstanceControllerFn);
     router.route('/courseInstance/getteacherinstance/:rut').get(courseInstanceController.getTeacherCourseInstanceControllerFn);
-    router.route('/courseInstance/getstudentinstance/:rut').get(courseInstanceController.getStudentCourseInstanceControllerFn);
     
     
     
