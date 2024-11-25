@@ -45,7 +45,7 @@
                                 <i class="fa-solid fa-plus"></i>
                             </button>
                             <!-- Botón de vista de alumno -->
-                            <button @click="viewAlumno(alumno)" class="btn btn-sm btn-primary mx-1">
+                            <button @click="goperfilalumno(alumno.matricula,alumno.nombres)" class="btn btn-sm btn-primary mx-1">
                                 <i class="far fa-eye"></i>
                             </button>
                         </td>
@@ -160,6 +160,16 @@
             this.fetchCursos();
         },
         methods: {
+            goperfilalumno(matricula, nombrePrimer) {
+                console.log('Datos enviados:', matricula, nombrePrimer); // Debug para confirmar los valores
+                this.$router.push({
+                    name: 'PerfilAlumno',
+                    params: {
+                        matriculaalum: matricula,
+                        nombrealum: nombrePrimer
+                    }
+                });
+            },
             async addComment() {
                 try {
                     this.newComment.matricula = this.alumno.matricula;
