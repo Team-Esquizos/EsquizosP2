@@ -1,6 +1,7 @@
 var courseInstanceModel = require('./courseInstanceModel.js');
 var teachingModel = require('../teaching/teachingModel.js');
 var courseModel = require('../course/courseModel.js');
+var studentModel = require('../student/studentModel.js');
 
 module.exports.registerCourseInstanceDBService = (courseData) => {
     return new Promise(async function myFn(resolve, reject) {
@@ -226,44 +227,4 @@ module.exports.getTeacherCourseInstanceDBService = async (rut) => {
 };
 
 
-module.exports.getStudentCourseInstanceDBService = async (rut) => {
-    try {
-        console.log(rut.rut);
 
-        // Encuentra las instancias de cursos asociadas al profesor
-        const courseInstances = await courseInstanceModel.find({ codDocente: rut });
-        console.log("Course Instances:", courseInstances);
-
-        if (courseInstances && courseInstances.length > 0) {
-            // Crea un mapa de cada curso a su lista de alumnos
-            const courseToStudentsMap = courseInstances.map(instance => ({
-                codCurso: instance.codCurso,
-                alumnos: instance.alumnos || [], // Maneja el caso donde alumnos pueda ser undefined
-            }));
-            console.log("Course to Students Map:", courseToStudentsMap);
-
-            // Consulta para obtener todos los estudiantes únicos
-            const uniqueStudentIds = [...new Set(courseToStudentsMap.flatMap(course => course.alumnos))];
-            console.log("Unique Student IDs:", uniqueStudentIds);
-
-            // Busca los estudiantes por sus matrículas
-            const students = await studentModel.find({ matricula: { $in: uniqueStudentIds } });
-            console.log("Students Found:", students);
-
-            // Asocia cada curso con los estudiantes correspondientes
-            const result = courseToStudentsMap.map(course => ({
-                codCurso: course.codCurso,
-                alumnos: students.filter(student => course.alumnos.includes(student.matricula)),
-            }));
-
-            return { status: true, msg: "Cursos y estudiantes encontrados", data: result };
-        } else {
-            console.log("INVALID DATA");
-            return { status: false, msg: "INVALID DATA" };
-        }
-
-    } catch (error) {
-        console.error("Error:", error);
-        return { status: false, msg: "INVALID DATA" };
-    }
-};
