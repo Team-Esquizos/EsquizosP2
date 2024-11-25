@@ -58,7 +58,7 @@ module.exports.removeCommentDBService = async (_id) => {
 
 module.exports.getCommentsDBService = async (matricula) => {
     try {
-        const comments = await commentModel.find({ matricula });
+        const comments = await commentModel.find({matricula: matricula});
 
         if (comments) {
             console.log("Comentarios del alumno ", matricula ,":", comments);

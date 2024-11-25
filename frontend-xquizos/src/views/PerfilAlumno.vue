@@ -1,93 +1,114 @@
 <template>
+  <navBar/>
   <div class="student-profile">
+    <header>
       <h1>Student Profile</h1>
-      <div class="student-info">
-        <p><strong>Name:</strong> {{ nombrealum }}</p>
-        <p><strong>Matricula:</strong> {{ matriculaalum }}</p>
-      </div>
-    </div>
+    </header>
+    <section class="student-info">
+      <p><strong>Name:</strong> {{ nombrealum }}</p>
+      <p><strong>Matricula:</strong> {{ matriculaalum }}</p>
+    </section>
+  </div>
   <div class="container">
     <!-- Default Comments -->
-    <div class="default-comments">
+    <section class="default-comments">
       <h2>Default Comments</h2>
-      <ul>
-        <li class="comment-box" @click="addDefaultComment('Great student, very punctual.', 9)">
-          <span>Ayuda a sus compañeros con la materia</span>
-        </li>
-        <li class="comment-box" @click="addDefaultComment('Excellent performance in mathematics.', 10)">
-          <span>Alumno Puntual</span>
-        </li>
-        <li class="comment-box" @click="addDefaultComment('Needs improvement in participation.', -5)">
-          <span>Participativo en clases</span>
-        </li>
-        <li class="comment-box2" @click="addDefaultComment('Shows great interest in science projects.', -8)">
-          <span>Copia de prueba</span>
-        </li>
-        <li class="comment-box2" @click="addDefaultComment('Has strong teamwork skills.', -10)">
-          <span>Copia proyecto</span>
-        </li>
-        <li class="comment-box2" @click="addDefaultComment('Lacks attention to detail.', -2)">
-          <span>Golpeo al jefe de grupo</span>
-        </li>
-      </ul>
-    </div>
-
+      <div class="default-comments-group">
+        <div class="comment-category">
+          <h3>Positive Comments</h3>
+          <ul>
+            <li class="comment-box positive" @click="addDefaultComment('Ayuda a sus compañeros con la materia', 9)">
+              Ayuda a sus compañeros con la materia
+            </li>
+            <li class="comment-box positive" @click="addDefaultComment('Alumno Puntual', 10)">
+              Alumno Puntual
+            </li>
+            <li class="comment-box positive" @click="addDefaultComment('Participativo en clases', -5)">
+              Participativo en clases
+            </li>
+          </ul>
+        </div>
+        <div class="comment-category">
+          <h3>Negative Comments</h3>
+          <ul>
+            <li class="comment-box negative" @click="addDefaultComment('Copia de prueba', -8)">
+              Copia de prueba
+            </li>
+            <li class="comment-box negative" @click="addDefaultComment('Copia proyecto', -10)">
+              Copia proyecto
+            </li>
+            <li class="comment-box negative" @click="addDefaultComment('Golpeo al jefe de grupo', -2)">
+              Golpeo al jefe de grupo
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
 
     <!-- Add a Commentary -->
-    <div class="comment-section">
-      <h2>Añadir comentario manual</h2>
-      <textarea v-model="comentario" placeholder="Write a comment..."></textarea>
-      <button @click="addComment">Añadir comentario</button>
+    <section class="comment-section">
+      <h2>Add a Custom Comment</h2>
+      <textarea v-model="newComment.comentario" placeholder="Write a comment..."></textarea>
+      <button @click="addComment">Add Comment</button>
       <div class="comments-list">
-        <h3>Comentarios:</h3>
+        <h3>Comments:</h3>
         <ul>
           <li v-for="(comment, index) in comments" :key="index" class="comment-box">
-            <span>{{ comment }} </span>
-            <button @click="deleteComment(index)" class="delete-button">Delete</button>
+            {{ comment.comentario }}
+            <button @click="deleteComment(comment._id)" class="delete-button">Delete</button>
           </li>
         </ul>
       </div>
-    </div>
+    </section>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import navBar from '@/components/AppNavbarAdm.vue';
 
 export default {
   name: 'PerfilAlumno',
   props: ['matriculaalum', 'nombrealum'],
+  components: {
+      navBar
+  },
   data() {
     return {
       newComment: {
         matricula: '',
         codDocente: '',
         comentario: '',
-        peso: ''
+        peso: '',
       },
-      comments: []
+      comments: [],
     };
   },
   created() {
-    const savedComments = localStorage.getItem('comments');
-    if (savedComments) {
-      this.comments = JSON.parse(savedComments);
-    }
+    this.fetchComments();
   },
   methods: {
+    async fetchComments() {
+      try {
+        const response = await axios.get(
+          `http://localhost:3333/api/comments/getFromMatricula/${this.matriculaalum}`
+        );
+        this.comments = response.data.comments;
+      } catch (error) {
+        console.error('Error fetching comments:', error);
+      }
+    },
     async addComment() {
       try {
         this.newComment.matricula = this.matriculaalum;
         this.newComment.codDocente = 'XD';
-        this.newComment.peso = 0; // Peso fijo para los comentarios ingresados manualmente
+        this.newComment.peso = 0;
 
-        const response = await axios.post('http://localhost:3333/api/comments/add', this.newComment);
-
-        this.comments.push(response.data);
+        await axios.post('http://localhost:3333/api/comments/add', this.newComment);
         this.newComment = {};
+        this.fetchComments();
       } catch (error) {
-        console.error('Error al agregar el comentario:', error.response?.data || error.message);
-        alert('Hubo un problema al agregar el comentario. Revisa la consola para más detalles.');
+        console.error('Error adding comment:', error);
       }
     },
     async addDefaultComment(commentText, commentWeight) {
@@ -99,83 +120,113 @@ export default {
           peso: commentWeight,
         };
 
-        const response = await axios.post('http://localhost:3333/api/comments/add', defaultComment);
-
-        this.comments.push(response.data);
+        await axios.post('http://localhost:3333/api/comments/add', defaultComment);
+        this.fetchComments();
       } catch (error) {
-        console.error('Error al agregar el comentario predeterminado:', error.response?.data || error.message);
-        alert('No se pudo agregar el comentario predeterminado.');
+        console.error('Error adding default comment:', error);
       }
     },
     async deleteComment(index) {
       try {
-                await axios.delete(`http://localhost:3333/api/remove/${this.comments[index].id}`);
-            } catch (error) {
-                console.error('Error al eliminar el comentario:', error);
-            }
+        await axios.delete(`http://localhost:3333/api/comments/remove/${index}`);
+        this.fetchComments();
+      } catch (error) {
+        console.error('Error deleting comment:', error);
+      }
     },
-    saveComments() {
-      localStorage.setItem('comments', JSON.stringify(this.comments));
-    }
-  }
+  },
 };
 </script>
 
 <style scoped>
-/* General container */
+/* General Styling */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f9;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+/* Profile Header */
+.student-profile {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.student-profile header h1 {
+  color: #4CAF50;
+}
+
+.student-info {
+  display: inline-block;
+  padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.student-info p {
+  margin: 5px 0;
+}
+
+/* Container */
 .container {
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 20px;
-  background-color: #f7f7f7;
+  background-color: #fff;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Default Comments Section */
+/* Default Comments */
 .default-comments h2 {
   text-align: center;
-  margin-bottom: 10px;
-}
-.default-comments .comment-box {
-  cursor: pointer;
-  background-color: #d9f7d9;
-  transition: background-color 0.3s ease;
-  margin-bottom: 10px;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-.default-comments .comment-box2{
-  cursor: pointer;
-  background-color: #fc7861;
-  transition: background-color 0.3s ease;
-  margin-bottom: 10px;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-.comment-box2:hover{
-  background-color: #f8664d;
+  margin-bottom: 20px;
 }
 
-.default-comments .comment-box:hover {
-  background-color: #b8e6b8;
+.default-comments-group {
+  display: flex;
+  gap: 20px;
 }
 
-/* Student Profile */
-.student-profile h1 {
+.comment-category {
+  flex: 1;
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.comment-category h3 {
+  color: #555;
   margin-bottom: 10px;
+}
+
+.comment-box {
+  cursor: pointer;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
   text-align: center;
 }
-.student-info {
-  border: 1px solid #ccc;
-  padding: 15px;
-  border-radius: 5px;
-  background-color: #fff;
+
+.comment-box.positive {
+  background-color: #d9f7d9;
+  border: 1px solid #a4d4a4;
 }
-.student-info p {
-  margin: 5px 0;
+
+.comment-box.negative {
+  background-color: #fbdcdc;
+  border: 1px solid #f5a9a9;
+}
+
+.comment-box:hover {
+  background-color: #e3e3e3;
 }
 
 /* Comment Section */
@@ -183,13 +234,16 @@ export default {
   text-align: center;
   margin-bottom: 10px;
 }
+
 textarea {
   width: 100%;
+  height: 80px;
   margin-bottom: 10px;
   padding: 10px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 8px;
 }
+
 button {
   background-color: #4CAF50;
   color: white;
@@ -197,25 +251,42 @@ button {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
+
 button:hover {
   background-color: #45a049;
 }
 
 /* Comments List */
-.comments-list {
-  margin-top: 20px;
+.comments-list ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.comments-list .comment-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  background-color: #f4f4f9;
 }
 
 .delete-button {
   background-color: #f44336;
   color: white;
-  padding: 5px 10px;
   border: none;
   border-radius: 5px;
+  padding: 5px 10px;
   cursor: pointer;
 }
+
 .delete-button:hover {
-  background-color: #e53935;
+  background-color: #d32f2f;
 }
 </style>
+
+
