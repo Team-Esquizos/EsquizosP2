@@ -24,8 +24,9 @@
                     <tr>
                         <th>Foto</th>
                         <th>Nombre Completo</th>
-                        <th>Email</th>
-                        <th>Carrera</th>
+                        <th>Rut</th>
+                        <th>Fecha Nacimiento</th>
+                        <th>Fecha Ingreso</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -34,11 +35,17 @@
                         <td class="align-middle">
                             <img class="img-fluid rounded-circle" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Avatar" style="width: 50px; height: 50px;" />
                         </td>
-                        <td class="align-middle">{{ alumno.nombrePrimer }} {{ alumno.apellidoP }} {{ alumno.apellidoM }}</td>
-                        <td class="align-middle">{{ alumno.email }}</td>
-                        <td class="align-middle">{{ alumno.carrera }}</td>
+                        <td class="align-middle">{{ alumno.nombres }} {{ alumno.apellidoP }} {{ alumno.apellidoM }}</td>
+                        <td class="align-middle">{{ alumno.rut }}</td>
+                        <td class="align-middle">{{ alumno.fecNac }}</td>
+                        <td class="align-middle">{{ alumno.fecIng }}</td>
                         <td class="align-middle">
-                            <button @click="viewAlumno(alumno)" class="btn btn-sm btn-primary mx-1">
+                            <!-- Botón de "más" más grande -->
+                            <button type="button" class="btn btn-primary btn-sm mx-1" @click="toggleForm('add', alumno)">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                            <!-- Botón de vista de alumno -->
+                            <button @click="goperfilalumno(alumno.matricula,alumno.nombres)" class="btn btn-sm btn-primary mx-1">
                                 <i class="far fa-eye"></i>
                             </button>
                         </td>
@@ -46,23 +53,59 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Formulario modal -->
+        <div v-if="formVisible" class="modal-overlay" @click.self="clearForm">
+            <div class="modal-content">
+            <form @submit.prevent="handleSubmit">
+                <h3 class="text-center mb-4">Agregar Comentario</h3>
+
+                <h1>{{ alumno.nombres }} {{ alumno.apellidoP }} {{ alumno.apellidoM }}</h1>
+                <h2>{{ alumno.matricula }}</h2>
+
+                <div class="flags-action-container">
+                <div class="flags-container">
+                    <flag :regularColor="'#00FF00'" :solidColor="'#006400'" :texto="'Buen comportamiento'" />
+                    <flag :regularColor="'#FFFF00'" :solidColor="'#FFD700'" :texto="'Advertencia'" />
+                    <flag :regularColor="'#FF0000'" :solidColor="'#8B0000'" :texto="'Mal comportamiento'" />
+                </div>
+                <div class="action-value-container">
+                    <label for="valorAccion">Valor acción</label>
+                    <input id="valorAccion" type="text" v-model="newComment.peso" class="form-control" placeholder="Ingrese valor" />
+                </div>
+                </div>
+
+                <div class="comment-container">
+                <label for="comentario" >Comentario</label>
+                <textarea id="comentario" v-model="newComment.comentario" class="form-control" placeholder="Escribe tu comentario aquí..." rows="4"></textarea>
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                <button type="submit" class="btn btn-success" @click="addComment">Agregar comentario</button>
+                <button type="button" class="btn btn-secondary" @click="clearForm">Cancelar</button>
+                </div>
+            </form>
+            </div>
+        </div>
     </div>
-    </template>
+</template>
     
     <script>
     import axios from 'axios';
     import navBar from '@/components/AppNavbarAdm.vue';
+    import flag from '@/components/Flag.vue';
     import autenticadorSesion from '../mixins/AutenticadorSesion.js';
     
     export default {
         name: 'VistaAlumnos',
         mixins: [autenticadorSesion],
-        props: ['nombreCurso, seccionCurso'], // Recibe el parámetro 'idCurso' como prop
+        props: ['nombreCurso, seccionCurso, codigo'], 
         mounted() {
         console.log(this.$route.params.nombreCurso);
         },
         components: {
-            navBar
+            navBar,
+            flag,
         },
         computed: {
             userRole() {
@@ -80,37 +123,64 @@
                 seccionCurso: '',
                 alumnos: [],
                 alumno: {
-                    nombrePrimer: '',
-                    nombreSegundo: '',
+                    nombres: '',
                     apellidoP: '',
                     apellidoM: '',
                     rut: '',
-                    email: '',
                     matricula: '',
-                    carrera: '',
-                    cursos: []
+                    fecNac: '',
+                    fecIng: '',
+                },
+                newComment: {
+                    matricula: '',
+                    codDocente: '',
+                    comentario: '',
+                    peso: '',
                 },
                 formVisible: false,
                 isEditMode: false,
                 formFields: {
-                    nombrePrimer: 'Primer Nombre',
-                    nombreSegundo: 'Segundo Nombre',
+                    nombres: 'Nombres',
                     apellidoP: 'Apellido Paterno',
                     apellidoM: 'Apellido Materno',
-                    rut: 'RUT',
-                    email: 'Email',
-                    matricula: 'Matrícula',
-                    carrera: 'Carrera'
+                    rut: 'Rut',
+                    matricula: 'Matricula',
+                    fecNac: 'Fecha Nacimiento',
+                    fecIng: 'Fecha Ingreso',
                 },
-                requiredFields: ['nombrePrimer', 'apellidoP', 'rut', 'email', 'matricula', 'carrera']
+                requiredFields: ['nombrePrimer', 'apellidoP', 'rut', 'matricula', 'fecNac', 'fecIng'],
+                
             };
+            
         },
         created() {
             this.nombreCurso = this.$route.params.nombreCurso || 'Sin nombre';
             this.seccionCurso = this.$route.params.seccionCurso || 'Sin sección';
+            this.codigo = this.$route.params.codigo || 'Sin sección';
             this.fetchCursos();
         },
         methods: {
+            goperfilalumno(matricula, nombrePrimer) {
+                console.log('Datos enviados:', matricula, nombrePrimer); // Debug para confirmar los valores
+                this.$router.push({
+                    name: 'PerfilAlumno',
+                    params: {
+                        matriculaalum: matricula,
+                        nombrealum: nombrePrimer
+                    }
+                });
+            },
+            async addComment() {
+                try {
+                    this.newComment.matricula = this.alumno.matricula;
+                    this.newComment.codDocente = localStorage.getItem('rut') || sessionStorage.getItem('rut');
+
+                    await axios.post('http://localhost:3333/api/comments/add', this.newComment);
+                    this.newComment = {};
+                } catch (error) {
+                    console.error('Error adding comment:', error);
+                }
+            },
             goBack() {
                 this.$router.push({
                     name: 'VistaDocente'
@@ -120,8 +190,9 @@
                 try {
                     const nombre = this.$route.params.nombreCurso;
                     const seccion = this.$route.params.seccionCurso;
-                    console.log(nombre, seccion)
-                    const response = await axios.get(`http://localhost:3333/api/student/getcoursebynom/${encodeURIComponent(nombre)}/${seccion}`);
+                    const codigo = this.$route.params.codigo;
+                    console.log(nombre, seccion, codigo)
+                    const response = await axios.get(`http://localhost:3333/api/courseInstance/get/students/${encodeURIComponent(codigo)}`);
                 if (response.data.status) {
                     this.alumnos = response.data.students;
                 } else {
@@ -133,17 +204,11 @@
             },
             toggleForm(mode, alumno = {}) {
                 this.isEditMode = mode === 'edit';
-                this.alumno = {
-                    ...alumno
-                };
-                this.formVisible = !this.formVisible;
+                this.alumno = { ...alumno, valorAccion: '', comentario: '' };
+                this.formVisible = true;
             },
-            async handleSubmit() {
-                if (this.isEditMode) {
-                    await this.updateAlumno();
-                } else {
-                    await this.addAlumno();
-                }
+            handleSubmit() {
+                console.log('Comentario agregado:', this.alumno);
                 this.clearForm();
             },
             async addAlumno() {
@@ -163,18 +228,9 @@
                 }
             },
             clearForm() {
-                this.alumno = {
-                    nombrePrimer: '',
-                    nombreSegundo: '',
-                    apellidoP: '',
-                    apellidoM: '',
-                    rut: '',
-                    email: '',
-                    matricula: '',
-                    carrera: ''
-                };
                 this.formVisible = false;
             },
+            
     
             triggerFileInput() {
                 this.$refs.fileInput.click();

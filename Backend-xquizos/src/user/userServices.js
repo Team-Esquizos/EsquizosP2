@@ -9,6 +9,7 @@ module.exports.registerUserDBService = (userData) => {
         userModelData.username = userData.username;
         userModelData.password = userData.password;
         userModelData.isAdmin = userData.isAdmin;
+        userModelData.rut = userData.rut;
 
         try {
             await userModelData.save();
@@ -25,7 +26,7 @@ module.exports.loginUserDBService = async (userData) => {
         if (result) {
             if (result.password == userData.password) {
                 console.log("VALIDATED");
-                return { status: true, msg: "User Validated", username: result.username, isAdmin: result.isAdmin };
+                return { status: true, msg: "User Validated", username: result.username, isAdmin: result.isAdmin, rut: result.rut };
             } else {
                 console.log("VALIDATION FAILED");
                 return { status: false, msg: "User validation FAILED" };
