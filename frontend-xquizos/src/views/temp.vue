@@ -2,22 +2,55 @@
   <div class="modal-overlay" @click.self="clearForm">
     <div class="modal-content">
       <form @submit.prevent="handleSubmit">
-        <h3 class="text-center mb-4">{{ isEditMode ? 'Editar Alumno' : 'Agregar Alumno' }}</h3>
+        <h3 class="text-center mb-4">Agregar Comentario</h3>
 
         <h1>nombre apellido apellido</h1>
         <h2>matricula</h2>
 
-        <!-- Contenedor para las flags -->
-        <div class="flags-container">
-          <span><flag />Green Flag</span>
-          <span><flag />Yellow Flag</span>
-          <span><flag />Red Flag</span>
+        <!-- Contenedor para las flags y el recuadro -->
+        <div class="flags-action-container">
+          <!-- Contenedor para las flags -->
+          <div class="flags-container">
+            <flag 
+              :regularColor="'#00FF00'" 
+              :solidColor="'#006400'" 
+              :texto="'Buen comportamiento'" 
+            />
+            <flag 
+              :regularColor="'#FFFF00'" 
+              :solidColor="'#FFD700'" 
+              :texto="'Advertencia'" 
+            />
+            <flag 
+              :regularColor="'#FF0000'" 
+              :solidColor="'#8B0000'" 
+              :texto="'Mal comportamiento'" 
+            />
+          </div>
+
+          <!-- Contenedor para "Valor acción" -->
+          <div class="action-value-container">
+            <label for="valorAccion">Valor acción</label>
+            <input
+              id="valorAccion"
+              type="text"
+              v-model="alumno.valorAccion"
+              class="form-control"
+              placeholder="Ingrese valor"
+            />
+          </div>
         </div>
 
-        <!-- Campos del formulario -->
-        <div class="form-group mb-3" v-for="(label, key) in formFields" :key="key">
-          <label :for="key">{{ label }}</label>
-          <input type="text" :id="key" v-model="alumno[key]" class="form-control" :required="requiredFields.includes(key)" />
+        <!-- Sección para agregar comentario -->
+        <div class="comment-container">
+          <label for="comentario">Comentario</label>
+          <textarea
+            id="comentario"
+            v-model="alumno.comentario"
+            class="form-control"
+            placeholder="Escribe tu comentario aquí..."
+            rows="4"
+          ></textarea>
         </div>
 
         <!-- Botones de acción -->
@@ -29,6 +62,7 @@
     </div>
   </div>
 </template>
+
 
 
 <script>
@@ -54,7 +88,6 @@ export default {
             formVisible: false,
             isEditMode: false,
             formFields: {
-                valor: 'Valor acción',
                 comentario: 'Accion realizada',
                 
 
@@ -88,19 +121,36 @@ export default {
     width: 100%;
 }
 
-.flags-container {
-  display: flex;              /* Activa flexbox */
-  flex-direction: column;     /* Ordena los elementos en columna */
-  gap: 10px;                  /* Espaciado vertical entre las flags */
-  justify-content: flex-start; /* Alinea las flags al inicio verticalmente */
-  margin-top: 20px;           /* Espaciado superior opcional */
+.flags-action-container {
+  display: flex;             /* Alinea flags y recuadro horizontalmente */
+  align-items: center;       /* Centra verticalmente los elementos */
+  gap: 20px;                 /* Espaciado entre flags y recuadro */
+  margin-top: 15px;          /* Separación superior */
 }
 
 .flags-container {
-  margin-top: 20px;           /* Espaciado superior */
+  display: flex;
+  flex-direction: column;    /* Alinea las flags verticalmente */
+  gap: 10px;                 /* Espaciado entre cada flag */
 }
 
-.flags-container > * {
-  margin-bottom: 25px;        /* Espaciado entre cada flag */
+.action-value-container {
+  display: flex;
+  flex-direction: column;    /* Alinea etiqueta y recuadro verticalmente */
+  flex-shrink: 0;            /* Previene que el recuadro cambie de tamaño */
+  width: 200px;              /* Ancho del recuadro */
 }
+
+.action-value-container label {
+  font-size: 14px;           /* Tamaño de texto para la etiqueta */
+  margin-bottom: 5px;        /* Espaciado debajo de la etiqueta */
+}
+
+.action-value-container input {
+  width: 100%;               /* Asegura que el recuadro tome el ancho disponible */
+  padding: 8px;              /* Espaciado interno del recuadro */
+  border: 1px solid #ccc;    /* Borde del recuadro */
+  border-radius: 4px;        /* Esquinas redondeadas */
+}
+
 </style>

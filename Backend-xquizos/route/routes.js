@@ -18,7 +18,7 @@
     router.route('/student/:matricula').put(studentController.editStudentControllerFn);
     router.route('/student/remove/:matricula').delete(studentController.removeStudentControllerFn);
     router.route('/student/getcoursebynom/:nombre/:seccion').get(studentController.getCourseByNomControllerFn);
-    router.route('/student/addaccion/:matricula').put(studentController.addlista_de_accionesControllerFn);
+    router.post('/estudiante/:matricula/acciones', addlista_de_accionesControllerFn);
     
     router.route('/teaching/register').post(teachingController.registerTeachingControllerFn);
     router.route('/teaching/get').get(teachingController.getTeachingsControllerFn);
@@ -38,7 +38,6 @@
     router.route('/courseInstance/setTeaching/:codCurso/:codDocente').put(courseInstanceController.updateCodDocenteInCourseInstanceControllerFn); 
     router.route('/courseInstance/addStudent/:codCurso/:matricula').put(courseInstanceController.addStudentToCourseInstanceControllerFn);
     router.route('/courseInstance/getteacherinstance/:rut').get(courseInstanceController.getTeacherCourseInstanceControllerFn);
-    router.route('/courseInstance/getstudentinstance/:rut').get(courseInstanceController.getStudentCourseInstanceControllerFn);
     
     
     

@@ -2,11 +2,15 @@
   <navBar/>
   <div class="student-profile">
     <header>
+      <button class="btn btn-secondary back-button" @click="goBack">
+          <i class="fa-solid fa-circle-left"></i> Volver a los modulos
+      </button>
       <h1>Student Profile</h1>
     </header>
     <section class="student-info">
       <p><strong>Name:</strong> {{ nombrealum }}</p>
       <p><strong>Matricula:</strong> {{ matriculaalum }}</p>
+      <button @click="iraEstadisticas">Ver estadistica</button>
     </section>
   </div>
   <div class="container">
@@ -66,10 +70,12 @@
 <script>
 import axios from 'axios';
 import navBar from '@/components/AppNavbarAdm.vue';
+import GoBackMixin from '@/mixins/AutenticadorSesion';
 
 export default {
   name: 'PerfilAlumno',
   props: ['matriculaalum', 'nombrealum'],
+  mixins: [GoBackMixin],
   components: {
       navBar
   },
@@ -88,6 +94,11 @@ export default {
     this.fetchComments();
   },
   methods: {
+    async iraEstadisticas(){
+      this.$router.push({
+          name: 'VistaEstadisticas'
+      });
+    },
     async fetchComments() {
       try {
         const response = await axios.get(
@@ -101,7 +112,7 @@ export default {
     async addComment() {
       try {
         this.newComment.matricula = this.matriculaalum;
-        this.newComment.codDocente = 'XD';
+        this.newComment.codDocente = localStorage.getItem('rut') || sessionStorage.getItem('rut');
         this.newComment.peso = 0;
 
         await axios.post('http://localhost:3333/api/comments/add', this.newComment);
@@ -146,6 +157,10 @@ body {
   color: #333;
   margin: 0;
   padding: 0;
+}
+
+.back-button {
+  margin-right: 20px;
 }
 
 /* Profile Header */
