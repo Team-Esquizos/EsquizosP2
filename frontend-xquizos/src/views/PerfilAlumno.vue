@@ -5,11 +5,12 @@
         <button class="btn btn-secondary back-button" @click="goBack">
             <i class="fa-solid fa-circle-left"></i> Volver a los modulos
         </button>
-        <h1>Student Profile</h1>
+        <h1>Perfil del alumno</h1>
     </header>
     <section class="student-info">
         <p><strong>Name:</strong> {{ nombrealum }}</p>
         <p><strong>Matricula:</strong> {{ matriculaalum }}</p>
+        <button @click="generateLetter">Generar Carta de Recomendación</button>
         <button @click="iraEstadisticas">Ver estadistica</button>
     </section>
 </div>
@@ -185,6 +186,56 @@ export default {
                 this.fetchComments();
             } catch (error) {
                 console.error('Error deleting comment:', error);
+            }
+        },
+        async generateLetter() {
+            try {
+                const response = this.fetchComments(); // Endpoint para obtener los comentarios
+                const comments = response.data;
+
+                if (!comments || comments.length === 0) {
+                    Swal.fire({
+                        title: 'Sin comentarios',
+                        text: 'No hay comentarios registrados para calcular el promedio.',
+                        icon: 'info',
+                        confirmButtonText: 'Aceptar',
+                    });
+                    return;
+                }
+
+                // Calcula el promedio de los pesos
+                const totalPeso = comments.reduce((sum, comment) => sum + (comment.peso || 0), 0);
+                const promedioPeso = totalPeso / comments.length;
+
+                // Decide el tipo de carta según el promedio
+                let letterType;
+                let letterMessage;
+                if (promedioPeso >= 3) {
+                    letterType = 'recomendacion';
+                    letterMessage = 'Se generó una carta de recomendación debido al buen desempeño.';
+                } else {
+                    letterType = 'sumario';
+                    letterMessage = 'Se generó una carta de sumario debido a los resultados negativos.';
+                }
+
+                // Simula la generación de la carta
+                Swal.fire({
+                    title: `Carta de ${letterType === 'recomendacion' ? 'Recomendación' : 'Sumario'}`,
+                    text: letterMessage,
+                    icon: letterType === 'recomendacion' ? 'success' : 'warning',
+                    confirmButtonText: 'Descargar',
+                }).then(() => {
+                    // Lógica para descargar la carta
+                    this.downloadLetter(letterType);
+                });
+            } catch (error) {
+                console.error('Error al generar la carta:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Ocurrió un problema al generar la carta. Por favor, inténtalo de nuevo.',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar',
+                });
             }
         },
     },
