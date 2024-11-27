@@ -187,6 +187,13 @@ module.exports.addStudentToCourseInstanceDBService = async (curso, alumno) => {
         console.log("Curso:", curso);
         const newAlumno = alumno.alumno;
         console.log("Nuevo alumno:", newAlumno);
+        const response = await studentModel.findOne({matricula: newAlumno});
+        if(!response){
+            return {
+                status: false,
+                msg: "El alumno NO EXISTE",
+            };
+        }
 
         const result = await this.getCourseInstanceDBService(curso);
 
