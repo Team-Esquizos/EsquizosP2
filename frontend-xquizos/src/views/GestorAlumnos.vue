@@ -98,6 +98,7 @@
 import axios from 'axios';
 import navBar from '@/components/AppNavbarAdm.vue';
 import autenticadorSesion from '../mixins/AutenticadorSesion.js';
+import Swal from 'sweetalert2';
 
 export default {
     name: 'GestorAlumnos',
@@ -185,16 +186,50 @@ export default {
         },
         async addAlumno() {
             try {
+                // Enviar datos del alumno al backend
                 await axios.post('http://localhost:3333/api/student/register', this.alumno);
+
+                // Actualizar la lista de alumnos después de agregar uno nuevo
                 this.fetchAlumnos();
-                alert('Alumno agregado exitosamente.');
+
+                // Mostrar alerta de éxito
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: 'Alumno agregado exitosamente.',
+                    confirmButtonText: 'Aceptar'
+                });
             } catch (error) {
-                console.log(error);
-                if (error.response && error.response.status === 409) {
-                    alert('El alumno ya está registrado. Verifica los datos.');
+                // Mostrar detalles del error en la consola para depuración
+                console.error('Error al agregar alumno:', error);
+
+                // Manejar errores específicos basados en la respuesta del servidor
+                if (error.response) {
+                    if (error.response.status === 409) {
+                        // Código 409: Duplicado
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Registro duplicado',
+                            text: 'El alumno ya está registrado. Verifica los datos.',
+                            confirmButtonText: 'Entendido'
+                        })
+                    } else {
+                        // Otros errores con respuesta del servidor
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: error.response.data.message || 'Ocurrió un problema al agregar el alumno.',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
                 } else {
-                    console.error('Error al agregar alumno:', error);
-                    alert('Ocurrió un error al agregar el alumno. Intenta nuevamente.');
+                    // Error sin respuesta del servidor (problemas de red, etc.)
+                    Swal.fire({
+                icon: 'error',
+                title: 'Error de conexión',
+                text: 'No se pudo conectar al servidor. Intenta nuevamente.',
+                confirmButtonText: 'Aceptar'
+            })
                 }
             }
         },

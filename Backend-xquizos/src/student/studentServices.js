@@ -5,21 +5,30 @@ var courseModel = require('../course/courseModel.js');
 module.exports.registerStudentDBService = (studentData) => {
     return new Promise(async function myFn(resolve, reject) {
 
-        var studentModelData = new studentModel();
-
-        studentModelData.nombres = studentData.nombres;
-        studentModelData.apellidoP = studentData.apellidoP;
-        studentModelData.apellidoM = studentData.apellidoM;
-        studentModelData.rut = studentData.rut;
-        studentModelData.matricula = studentData.matricula;
-        studentModelData.fecNac = studentData.fecNac;
-        studentModelData.fecIng = studentData.fecIng;
-
         try {
+            // Verificar si el estudiante ya existe (por ejemplo, usando 'rut' o 'matricula' como únicos)
+            const existingStudent = await studentModel.findOne({ rut: studentData.rut });
+            
+            if (existingStudent) {
+                resolve('duplicate'); // Indica que el estudiante ya está registrado
+                return;
+            }
+
+            // Crear un nuevo estudiante si no existe
+            var studentModelData = new studentModel();
+            studentModelData.nombres = studentData.nombres;
+            studentModelData.apellidoP = studentData.apellidoP;
+            studentModelData.apellidoM = studentData.apellidoM;
+            studentModelData.rut = studentData.rut;
+            studentModelData.matricula = studentData.matricula;
+            studentModelData.fecNac = studentData.fecNac;
+            studentModelData.fecIng = studentData.fecIng;
+
             await studentModelData.save();
-            resolve(true);
+            resolve(true); // Estudiante registrado exitosamente
+
         } catch (error) {
-            reject(error);
+            reject(error); // Error general del sistema
         }
     });
 };

@@ -2,20 +2,32 @@ var studentService = require('./studentServices.js');
 
 var registerStudentControllerFn = async (req, res) => {
     try {
-
         var status = await studentService.registerStudentDBService(req.body);
-        //console.log(status);
 
-        if(status){
-            res.send({"status": true, "message": "Student registered succesfully"});
+        if (status === 'duplicate') {
+            return res.status(409).send({
+                status: false,
+                message: "El estudiante ya está registrado"
+            });
+        } else if (status) {
+            return res.status(201).send({
+                status: true,
+                message: "Estudiante registrado exitosamente"
+            });
         } else {
-            res.send({"status": false, "message": "Failed student registration"});
+            return res.status(500).send({
+                status: false,
+                message: "Fallo en el registro del estudiante"
+            });
         }
-
     } catch (err) {
-        console.log(err);
+        console.error(err);
+        return res.status(500).send({
+            status: false,
+            message: "Error interno del servidor"
+        });
     }
-}
+};
 
 var getStudentsControllerFn = async (req, res) => {
     try {
