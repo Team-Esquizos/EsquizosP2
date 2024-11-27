@@ -85,6 +85,13 @@ const routes = [
     name: 'PerfilAlumno',
     component: PerfilAlumno,
     props: true
+  },
+  { 
+    path: '/cursoPeriodo/:nombre/:seccion/:semestre/:codCurso',
+    name: 'CursoPeriodo',
+    component: () => import("@/views/CursoPeriodo.vue"),
+    props: true,
+    state: true
   }
 
 ];
