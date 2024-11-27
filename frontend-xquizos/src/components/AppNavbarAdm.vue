@@ -11,6 +11,7 @@
       <li v-if="isAdmin" class="navbar-item"><a href="#" @click="GestorAlumnos">Alumnos</a></li>
       <li v-if="isAdmin" class="navbar-item"><a href="#" @click="GestorDocentes">Docentes</a></li>
       <li v-if="isAdmin" class="navbar-item"><a href="#" @click="GestorCursos">Cursos</a></li>
+      <li v-if="isAdmin" class="navbar-item"><a href="#" @click="GestorCursosPeriodo">Cursos Periodo</a></li>
       <li v-if="isAdmin" class="navbar-item"><a href="#" @click="cerrarSesion">Salir</a></li>
       
     </ul>
@@ -69,6 +70,9 @@ export default {
     },
     GestorCursos() {
       this.$router.push({ name: 'GestorCursos' });
+    },
+    GestorCursosPeriodo() {
+      this.$router.push({ name: 'GestorCursosPeriodo' });
     },
     toggleMobileMenu() {
       this.isMobileMenuOpen = !this.isMobileMenuOpen;
