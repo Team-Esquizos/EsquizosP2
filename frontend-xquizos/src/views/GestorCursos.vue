@@ -59,7 +59,7 @@
         </div>
     </div>
 
-    <div class="table-responsive" ref="tableContainer" style="border-radius: 15px; max-height: 300px; overflow-y: auto; position: relative;">
+    <div class="table-responsive" ref="tableContainer" style="border-radius: 15px; ">
         <table class="table table-striped table-hover table-bordered text-center">
             <thead class="thead-light" style="position: sticky; top: 0; z-index: 1; background-color: white;">
                 <tr>
@@ -169,7 +169,12 @@ export default {
             try {
                 await axios.post('http://localhost:3333/api/courses/register', this.curso);
                 this.fetchCursos();
-                alert('Curso agregado exitosamente.');
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: 'Curso agregado exitosamente.',
+                    confirmButtonText: 'Aceptar'
+                });
             } catch (error) {
                 if (error.response) {
                     if (error.response.status === 409) {
@@ -177,7 +182,7 @@ export default {
                         Swal.fire({
                             icon: 'warning',
                             title: 'Registro duplicado',
-                            text: 'El alumno ya está registrado. Verifica los datos.',
+                            text: 'El Curso ya está registrado. Verifica los datos.',
                             confirmButtonText: 'Entendido'
                         })
                     } else {
@@ -185,7 +190,7 @@ export default {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: error.response.data.message || 'Ocurrió un problema al agregar el alumno.',
+                            text: error.response.data.message || 'Ocurrió un problema al agregar el Curso.',
                             confirmButtonText: 'Aceptar'
                         });
                     }
@@ -305,7 +310,6 @@ export default {
         }
     },
 }
-
 </script>
 
 <style scoped>
