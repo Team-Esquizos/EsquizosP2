@@ -53,7 +53,7 @@
         </div>
     </div>
 
-    <div class="table-responsive" ref="tableContainer" style="border-radius: 15px; max-height: 500px; overflow-y: auto; position: relative;">
+    <div class="table-responsive" ref="tableContainer" style="border-radius: 15px; ">
         <table class="table table-striped table-hover table-bordered text-center">
             <thead class="thead-light" style="position: sticky; top: 0; z-index: 1; background-color: white;">
                 <tr>
