@@ -134,6 +134,18 @@ export default {
         this.fetchCursos();
     },
     methods: {
+        viewCurso(cursoPeriodo){
+            console.log(cursoPeriodo.codCurso);
+            this.$router.push({
+                name: 'CursoPeriodo',
+                params: {
+                    nombre: cursoPeriodo.course[0].nombre,
+                    seccion: cursoPeriodo.course[0].seccion,
+                    semestre: cursoPeriodo.course[0].semestre,
+                    codCurso: cursoPeriodo.codCurso
+                }
+            });
+        },  
         goBack() {
             this.$router.push({
                 name: 'VistaAdministrador'
