@@ -26,6 +26,41 @@
                   <strong>Docente:</strong> {{ docente.nombres }} {{ docente.apellidoP }} {{ docente.apellidoM }}
                 </li>
               </ul>
+              <div class="d-flex justify-content-center mt-4 gap-2">
+                <button class="btn btn-outline-info" @click="showModal = true">
+                  <i class="bi bi-person-plus me-1"></i> Cambiar Docente
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal para cambiar docente -->
+      <div v-if="showModal" class="modal d-block" tabindex="-1" aria-labelledby="modalChangeTeacher" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalChangeTeacher">Seleccionar Docente</h5>
+              <button type="button" class="btn-close" @click="showModal = false" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="list-group">
+                <a 
+                  v-for="teacher in availableTeachers" 
+                  :key="teacher.rut" 
+                  href="#" 
+                  class="list-group-item list-group-item-action"
+                  :class="{ 'selected': teacher.rut === newDocente?.rut }" 
+                  @click="selectTeacher(teacher)"
+                >
+                  {{ teacher.nombres }} {{ teacher.apellidoP }} {{ teacher.apellidoM }}
+                </a>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" @click="showModal = false">Cancelar</button>
+              <button type="button" class="btn btn-primary" @click="updateTeacher">Confirmar Cambio</button>
             </div>
           </div>
         </div>
@@ -145,17 +180,24 @@ export default {
       showAddAlumno: false,
       newMatricula: "", // Para capturar el número de matrícula
       suggestions: [], // Lista de sugerencias de matrículas
+      showModal: false,  // Para mostrar el modal
+      availableTeachers: [],  // Lista de docentes disponibles
+      newDocente: null,  // Docente seleccionado para cambiar
     };
   },
   async created() {
     try {
       const teacherData = await axios.get(`http://localhost:3333/api/courseInstance/get/teacher/${this.codCurso}`);
-      
+      const teachersData = await axios.get("http://localhost:3333/api/teaching/get");
+      console.log(teachersData.data);
+      this.availableTeachers = teachersData.data;
+
       if (teacherData.data.teaching) {
         this.docente = teacherData.data.teaching;
       } else {
         this.docente = { nombres: "Por", apellidoP: "Definir", apellidoM: "" };
       }
+      
     } catch (error) {
       console.error("Error al obtener docente:", error);
       this.docente = { nombres: "Por", apellidoP: "Definir", apellidoM: "" };
@@ -164,6 +206,25 @@ export default {
     this.fetchAlumnos(); // Para cargar alumnos como se hacía antes
   },
   methods: {
+    // Función para seleccionar un docente
+    selectTeacher(teacher) {
+        this.newDocente = teacher;
+    },
+    // Función para actualizar el docente en el backend
+    async updateTeacher() {
+        if (this.newDocente) {
+        try {
+            await axios.put(`http://localhost:3333/api/courseInstance/setTeaching/${this.codCurso}/${this.newDocente.rut}`, {
+            codDocente: this.newDocente.rut
+            });
+            this.docente = { ...this.newDocente };  // Actualizar los datos del docente
+            alert("Docente actualizado correctamente");
+        } catch (error) {
+            console.error("Error al actualizar el docente", error);
+            alert("Hubo un error al actualizar el docente");
+        }
+        }
+    },
     async fetchSuggestions() {
       // No buscar si el texto es muy corto
       if (this.newMatricula.length < 2) {
