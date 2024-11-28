@@ -77,24 +77,39 @@ module.exports.getAllCoursesInstanceDBService = async () => {
 module.exports.getTeacherCourseInstancesDBService = async (codDocente) => {
     try {
         console.log(codDocente);
+        
+        // Obtener todas las instancias de curso para el docente
         const result = await courseInstanceModel.find({ codDocente: codDocente });
-        result.codCurso;
-
-        const cursos = await studentModel.find({ codDocente: codDocente });
         console.log(result);
-        if (result) {
-            console.log("Curso encontrado");
-            return { status: true, msg: "Curso encontrado", courseInstance: result  };
+
+        if (!result || result.length === 0) {
+            console.log("No se encontraron instancias de curso para este docente");
+            return { status: false, msg: "No se encontraron instancias de curso para este docente" };
+        }
+
+        // Extraer los codCurso de las instancias de curso encontradas
+        const codigosCursos = result.map(instance => instance.codCurso);
+        console.log("Códigos de curso extraídos:", codigosCursos);
+
+        // Obtener los cursos asociados a esos codigos
+        const cursos = await courseModel.find({ codigo: { $in: codigosCursos } });
+        console.log("Cursos encontrados:", cursos);
+
+        if (cursos && cursos.length > 0) {
+            console.log("Cursos encontrados");
+            return { status: true, msg: "Cursos encontrados", courses: cursos };
         } else {
-            console.log("INVALID DATA");
-            return { status: false, msg: "INVALID DATA" };
+            console.log("No se encontraron cursos para las instancias");
+            return { status: false, msg: "No se encontraron cursos para las instancias" };
         }
 
     } catch (error) {
-        console.log("INVALID DATA");
-        return { status: false, msg: "INVALID DATA" };
+        console.log("Error:", error);
+        return { status: false, msg: "Ocurrió un error al obtener los cursos" };
     }
 };
+
+
 
 module.exports.getStudentsFromCourseInstanceDBService = async (curso) => {
     try {
