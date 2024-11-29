@@ -197,7 +197,8 @@ export default {
                     icon: 'success',
                     title: '¡Éxito!',
                     text: 'Alumno agregado exitosamente.',
-                    confirmButtonText: 'Aceptar'
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#4CAF50'
                 });
             } catch (error) {
                 // Mostrar detalles del error en la consola para depuración
@@ -211,7 +212,8 @@ export default {
                             icon: 'warning',
                             title: 'Registro duplicado',
                             text: 'El alumno ya está registrado. Verifica los datos.',
-                            confirmButtonText: 'Entendido'
+                            confirmButtonText: 'Entendido',
+                            confirmButtonColor: '#d33'
                         })
                     } else {
                         // Otros errores con respuesta del servidor
@@ -219,7 +221,8 @@ export default {
                             icon: 'error',
                             title: 'Error',
                             text: error.response.data.message || 'Ocurrió un problema al agregar el alumno.',
-                            confirmButtonText: 'Aceptar'
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor: '#d33'
                         });
                     }
                 } else {
@@ -228,7 +231,8 @@ export default {
                         icon: 'error',
                         title: 'Error de conexión',
                         text: 'No se pudo conectar al servidor. Intenta nuevamente.',
-                        confirmButtonText: 'Aceptar'
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#d33'
                     })
                 }
             }
@@ -237,6 +241,13 @@ export default {
             try {
                 await axios.put(`http://localhost:3333/api/student/${this.alumno.matricula}`, this.alumno);
                 this.fetchAlumnos();
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: 'Alumno actualizado exitosamente.',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#4CAF50'
+                });
             } catch (error) {
                 console.error('Error al actualizar alumno:', error);
             }
@@ -245,6 +256,13 @@ export default {
             try {
                 await axios.delete(`http://localhost:3333/api/student/remove/${matricula}`);
                 this.fetchAlumnos();
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: 'Alumno eliminado exitosamente.',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#4CAF50'
+                });
             } catch (error) {
                 console.error('Error al eliminar alumno:', error);
             }

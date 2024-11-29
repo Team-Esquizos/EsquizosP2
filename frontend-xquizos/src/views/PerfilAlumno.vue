@@ -10,7 +10,8 @@
     <section class="student-info">
         <p><strong>Name:</strong> {{ nombrealum }}</p>
         <p><strong>Matricula:</strong> {{ matriculaalum }}</p>
-        <button @click="generateLetter">Generar Carta de Recomendación</button>
+        <button @click="showChoiceDialog">Generar Carta de Recomendación</button>
+
         <button @click="iraEstadisticas">Ver estadistica</button>
     </section>
 </div>
@@ -77,6 +78,8 @@ import axios from 'axios';
 import navBar from '@/components/AppNavbarAdm.vue';
 import GoBackMixin from '@/mixins/AutenticadorSesion';
 import Swal from 'sweetalert2';
+import jsPDF from 'jspdf';
+import logo from '@/assets/Utalca.png';
 
 export default {
     name: 'PerfilAlumno',
@@ -100,6 +103,112 @@ export default {
         this.fetchComments();
     },
     methods: {
+        async generatePDF(type) {
+            const doc = new jsPDF();
+            const imgData = await this.loadLogo();
+
+            if (type === "recomendacion") {
+                // Encabezado de carta de recomendación
+                doc.addImage(imgData, "PNG", 10, 10, 30, 30); // Logo
+                doc.setFont("Times", "bold");
+                doc.setFontSize(16);
+                doc.text("Carta de Recomendación", 60, 20);
+
+                // Contenido de la carta de recomendación
+                const recommendationContent = `
+Estimado/a:
+
+Por la presente, recomiendo ampliamente a ${this.nombrealum}, con matrícula ${this.matriculaalum}, por su destacada participación en el programa académico. 
+Durante su tiempo con nosotros, demostró ser una persona comprometida, proactiva y orientada a resultados.
+
+Entre sus logros más destacados se encuentran:
+- [Logro 1].
+- [Logro 2].
+- [Logro 3].
+
+Estoy convencido de que ${this.nombrealum} será un gran activo para cualquier organización o proyecto en el que participe.
+        `;
+                doc.setFont("Times", "normal");
+                doc.setFontSize(12);
+                doc.text(recommendationContent, 10, 40, {
+                    maxWidth: 190
+                });
+            } else if (type === "sumario") {
+                // Encabezado de carta de sumario
+                doc.addImage(imgData, "PNG", 10, 10, 30, 30); // Logo
+                doc.setFont("Times", "bold");
+                doc.setFontSize(16);
+                doc.text("Carta de Sumario", 70, 20);
+
+                // Contenido de la carta de sumario
+                const summaryContent = `
+Estudiante: ${this.nombrealum}
+Matrícula: ${this.matriculaalum}
+Fecha: ${new Date().toLocaleDateString()}
+
+A quien corresponda:
+
+Por medio de la presente, solicitamos información adicional sobre el estudiante ${this.nombrealum}, con matrícula ${this.matriculaalum}, 
+quien se encuentra registrado en nuestro sistema académico. Esta solicitud se realiza con el fin de llevar a cabo un seguimiento 
+detallado de su desempeño y cumplimiento con las políticas institucionales.
+
+Los datos requeridos incluyen, pero no se limitan a:
+1. Historial académico detallado.
+2. Información sobre actividades extracurriculares realizadas.
+3. Cualquier observación relevante sobre su conducta o desempeño.
+
+Le solicitamos que esta información sea proporcionada a la brevedad posible, en un plazo no mayor a [insertar plazo], 
+para proceder con las evaluaciones correspondientes. Si requiere más información, no dude en contactarnos.
+
+Atentamente,
+[Tu nombre]
+        `;
+                doc.setFont("Times", "normal");
+                doc.setFontSize(12);
+                doc.text(summaryContent, 10, 40, {
+                    maxWidth: 190
+                });
+            }
+
+            // Guardar el archivo PDF
+            doc.save(type === "recomendacion" ? "carta_recomendacion.pdf" : "carta_sumario.pdf");
+        },
+
+        loadLogo() {
+            // Método para cargar el logo como Base64
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.src = logo;
+                img.onload = () => {
+                    const canvas = document.createElement("canvas");
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0);
+                    resolve(canvas.toDataURL("image/png"));
+                };
+            });
+        },
+
+        async showChoiceDialog() {
+            const result = await Swal.fire({
+                title: "Seleccione el tipo de carta",
+                text: "¿Qué carta desea generar?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",  
+                confirmButtonText: "Recomendación",
+                cancelButtonColor: "#d33",
+                cancelButtonText: "Sumario",
+                reverseButtons: true,
+            });
+
+            if (result.isConfirmed) {
+                this.generatePDF("recomendacion");
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                this.generatePDF("sumario");
+            }
+        },
         async iraEstadisticas() {
             this.$router.push({
                 name: 'VistaEstadisticas'
@@ -151,6 +260,7 @@ export default {
                         title: 'Comentario añadido',
                         text: 'El comentario se agregó exitosamente.',
                         icon: 'success',
+                        confirmButtonColor  : '#3085d6',
                         confirmButtonText: 'Aceptar',
                     });
                 }
@@ -176,6 +286,13 @@ export default {
 
                 await axios.post('http://localhost:3333/api/comments/add', defaultComment);
                 this.fetchComments();
+                Swal.fire({
+                    title: 'Comentario añadido',
+                    text: 'El comentario se agregó exitosamente.',
+                    icon: 'success',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#3085d6',
+                });
             } catch (error) {
                 console.error('Error adding default comment:', error);
             }
@@ -184,6 +301,13 @@ export default {
             try {
                 await axios.delete(`http://localhost:3333/api/comments/remove/${index}`);
                 this.fetchComments();
+                Swal.fire({
+                    title: 'Comentario eliminado',
+                    text: 'El comentario se eliminó exitosamente.',
+                    icon: 'success',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#3085d6',
+                });
             } catch (error) {
                 console.error('Error deleting comment:', error);
             }
