@@ -210,6 +210,13 @@ export default {
         try {
             await axios.put(`http://localhost:3333/api/courses/${this.curso.codigo}`, this.curso);
             this.fetchCursos();
+            Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                text: 'Curso actualizado exitosamente.',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor  : '#2ecc71'
+            });
         } catch (error) {
             console.error('Error al actualizar Curso:', error);
         }
@@ -218,6 +225,13 @@ export default {
         try {
             await axios.delete(`http://localhost:3333/api/courses/remove/${encodeURIComponent(nombre)}/${seccion}`);
             this.fetchCursos();
+            Swal.fire({
+                icon: 'success',
+                title: '¡Éxito!',
+                text: 'Curso eliminado exitosamente.',
+                confirmButtonText: 'Aceptar',
+                confirmButtonColor  : '#2ecc71'
+            });
         } catch (error) {
             console.error('Error al eliminar Curso:', error);
         }

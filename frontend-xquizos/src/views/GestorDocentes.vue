@@ -205,6 +205,13 @@ export default {
             try {
                 await axios.put(`http://localhost:3333/api/teaching/${this.docente.rut}`, this.docente);
                 this.fetchDocentes();
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: 'Profesor actualizado exitosamente.',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#5cb85c'
+                });
             } catch (error) {
                 console.error('Error al actualizar docente:', error);
             }
@@ -213,6 +220,13 @@ export default {
             try {
                 await axios.delete(`http://localhost:3333/api/teaching/remove/${rut}`);
                 this.fetchDocentes();
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: 'Profesor eliminado exitosamente.',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#d33'
+                });
             } catch (error) {
                 console.error('Error al eliminar Docente:', error);
             }
