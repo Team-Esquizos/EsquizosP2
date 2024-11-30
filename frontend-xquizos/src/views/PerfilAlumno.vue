@@ -1,7 +1,7 @@
 <template>
 <navBar />
 <div class="student-profile">
-    <header>
+    <header class="header-container">
         <button class="btn btn-secondary back-button" @click="goBack">
             <i class="fa-solid fa-circle-left"></i> Volver a los modulos
         </button>
@@ -56,8 +56,8 @@
         <h2>Add a Custom Comment</h2>
         <textarea v-model="newComment.comentario" placeholder="Write a comment..."></textarea>
         <div>
-            <label for="commentWeight">Puntaje:</label>
-            <input id="commentWeight" type="number" v-model.number="newComment.peso" min="-5" max="5" step="1" placeholder="0" />
+            <Slide v-model="newComment.peso"/>
+            <p>Peso seleccionado: {{ newComment.peso }}</p>
         </div>
         <button @click="addComment">Add Comment</button>
         <div class="comments-list">
@@ -80,13 +80,15 @@ import GoBackMixin from '@/mixins/AutenticadorSesion';
 import Swal from 'sweetalert2';
 import jsPDF from 'jspdf';
 import logo from '@/assets/Utalca.png';
+import Slide from '@/components/Slide.vue';
 
 export default {
     name: 'PerfilAlumno',
     props: ['matriculaalum', 'nombrealum'],
     mixins: [GoBackMixin],
     components: {
-        navBar
+        navBar,
+        Slide
     },
     data() {
         return {
@@ -94,7 +96,7 @@ export default {
                 matricula: '',
                 codDocente: '',
                 comentario: '',
-                peso: '',
+                peso: 0,
             },
             comments: [],
         };
@@ -376,8 +378,17 @@ body {
     padding: 0;
 }
 
+.header-container {
+    display: flex;
+    align-items: center;
+    gap: 440px; /* Espaciado entre el botón y el título */
+    justify-content: flex-start; /* Alinear los elementos hacia la izquierda */
+    margin-top: 5.2%;
+}
+
+
 .back-button {
-    margin-right: 20px;
+    margin: 0; /* Opcional, ajusta si hay márgenes no deseados */
 }
 
 /* Profile Header */
