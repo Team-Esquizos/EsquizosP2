@@ -2,20 +2,32 @@ var studentService = require('./studentServices.js');
 
 var registerStudentControllerFn = async (req, res) => {
     try {
-
         var status = await studentService.registerStudentDBService(req.body);
-        //console.log(status);
 
-        if(status){
-            res.send({"status": true, "message": "Student registered succesfully"});
+        if (status === 'duplicate') {
+            return res.status(409).send({
+                status: false,
+                message: "El estudiante ya está registrado"
+            });
+        } else if (status) {
+            return res.status(201).send({
+                status: true,
+                message: "Estudiante registrado exitosamente"
+            });
         } else {
-            res.send({"status": false, "message": "Failed student registration"});
+            return res.status(500).send({
+                status: false,
+                message: "Fallo en el registro del estudiante"
+            });
         }
-
     } catch (err) {
-        console.log(err);
+        console.error(err);
+        return res.status(500).send({
+            status: false,
+            message: "Error interno del servidor"
+        });
     }
-}
+};
 
 var getStudentsControllerFn = async (req, res) => {
     try {
@@ -73,23 +85,27 @@ var removeStudentControllerFn = async (req, res) => {
 
 
 var addlista_de_accionesControllerFn = async (req, res) => {
-    const matricula = req.params.matricula; 
-    const accion = req.body.lista_de_acciones;
+    const { matricula } = req.params;
+    const { lista_de_acciones } = req.body;
 
-    try {
-        const result = await studentService.addlista_de_accionesDBService(matricula, accion);
-
-        if (result.status) {
-            res.status(200).json(result);
-        } else {
-            res.status(404).json(result);
-        }
-    } catch (error) {
-        console.error('Error en la actualización del estudiante:', error);
-        res.status(500).json({ status: false, msg: "Error en el servidor" });
+    if (!matricula || !lista_de_acciones) {
+        return res.status(400).json({ status: false, msg: "Matricula o lista de acciones faltante" });
     }
 
-}
+    try {
+        const result = await studentService.addlista_de_accionesDBService(matricula, lista_de_acciones);
+
+        if (result.status) {
+            return res.status(200).json(result);
+        } else {
+            return res.status(404).json(result);
+        }
+    } catch (error) {
+        console.error("Error en la actualización del estudiante:", error);
+        return res.status(500).json({ status: false, msg: "Error en el servidor" });
+    }
+};
+
 
 
 

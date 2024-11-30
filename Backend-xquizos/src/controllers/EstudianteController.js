@@ -16,15 +16,14 @@ const importEstudiante = async (req, res) => {
                     const cursos = response[i].curso ? response[i].curso.split(',') : [];
 
                     datosData.push({
-                        matricula: response[i].rut,
+                       
+                        nombres: response[i].nombres,
                         rut: response[i].rut,
-                        email: response[i].email,
-                        nombrePrimer: response[i].nombrePrimer,
-                        nombreSegundo: response[i].nombreSegundo,
                         apellidoP: response[i].apellidoP,
                         apellidoM: response[i].apellidoM,
-                        carrera: response[i].carrera,
-                        cursos: cursos // Guardamos los cursos como un array
+                        matricula: response[i].matricula,
+                        fecNac: response[i].fecNac,
+                        fecIng: response[i].fecIng // Guardamos los cursos como un array
                     });
                 }
 

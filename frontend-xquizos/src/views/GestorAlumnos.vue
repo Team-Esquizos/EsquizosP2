@@ -53,7 +53,7 @@
         </div>
     </div>
 
-    <div class="table-responsive" ref="tableContainer" style="border-radius: 15px; max-height: 300px; overflow-y: auto; position: relative;">
+    <div class="table-responsive" ref="tableContainer" style="border-radius: 15px; ">
         <table class="table table-striped table-hover table-bordered text-center">
             <thead class="thead-light" style="position: sticky; top: 0; z-index: 1; background-color: white;">
                 <tr>
@@ -98,6 +98,7 @@
 import axios from 'axios';
 import navBar from '@/components/AppNavbarAdm.vue';
 import autenticadorSesion from '../mixins/AutenticadorSesion.js';
+import Swal from 'sweetalert2';
 
 export default {
     name: 'GestorAlumnos',
@@ -185,16 +186,54 @@ export default {
         },
         async addAlumno() {
             try {
+                // Enviar datos del alumno al backend
                 await axios.post('http://localhost:3333/api/student/register', this.alumno);
+
+                // Actualizar la lista de alumnos después de agregar uno nuevo
                 this.fetchAlumnos();
-                alert('Alumno agregado exitosamente.');
+
+                // Mostrar alerta de éxito
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: 'Alumno agregado exitosamente.',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#4CAF50'
+                });
             } catch (error) {
-                console.log(error);
-                if (error.response && error.response.status === 409) {
-                    alert('El alumno ya está registrado. Verifica los datos.');
+                // Mostrar detalles del error en la consola para depuración
+                console.error('Error al agregar alumno:', error);
+
+                // Manejar errores específicos basados en la respuesta del servidor
+                if (error.response) {
+                    if (error.response.status === 409) {
+                        // Código 409: Duplicado
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Registro duplicado',
+                            text: 'El alumno ya está registrado. Verifica los datos.',
+                            confirmButtonText: 'Entendido',
+                            confirmButtonColor: '#d33'
+                        })
+                    } else {
+                        // Otros errores con respuesta del servidor
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: error.response.data.message || 'Ocurrió un problema al agregar el alumno.',
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor: '#d33'
+                        });
+                    }
                 } else {
-                    console.error('Error al agregar alumno:', error);
-                    alert('Ocurrió un error al agregar el alumno. Intenta nuevamente.');
+                    // Error sin respuesta del servidor (problemas de red, etc.)
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        text: 'No se pudo conectar al servidor. Intenta nuevamente.',
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#d33'
+                    })
                 }
             }
         },
@@ -202,6 +241,13 @@ export default {
             try {
                 await axios.put(`http://localhost:3333/api/student/${this.alumno.matricula}`, this.alumno);
                 this.fetchAlumnos();
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: 'Alumno actualizado exitosamente.',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#4CAF50'
+                });
             } catch (error) {
                 console.error('Error al actualizar alumno:', error);
             }
@@ -210,6 +256,13 @@ export default {
             try {
                 await axios.delete(`http://localhost:3333/api/student/remove/${matricula}`);
                 this.fetchAlumnos();
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: 'Alumno eliminado exitosamente.',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#4CAF50'
+                });
             } catch (error) {
                 console.error('Error al eliminar alumno:', error);
             }

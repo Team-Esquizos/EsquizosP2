@@ -4,34 +4,46 @@ var userModel = require('../user/userModel.js');
 
 module.exports.registerTeachingDBService = (teachingData) => {
     return new Promise(async function myFn(resolve, reject) {
-
-        var teachingModelData = new teachingModel();
-        const newUser = new userModel();
-
-
-        teachingModelData.nombres = teachingData.nombres;
-        teachingModelData.apellidoP = teachingData.apellidoP;
-        teachingModelData.apellidoM = teachingData.apellidoM;
-        teachingModelData.rut = teachingData.rut;
-        teachingModelData.titulo = teachingData.titulo;
-        teachingModelData.gradoMax = teachingData.gradoMax;
-
-
-        newUser.email = `${teachingData.nombres[0]}${teachingData.nombres[1]}${teachingData.apellidoP}@email.com`.toLowerCase();
-        console.log(newUser.email);
-        newUser.password = "1234";  
-        newUser.isAdmin = false; 
-        newUser.username = `${teachingData.nombres}${teachingData.apellidoP}`.toLowerCase();
-        newUser.rut = teachingData.rut;
-        console.log(newUser.email);
-
         try {
+            // Verificar si el docente ya existe por su 'rut'
+            const existingTeaching = await teachingModel.findOne({ rut: teachingData.rut });
+            if (existingTeaching) {
+                resolve('duplicate'); // Indica duplicado
+                return;
+            }
+
+            // Verificar si ya existe un usuario con el mismo 'rut' (si aplica)
+            const existingUser = await userModel.findOne({ rut: teachingData.rut });
+            if (existingUser) {
+                resolve('duplicate'); // Indica duplicado
+                return;
+            }
+
+            // Crear un nuevo docente
+            var teachingModelData = new teachingModel();
+            const newUser = new userModel();
+
+            teachingModelData.nombres = teachingData.nombres;
+            teachingModelData.apellidoP = teachingData.apellidoP;
+            teachingModelData.apellidoM = teachingData.apellidoM;
+            teachingModelData.rut = teachingData.rut;
+            teachingModelData.titulo = teachingData.titulo;
+            teachingModelData.gradoMax = teachingData.gradoMax;
+
+            // Crear usuario relacionado
+            newUser.email = `${teachingData.nombres[0]}${teachingData.nombres[1]}${teachingData.apellidoP}@email.com`.toLowerCase();
+            newUser.password = "1234";  
+            newUser.isAdmin = false; 
+            newUser.username = `${teachingData.nombres}${teachingData.apellidoP}`.toLowerCase();
+            newUser.rut = teachingData.rut;
+
             await teachingModelData.save();
             await newUser.save();
+
             console.log("New user created:", newUser);
-            resolve(true);
+            resolve(true); // Registro exitoso
         } catch (error) {
-            reject(error);
+            reject(error); // Error general
         }
     });
 };

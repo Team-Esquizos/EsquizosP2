@@ -3,7 +3,7 @@ const { truncateSync } = require('node:fs');
 var Schema = mongoose.Schema;
 
 var courseInstanceSchema = new Schema ({
-    codCurso: {type: String, required: true, unique: true},
+    codCurso: {type: String, required: true, unique: false},
     codDocente: {type: String, required: false, unique: false},
     alumnos: [
         {

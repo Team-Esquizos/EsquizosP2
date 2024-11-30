@@ -5,21 +5,30 @@ var courseModel = require('../course/courseModel.js');
 module.exports.registerStudentDBService = (studentData) => {
     return new Promise(async function myFn(resolve, reject) {
 
-        var studentModelData = new studentModel();
-
-        studentModelData.nombres = studentData.nombres;
-        studentModelData.apellidoP = studentData.apellidoP;
-        studentModelData.apellidoM = studentData.apellidoM;
-        studentModelData.rut = studentData.rut;
-        studentModelData.matricula = studentData.matricula;
-        studentModelData.fecNac = studentData.fecNac;
-        studentModelData.fecIng = studentData.fecIng;
-
         try {
+            // Verificar si el estudiante ya existe (por ejemplo, usando 'rut' o 'matricula' como únicos)
+            const existingStudent = await studentModel.findOne({ rut: studentData.rut });
+            
+            if (existingStudent) {
+                resolve('duplicate'); // Indica que el estudiante ya está registrado
+                return;
+            }
+
+            // Crear un nuevo estudiante si no existe
+            var studentModelData = new studentModel();
+            studentModelData.nombres = studentData.nombres;
+            studentModelData.apellidoP = studentData.apellidoP;
+            studentModelData.apellidoM = studentData.apellidoM;
+            studentModelData.rut = studentData.rut;
+            studentModelData.matricula = studentData.matricula;
+            studentModelData.fecNac = studentData.fecNac;
+            studentModelData.fecIng = studentData.fecIng;
+
             await studentModelData.save();
-            resolve(true);
+            resolve(true); // Estudiante registrado exitosamente
+
         } catch (error) {
-            reject(error);
+            reject(error); // Error general del sistema
         }
     });
 };
@@ -86,23 +95,25 @@ module.exports.editStudentDBService = async (matricula, updatedData) => {
 
 module.exports.addlista_de_accionesDBService = async (matricula, accion) => {
     try {
-        const student = await studentModel.findOne({ matricula });
-        if (student) {
-            db.collection('Student').updateOne(
-                { matricula: matricula },
-                { $push: { lista_de_acciones: accion } }
-              );
-            console.log("lista de acciones agregadas a estudiante:", student);
-            return { status: true, msg: "Estudiante actualizado correctamente", student };
-    }else{
-        console.log("Estudiante no encontrado");
-        return { status: false, msg: "Estudiante no encontrado" };
-    }
-    } catch (error) {
-        console.log("Error al actualizar el estudiante:", error);
-        return { status: false, msg: "Error al actualizar el estudiante" };
+        const student = await studentModel.findOneAndUpdate(
+            { matricula },
+            { $push: { lista_de_acciones: accion } }, // Agrega la acción
+            { new: true } // Devuelve el documento actualizado
+        );
 
-    }};
+        if (student) {
+            console.log("Lista de acciones agregadas al estudiante:", student);
+            return { status: true, msg: "Estudiante actualizado correctamente", student };
+        } else {
+            console.log("Estudiante no encontrado");
+            return { status: false, msg: "Estudiante no encontrado" };
+        }
+    } catch (error) {
+        console.error("Error al actualizar el estudiante:", error);
+        return { status: false, msg: "Error al actualizar el estudiante" };
+    }
+};
+
 
 module.exports.removeStudentDBService = async (matricula) => {
     try {
