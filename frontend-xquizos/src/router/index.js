@@ -9,6 +9,7 @@ import GestorDatos from '@/views/GestorDatos.vue';
 import GestorAlumnos from '@/views/GestorAlumnos.vue';
 import GestorDocentes from '@/views/GestorDocentes.vue';
 import GestorCursos from '@/views/GestorCursos.vue';
+import GestorCursosPeriodo from '@/views/GestorCursosPeriodo.vue';
 import VistaAlumnos from '@/views/VistaAlumnos.vue';
 
 import VistaEstadisticas from '@/views/VistaEstadisticas.vue';
@@ -68,6 +69,11 @@ const routes = [
     name: 'GestorCursos',
     component: GestorCursos
   },
+  {
+    path: '/gestorCursosPeriodo',
+    name: 'GestorCursosPeriodo',
+    component: GestorCursosPeriodo
+  },
 
   { path: '/vistaEstadisticas',
     name: 'VistaEstadisticas',
@@ -79,6 +85,13 @@ const routes = [
     name: 'PerfilAlumno',
     component: PerfilAlumno,
     props: true
+  },
+  { 
+    path: '/cursoPeriodo/:nombre/:seccion/:semestre/:codCurso',
+    name: 'CursoPeriodo',
+    component: () => import("@/views/CursoPeriodo.vue"),
+    props: true,
+    state: true
   }
 
 ];

@@ -2,7 +2,7 @@
 <img src="../assets/fondogestor2.jpg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
 <navBar />
 
-<div class="gestor-docentes-container container my-5" style="opacity: 0.9;">
+<div class="gestor-cursos-container container my-5" style="opacity: 0.9;">
 
     <!-- Contenedor principal para el botón y el título -->
     <div class="header-container container my-5">
@@ -13,7 +13,7 @@
             </button>
 
             <!-- Título centrado -->
-            <h1 class="title" style="border-radius: 15px;">Gestor de Docentes</h1>
+            <h1 class="title" style="border-radius: 15px;">Gestor de Cursos Periodo</h1>
         </div>
     </div>
 
@@ -21,12 +21,12 @@
     <div v-if="formVisible" class="modal-overlay" @click.self="clearForm">
         <div class="modal-content">
             <form @submit.prevent="handleSubmit">
-                <h3 class="text-center mb-4">{{ isEditMode ? 'Editar Docente' : 'Agregar Docente' }}</h3>
+                <h3 class="text-center mb-4">{{ isEditMode ? 'Editar Curso' : 'Agregar Curso' }}</h3>
 
                 <!-- Campos del formulario -->
                 <div class="form-group mb-3" v-for="(label, key) in formFields" :key="key">
                     <label :for="key">{{ label }}</label>
-                    <input type="text" :id="key" v-model="docente[key]" class="form-control" :required="requiredFields.includes(key)" />
+                    <input type="text" :id="key" v-model="cursoPeriodo[key]" class="form-control" :required="requiredFields.includes(key)" />
                 </div>
 
                 <!-- Botones de acción -->
@@ -40,48 +40,45 @@
 
     <!-- Lista de alumnos con el botón Agregar Alumno a la derecha del título -->
     <div class="d-flex align-items-center justify-content-between section-title mb-4">
-        <h3 style="border-radius: 15px;">Lista de Docentes</h3>
+        <h3 style="border-radius: 15px;">Lista de Cursos Periodo</h3>
         <div class="d-flex">
-            <button class="btn btn-primary" @click="toggleForm('add')"><i class="fa-solid fa-user-plus"></i> Agregar Docente</button>
+            <button class="btn btn-primary" @click="toggleForm('add')"><i class="fa-solid fa-user-plus"></i> Agregar Curso</button>
             <!-- Botón de importar CSV -->
             <div class="ms-2">
                 <input type="file" ref="fileInput" @change="onFileSelected" style="display: none;" accept=".csv" />
                 <button class="btn btn-success" @click="triggerFileInput">
                     <i class="fa-solid fa-file-csv"></i> Importar desde CSV
                 </button>
+
             </div>
+            
         </div>
     </div>
 
-    <div class="table-responsive" ref="tableContainer" style="border-radius: 15px; ">
+    <div class="table-responsive" ref="tableContainer" style="border-radius: 15px; max-height: 300px; overflow-y: auto; position: relative;">
         <table class="table table-striped table-hover table-bordered text-center">
             <thead class="thead-light" style="position: sticky; top: 0; z-index: 1; background-color: white;">
                 <tr>
-                    <th>Foto</th>
-                    <th>Nombre Completo</th>
-                    <th>Rut</th>
-                    <th>Título</th>
-                    <th>Grado Máximo</th>
+                    <th>Código curso</th>
+                    <th>Rut del docente</th>
+                    <th>Nombre</th>
+                    <th>Sección</th>
+                    <th>Semestre</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="docente in docentes" :key="docente.rut">
+                <tr v-for="cursoPeriodo in cursosPeriodo" :key="cursoPeriodo.course[0]?.nombre + cursoPeriodo.course[0]?.seccion + cursoPeriodo.course[0]?.semestre">
+                    <td class="align-middle">{{ cursoPeriodo.codCurso }}</td>
+                    <td class="align-middle">{{ cursoPeriodo.codDocente }}</td>
+                    <td class="align-middle">{{ cursoPeriodo.course[0]?.nombre }}</td>
+                    <td class="align-middle">{{ cursoPeriodo.course[0]?.seccion }}</td>
+                    <td class="align-middle">{{ cursoPeriodo.course[0]?.semestre }}</td>
                     <td class="align-middle">
-                        <img class="img-fluid rounded-circle" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Avatar" style="width: 50px; height: 50px;" />
-                    </td>
-                    <td class="align-middle">{{ docente.nombres }} {{ docente.apellidoP }} {{ docente.apellidoM }}</td>
-                    <td class="align-middle">{{ docente.rut }}</td>
-                    <td class="align-middle">{{ docente.titulo }}</td>
-                    <td class="align-middle">{{ docente.gradoMax }}</td>
-                    <td class="align-middle">
-                        <button @click="viewDocente(docente)" class="btn btn-sm btn-primary mx-1">
+                        <button @click="viewCurso(cursoPeriodo)" class="btn btn-sm btn-primary mx-1">
                             <i class="far fa-eye"></i>
                         </button>
-                        <button @click="toggleForm('edit', docente)" class="btn btn-sm btn-info mx-1">
-                            <i class="fas fa-pencil-alt"></i>
-                        </button>
-                        <button @click="deleteDocente(docente.rut)" class="btn btn-sm btn-danger mx-1">
+                        <button @click="deleteCurso(cursoPeriodo.codCurso)" class="btn btn-sm btn-danger mx-1">
                             <i class="far fa-trash-alt"></i>
                         </button>
                     </td>
@@ -99,146 +96,152 @@ import autenticadorSesion from '../mixins/AutenticadorSesion.js';
 import Swal from 'sweetalert2';
 
 export default {
-    name: 'GestorDocentes',
+    name: 'GestorCursosPeriodo',
     mixins: [autenticadorSesion],
     components: {
         navBar
     },
     data() {
         return {
-            docentes: [],
-            docente: {
-                nombres: '',
-                apellidoP: '',
-                apellidoM: '',
-                rut: '',
-                titulo: '',
-                gradoMax: ''
+            cursos: [],
+            curso: {
+                codigo: '',
+                carrera: '',
+                nombre: '',
+                semestre: '',
+                seccion: ''
             },
+            cursoPeriodo: {
+                codCurso: '',
+                codDocente: '',
+                alumnos: ''
+            },
+            cursosPeriodo: [],
             formVisible: false,
             isEditMode: false,
             formFields: {
-                nombres: 'Nombre(s) del docente',
-                apellidoP: 'Apellido Paterno',
-                apellidoM: 'Apellido Materno',
-                rut: 'Rut',
-                titulo: 'Título',
-                gradoMax: 'Grado Máximo',
+                codCurso: 'Código del curso',
+                codDocente: 'Rut del docente'
             },
-            requiredFields: ['nombres', 'apellidoP', 'apellidoM', 'rut', 'titulo', 'gradoMax']
+            requiredFields: ['codCurso', 'codDocente']
         };
     },
     created() {
-        this.fetchDocentes();
+        this.fetchCursos();
     },
     methods: {
-
+        viewCurso(cursoPeriodo){
+            console.log(cursoPeriodo.codCurso);
+            this.$router.push({
+                name: 'CursoPeriodo',
+                params: {
+                    nombre: cursoPeriodo.course[0].nombre,
+                    seccion: cursoPeriodo.course[0].seccion,
+                    semestre: cursoPeriodo.course[0].semestre,
+                    codCurso: cursoPeriodo.codCurso
+                }
+            });
+        },  
         goBack() {
             this.$router.push({
                 name: 'VistaAdministrador'
             });
         },
-        async fetchDocentes() {
+
+        async fetchCursos() {
             try {
-                const response = await axios.get('http://localhost:3333/api/teaching/get');
-                this.docentes = response.data;
+                const response = await axios.get('http://localhost:3333/api/courseInstance/get');
+                this.cursosPeriodo = response.data.courseInstances;
+                console.log(this.cursosPeriodo);
             } catch (error) {
-                console.error('Error al obtener docentes:', error);
+                console.error('Error al obtener cursos:', error);
             }
         },
-        toggleForm(mode, docente = {}) {
+        toggleForm(mode, curso = {}) {
             this.isEditMode = mode === 'edit';
-            this.docente = {
-                ...docente
+            this.curso = {
+                ...curso
             };
             this.formVisible = !this.formVisible;
         },
+
         async handleSubmit() {
             if (this.isEditMode) {
-                await this.updateDocente();
+                await this.updateCurso();
             } else {
-                await this.addDocente();
+                await this.addCurso();
             }
             this.clearForm();
         },
-        async addDocente() {
+
+        async addCurso() {
             try {
-                await axios.post('http://localhost:3333/api/teaching/register', this.docente);
-                this.fetchDocentes();
+                await axios.post('http://localhost:3333/api/courseInstance/register', this.cursoPeriodo);
+                this.fetchCursos();
                 Swal.fire({
                     icon: 'success',
-                    title: '¡Éxito!',
-                    text: 'Profesor agregado exitosamente.',
-                    confirmButtonText: 'Aceptar'
+                    title: 'Curso agregado',
+                    text: 'El curso se ha agregado correctamente.',
+                    confirmButton: 'Aceptar',
+                    confirmButtonColor: '#3498db'
                 });
             } catch (error) {
-                if (error.response) {
-                    if (error.response.status === 409) {
-                        // Código 409: Duplicado
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Registro duplicado',
-                            text: 'El Profesor ya está registrado. Verifica los datos.',
-                            confirmButtonText: 'Entendido'
-                        })
-                    } else {
-                        // Otros errores con respuesta del servidor
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: error.response.data.message || 'Ocurrió un problema al agregar el Profesor.',
-                            confirmButtonText: 'Aceptar'
-                        });
-                    }
-                } else {
-                    // Error sin respuesta del servidor (problemas de red, etc.)
+                if (error.response && error.response.status === 409) {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error de conexión',
-                        text: 'No se pudo conectar al servidor. Intenta nuevamente.',
-                        confirmButtonText: 'Aceptar'
-                    })
+                        title: 'Curso duplicado',
+                        text: 'El curso ya existe en el sistema.',
+                        confirmButton: 'Aceptar',
+                    confirmButtonColor: '#3498db'
+                    });
+                } else {
+                    console.error('Error al agregar curso:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error al agregar curso',
+                        text: 'Ha ocurrido un error al agregar el curso.',
+                        confirmButton: 'Aceptar',
+                        confirmButtonColor: '#3498db'
+                    });
                 }
             }
         },
-        async updateDocente() {
+        async updateCurso() {
             try {
-                await axios.put(`http://localhost:3333/api/teaching/${this.docente.rut}`, this.docente);
-                this.fetchDocentes();
+                await axios.put(`http://localhost:3333/api/courseInstance/update/${this.curso.codigo}`, this.curso);
+                this.fetchCursos();
                 Swal.fire({
                     icon: 'success',
-                    title: '¡Éxito!',
-                    text: 'Profesor actualizado exitosamente.',
-                    confirmButtonText: 'Aceptar',
-                    confirmButtonColor: '#5cb85c'
+                    title: 'Curso actualizado',
+                    text: 'El curso se ha actualizado correctamente.',
+                    confirmButton: 'Aceptar',
+                    confirmButtonColor: '#3498db'
                 });
             } catch (error) {
-                console.error('Error al actualizar docente:', error);
+                console.error('Error al actualizar Curso:', error);
             }
         },
-        async deleteDocente(rut) {
+        async deleteCurso(codCurso) {
             try {
-                await axios.delete(`http://localhost:3333/api/teaching/remove/${rut}`);
-                this.fetchDocentes();
+                await axios.delete(`http://localhost:3333/api/courseInstance/remove/${codCurso}`);
+                this.fetchCursos();
                 Swal.fire({
                     icon: 'success',
-                    title: '¡Éxito!',
-                    text: 'Profesor eliminado exitosamente.',
-                    confirmButtonText: 'Aceptar',
-                    confirmButtonColor: '#d33'
+                    title: 'Curso eliminado',
+                    text: 'El curso se ha eliminado correctamente.',
+                    confirmButton: 'Aceptar',
+                    confirmButtonColor: '#3498db'
                 });
             } catch (error) {
-                console.error('Error al eliminar Docente:', error);
+                console.error('Error al eliminar Curso:', error);
             }
         },
         clearForm() {
-            this.docente = {
-                nombres: '',
-                apellidoP: '',
-                apellidoM: '',
-                rut: '',
-                titulo: '',
-                gradoMax: ''
+            this.curso = {
+                nombre: '',
+                seccion: '',
+                area: '',
+                docente: ''
             };
             this.formVisible = false;
         },
@@ -254,10 +257,14 @@ export default {
         onFileSelected(event) {
             this.selectedFile = event.target.files[0];
             //this.uploadFile();
-            this.uploadDocenteFile(); // Llama a la nueva función para enviar el archivo a importCurso
+            this.uploadCursoFile(); // Llama a la nueva función para enviar el archivo a importCurso
         },
-
-        async uploadDocenteFile() {
+        onFileAlumnos(event) {
+            this.selectedFile = event.target.files[0];
+            //this.uploadFile();
+            this.uploadalumnosFile(); // Llama a la nueva función para enviar el archivo a importCurso
+        },
+        async uploadalumnosFile() {
             console.log('Subir archivo de curso');
             if (!this.selectedFile) {
                 this.message = "Por favor, selecciona un archivo primero.";
@@ -268,7 +275,7 @@ export default {
             formData.append('file', this.selectedFile);
 
             try {
-                const response = await axios.post('http://localhost:3333/csv/importProfesor', formData, {
+                const response = await axios.post('http://localhost:3333/csv/importCursoInstance', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
@@ -277,12 +284,41 @@ export default {
                 this.message = response.data.message;
 
                 if (response.data.success) {
-                    // Aquí llamamos a fetchDocentes después de la subida exitosa del archivo
-                    this.fetchDocentes();
+                    this.fetchCursos();
                 } else {
-                    // En caso de que el servidor devuelva un error
                     console.error('Error en el archivo:', response.data.message);
                 }
+
+            } catch (error) {
+                console.error('Error al subir el archivo de curso:', error);
+            }
+        },
+
+        async uploadCursoFile() {
+            console.log('Subir archivo de curso');
+            if (!this.selectedFile) {
+                this.message = "Por favor, selecciona un archivo primero.";
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', this.selectedFile);
+
+            try {
+                const response = await axios.post('http://localhost:3333/csv/importCurso', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+
+                });
+                this.message = response.data.message;
+
+                if (response.data.success) {
+                    this.fetchCursos();
+                } else {
+                    console.error('Error en el archivo:', response.data.message);
+                }
+
             } catch (error) {
                 console.error('Error al subir el archivo de curso:', error);
             }
@@ -292,7 +328,7 @@ export default {
 </script>
 
 <style scoped>
-.gestor-docentes-container {
+.gestor-cursos-container {
     padding-top: 30px;
     padding-bottom: 50px;
 }

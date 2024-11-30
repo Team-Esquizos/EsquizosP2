@@ -1,6 +1,7 @@
 var courseInstanceService = require('./courseInstanceServices.js');
 var datos = require('./courseInstanceModel.js');
 var csv = require('csvtojson');
+
 var registerCourseInstanceControllerFn = async (req, res) => {
     try {
         var status = await courseInstanceService.registerCourseInstanceDBService(req.body);
@@ -18,32 +19,13 @@ var registerCourseInstanceControllerFn = async (req, res) => {
 }
 
 
-var editCourseControllerFn = async (req, res) => {
-    const codigo = req.params.codigo; 
-    const updatedData = req.body; 
+
+
+var removeCourseInstanceControllerFn = async (req, res) => {
+    const codCurso = req.params.codCurso; 
 
     try {
-        const result = await courseService.editCourseDBService(codigo, updatedData);
-
-        if (result.status) {
-            res.status(200).json(result);
-        } else {
-            res.status(404).json(result);
-        }
-    } catch (error) {
-        console.error('Error en la actualización del curso:', error);
-        res.status(500).json({ status: false, msg: "Error en el servidor" });
-    }
-}
-
-
-
-var removeCourseControllerFn = async (req, res) => {
-    const nombreCurso = req.params.nombre; 
-    const seccion = req.params.seccion;
-
-    try {
-        const result = await courseService.removeCourseDBService(nombreCurso, seccion);
+        const result = await courseInstanceService.removeCourseInstanceDBService(codCurso);
 
         if (result.status) {
             res.status(200).json(result);
@@ -67,6 +49,25 @@ var getCourseInstanceControllerFn = async (req, res) => {
         console.log(codCurso);
         
         var result = await courseInstanceService.getCourseInstanceDBService( {codCurso: codCurso} );
+
+        if(result.status){
+            res.json(result);
+            console.log("Curso encontrado");
+        } else {
+            res.status(404).send('Curso no encontrado');
+            console.log("Curso no encontrado");
+        }
+
+    } catch (err) {
+        res.status(500).send({ "status": false, "message": "Error en el servidor" });
+        console.log(err);
+    }
+}
+
+var getAllCoursesInstanceControllerFn = async (req, res) => {
+    try {
+        
+        var result = await courseInstanceService.getAllCoursesInstanceDBService();
 
         if(result.status){
             res.json(result);
@@ -181,7 +182,7 @@ var getTeacherCourseInstanceControllerFn = async (req, res) => {
         console.log("Rut:", rut);
 
         // Llama al servicio para actualizar codDocente
-        const result = await courseInstanceService.getTeacherCourseInstanceDBService(rut);
+        const result = await courseInstanceService.getTeacherCourseInstancesDBService(rut);
 
         if (result.status) {
             res.json(result); // Responde con el resultado del servicio
@@ -195,5 +196,7 @@ var getTeacherCourseInstanceControllerFn = async (req, res) => {
         console.log("Error en el servidor:", err);
     }
 };
-module.exports = {registerCourseInstanceControllerFn, getCourseInstanceControllerFn, updateCodDocenteInCourseInstanceControllerFn, removeCourseControllerFn,
-    getStudentsFromCourseInstanceControllerFn, getTeachingFromCourseInstanceControllerFn, addStudentToCourseInstanceControllerFn, getTeacherCourseInstanceControllerFn};
+module.exports = {registerCourseInstanceControllerFn, getCourseInstanceControllerFn, updateCodDocenteInCourseInstanceControllerFn, removeCourseInstanceControllerFn,
+    getStudentsFromCourseInstanceControllerFn, getTeachingFromCourseInstanceControllerFn, addStudentToCourseInstanceControllerFn, getTeacherCourseInstanceControllerFn
+    ,getAllCoursesInstanceControllerFn 
+};

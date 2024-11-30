@@ -21,12 +21,12 @@ const importProfesor = async (req, res) => {
                         isAdmin: false,
                     });
                     datosData.push({
-                        rut: response[i].rut,
-                        email: `${response[i].nombrePrimer[0]}${response[i].nombrePrimer[1]}${response[i].apellidoP}@email.com`.toLowerCase(),
-                        nombrePrimer: response[i].nombrePrimer,
-                        nombreSegundo: response[i].nombreSegundo,
+                        nombres: response[i].nombres,
                         apellidoP: response[i].apellidoP,
                         apellidoM: response[i].apellidoM,
+                        rut: response[i].rut,
+                        titulo: response[i].titulo,
+                        gradoMax: response[i].gradoMax
                     });
                 }
 
