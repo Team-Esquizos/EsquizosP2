@@ -93,6 +93,7 @@
 import axios from 'axios';
 import navBar from '@/components/AppNavbarAdm.vue';
 import autenticadorSesion from '../mixins/AutenticadorSesion.js';
+import Swal from 'sweetalert2';
 
 export default {
     name: 'GestorCursosPeriodo',
@@ -177,13 +178,31 @@ export default {
             try {
                 await axios.post('http://localhost:3333/api/courseInstance/register', this.cursoPeriodo);
                 this.fetchCursos();
-                alert('Curso agregado exitosamente.');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Curso agregado',
+                    text: 'El curso se ha agregado correctamente.',
+                    confirmButton: 'Aceptar',
+                    confirmButtonColor: '#3498db'
+                });
             } catch (error) {
                 if (error.response && error.response.status === 409) {
-                    alert('El curso ya está registrado. Verifica los datos.');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Curso duplicado',
+                        text: 'El curso ya existe en el sistema.',
+                        confirmButton: 'Aceptar',
+                    confirmButtonColor: '#3498db'
+                    });
                 } else {
                     console.error('Error al agregar curso:', error);
-                    alert('Ocurrió un error al agregar el curso. Intenta nuevamente.');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error al agregar curso',
+                        text: 'Ha ocurrido un error al agregar el curso.',
+                        confirmButton: 'Aceptar',
+                        confirmButtonColor: '#3498db'
+                    });
                 }
             }
         },
@@ -191,6 +210,13 @@ export default {
             try {
                 await axios.put(`http://localhost:3333/api/courseInstance/update/${this.curso.codigo}`, this.curso);
                 this.fetchCursos();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Curso actualizado',
+                    text: 'El curso se ha actualizado correctamente.',
+                    confirmButton: 'Aceptar',
+                    confirmButtonColor: '#3498db'
+                });
             } catch (error) {
                 console.error('Error al actualizar Curso:', error);
             }
@@ -199,6 +225,13 @@ export default {
             try {
                 await axios.delete(`http://localhost:3333/api/courseInstance/remove/${codCurso}`);
                 this.fetchCursos();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Curso eliminado',
+                    text: 'El curso se ha eliminado correctamente.',
+                    confirmButton: 'Aceptar',
+                    confirmButtonColor: '#3498db'
+                });
             } catch (error) {
                 console.error('Error al eliminar Curso:', error);
             }
