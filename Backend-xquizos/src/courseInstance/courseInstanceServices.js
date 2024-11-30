@@ -3,12 +3,13 @@ var teachingModel = require('../teaching/teachingModel.js');
 var courseModel = require('../course/courseModel.js');
 var studentModel = require('../student/studentModel.js');
 
+
 module.exports.registerCourseInstanceDBService = (courseData) => {
     return new Promise(async function myFn(resolve, reject) {
 
         var courseInstanceModelData = new courseInstanceModel();
 
-        courseInstanceModelData.codCurso = courseData.codigo.toUpperCase();
+        courseInstanceModelData.codCurso = courseData.codCurso.toUpperCase();
         courseInstanceModelData.codDocente = "XD";
 
         try {
@@ -39,6 +40,76 @@ module.exports.getCourseInstanceDBService = async (curso) => {
         return { status: false, msg: "INVALID DATA" };
     }
 };
+
+module.exports.getAllCoursesInstanceDBService = async () => {
+    try {
+        const result = await courseInstanceModel.aggregate([
+            {
+                $lookup: {
+                    from: 'Course', // Nombre de la colección de Course
+                    localField: 'codCurso', // Campo en CourseInstance
+                    foreignField: 'codigo', // Campo en Course
+                    as: 'course'
+                }
+            },
+            {
+                $unwind: {
+                    path: '$courseDetails',
+                    preserveNullAndEmptyArrays: true // Maneja instancias sin curso relacionado
+                }
+            }
+        ]);
+
+        if (result) {
+            console.log("Instancias de cursos encontradas");
+            return { status: true, msg: "Instancias de cursos encontradas", courseInstances: result };
+        } else {
+            console.log("INVALID DATA");
+            return { status: false, msg: "INVALID DATA" };
+        }
+    } catch (error) {
+        console.log("Error:", error.message);
+        return { status: false, msg: "Error al obtener instancias de cursos" };
+    }
+};
+
+
+module.exports.getTeacherCourseInstancesDBService = async (codDocente) => {
+    try {
+        console.log(codDocente);
+        
+        // Obtener todas las instancias de curso para el docente
+        const result = await courseInstanceModel.find({ codDocente: codDocente });
+        console.log(result);
+
+        if (!result || result.length === 0) {
+            console.log("No se encontraron instancias de curso para este docente");
+            return { status: false, msg: "No se encontraron instancias de curso para este docente" };
+        }
+
+        // Extraer los codCurso de las instancias de curso encontradas
+        const codigosCursos = result.map(instance => instance.codCurso);
+        console.log("Códigos de curso extraídos:", codigosCursos);
+
+        // Obtener los cursos asociados a esos codigos
+        const cursos = await courseModel.find({ codigo: { $in: codigosCursos } });
+        console.log("Cursos encontrados:", cursos);
+
+        if (cursos && cursos.length > 0) {
+            console.log("Cursos encontrados");
+            return { status: true, msg: "Cursos encontrados", courses: cursos };
+        } else {
+            console.log("No se encontraron cursos para las instancias");
+            return { status: false, msg: "No se encontraron cursos para las instancias" };
+        }
+
+    } catch (error) {
+        console.log("Error:", error);
+        return { status: false, msg: "Ocurrió un error al obtener los cursos" };
+    }
+};
+
+
 
 module.exports.getStudentsFromCourseInstanceDBService = async (curso) => {
     try {
@@ -131,6 +202,13 @@ module.exports.addStudentToCourseInstanceDBService = async (curso, alumno) => {
         console.log("Curso:", curso);
         const newAlumno = alumno.alumno;
         console.log("Nuevo alumno:", newAlumno);
+        const response = await studentModel.findOne({matricula: newAlumno});
+        if(!response){
+            return {
+                status: false,
+                msg: "El alumno NO EXISTE",
+            };
+        }
 
         const result = await this.getCourseInstanceDBService(curso);
 
@@ -176,12 +254,12 @@ module.exports.addStudentToCourseInstanceDBService = async (curso, alumno) => {
 
 
 
-module.exports.removeCourseInstanceDBService = async (nombre, seccion) => {
+module.exports.removeCourseInstanceDBService = async (codCurso) => {
     try {
-        const course = await courseModel.findOne({ nombre, seccion });
+        const course = await courseInstanceModel.findOne({ codCurso: codCurso });
 
         if (course) {
-            await courseModel.deleteOne({ nombre, seccion });
+            await courseInstanceModel.deleteOne({ codCurso: codCurso });
 
             console.log("Curso eliminado:", course);
             return { status: true, msg: "Curso eliminado correctamente", course };
@@ -192,37 +270,6 @@ module.exports.removeCourseInstanceDBService = async (nombre, seccion) => {
     } catch (error) {
         console.log("Error al eliminar el Curso:", error);
         return { status: false, msg: "Error al eliminar el Curso" };
-    }
-};
-
-
-module.exports.getTeacherCourseInstanceDBService = async (rut) => {
-    try {
-        console.log(rut.rut);
-
-        // Encuentra las instancias de cursos asociadas al profesor
-        const courseInstances = await courseInstanceModel.find({ codDocente: rut });
-        console.log(courseInstances);
-
-        if (courseInstances && courseInstances.length > 0) {
-            // Extrae los codCurso únicos de las instancias
-            const courseCodes = courseInstances.map(instance => instance.codCurso);
-            console.log("Course Codes:", courseCodes);
-
-            // Busca los detalles de los cursos con los codCurso
-            const courses = await courseModel.find({ codigo: { $in: courseCodes } });
-            console.log("Courses:", courses);
-
-            // Retorna solo los cursos encontrados
-            return { status: true, msg: "Cursos encontrados", courses };
-        } else {
-            console.log("INVALID DATA");
-            return { status: false, msg: "INVALID DATA" };
-        }
-
-    } catch (error) {
-        console.error("Error:", error);
-        return { status: false, msg: "INVALID DATA" };
     }
 };
 
