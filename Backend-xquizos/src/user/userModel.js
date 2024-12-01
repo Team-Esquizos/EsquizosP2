@@ -8,6 +8,7 @@ var userSchema = new Schema ({
     password: {type: String, required: true, unique: false},
     isAdmin: {type: Boolean, required: true},
     rut: {type: String, required: true, unique: true},
+    imagen:{ type: String, required: false}
 
 })
 
