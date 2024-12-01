@@ -191,7 +191,9 @@ export default {
 }
 
 /* Ventana del dropdown */
+/* Ventana del dropdown */
 .popup-window {
+  z-index: 9999; /* Asegura que esté por encima de otros elementos */
   transform: scale(var(--nav-default-scale));
   visibility: hidden;
   opacity: 0;
@@ -207,10 +209,11 @@ export default {
     var(--burger-diameter) + var(--burger-enable-outline-width) +
       var(--burger-enable-outline-offset)
   );
-  right: 0; /* Posiciona el dropdown hacia la izquierda */
+  right: 0;
   margin-top: 10px;
   transition: var(--burger-transition);
 }
+
 
 
 /* Estilos del título del dropdown */
