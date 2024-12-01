@@ -54,6 +54,12 @@
                 <button class="btn btn-success" @click="triggerFileInput">
                     <i class="fa-solid fa-file-csv"></i> Importar alumnos por CSV
                 </button>
+
+                
+                <input type="file" ref="fileInput" @change="onFileModulos" style="display: none;" accept=".xlsx" />
+                <button class="btn btn-success" @click="triggerFileInput">
+                    <i class="fa-solid fa-file-"></i> Importar Modulos por excel
+                </button>
             </div>
 
         </div>
@@ -204,124 +210,162 @@ export default {
                     })
                 }
             }
-        }
-    },
-    async updateCurso() {
-        try {
-            await axios.put(`http://localhost:3333/api/courses/${this.curso.codigo}`, this.curso);
-            this.fetchCursos();
-            Swal.fire({
-                icon: 'success',
-                title: '¡Éxito!',
-                text: 'Curso actualizado exitosamente.',
-                confirmButtonText: 'Aceptar',
-                confirmButtonColor  : '#2ecc71'
-            });
-        } catch (error) {
-            console.error('Error al actualizar Curso:', error);
-        }
-    },
-    async deleteCurso(nombre, seccion) {
-        try {
-            await axios.delete(`http://localhost:3333/api/courses/remove/${encodeURIComponent(nombre)}/${seccion}`);
-            this.fetchCursos();
-            Swal.fire({
-                icon: 'success',
-                title: '¡Éxito!',
-                text: 'Curso eliminado exitosamente.',
-                confirmButtonText: 'Aceptar',
-                confirmButtonColor  : '#2ecc71'
-            });
-        } catch (error) {
-            console.error('Error al eliminar Curso:', error);
-        }
-    },
-    clearForm() {
-        this.curso = {
-            nombre: '',
-            seccion: '',
-            area: '',
-            docente: ''
-        };
-        this.formVisible = false;
-    },
-
-    triggerFileInput() {
-        this.$refs.fileInput.click();
-    },
-
-    handleAddFile() {
-        this.$refs.fileInput.click();
-    },
-
-    onFileSelected(event) {
-        this.selectedFile = event.target.files[0];
-        //this.uploadFile();
-        this.uploadCursoFile(); // Llama a la nueva función para enviar el archivo a importCurso
-    },
-    onFileAlumnos(event) {
-        this.selectedFile = event.target.files[0];
-        //this.uploadFile();
-        this.uploadalumnosFile(); // Llama a la nueva función para enviar el archivo a importCurso
-    },
-    async uploadalumnosFile() {
-        console.log('Subir archivo de curso');
-        if (!this.selectedFile) {
-            this.message = "Por favor, selecciona un archivo primero.";
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('file', this.selectedFile);
-
-        try {
-            const response = await axios.post('http://localhost:3333/csv/importCursoInstance', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-
-            });
-            this.message = response.data.message;
-
-            if (response.data.success) {
+        },
+    
+        async updateCurso() {
+            try {
+                await axios.put(`http://localhost:3333/api/courses/${this.curso.codigo}`, this.curso);
                 this.fetchCursos();
-            } else {
-                console.error('Error en el archivo:', response.data.message);
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: 'Curso actualizado exitosamente.',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor  : '#2ecc71'
+                });
+            } catch (error) {
+                console.error('Error al actualizar Curso:', error);
+            }
+        },
+        async deleteCurso(nombre, seccion) {
+            try {
+                await axios.delete(`http://localhost:3333/api/courses/remove/${encodeURIComponent(nombre)}/${seccion}`);
+                this.fetchCursos();
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: 'Curso eliminado exitosamente.',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor  : '#2ecc71'
+                });
+            } catch (error) {
+                console.error('Error al eliminar Curso:', error);
+            }
+        },
+        clearForm() {
+            this.curso = {
+                nombre: '',
+                seccion: '',
+                area: '',
+                docente: ''
+            };
+            this.formVisible = false;
+        },
+
+        triggerFileInput() {
+            console.log('Trigger file input');
+            this.$refs.fileInput.click();
+        },
+
+        handleAddFile() {
+            this.$refs.fileInput.click();
+        },
+
+        onFileSelected(event) {
+            this.selectedFile = event.target.files[0];
+            //this.uploadFile();
+            this.uploadCursoFile(); // Llama a la nueva función para enviar el archivo a importCurso
+        },
+        onFileAlumnos(event) {
+            this.selectedFile = event.target.files[0];
+            //this.uploadFile();
+            this.uploadalumnosFile(); // Llama a la nueva función para enviar el archivo a importCurso
+        },
+        onFileModulos(event) {
+            this.selectedFile = event.target.files[0];
+            //this.uploadFile();
+            this.uploadModulosFile(); // Llama a la nueva función para enviar el archivo a importCurso
+        },
+
+        async uploadModulosFile() {
+            console.log('Subir archivo de curso');
+            if (!this.selectedFile) {
+                this.message = "Por favor, selecciona un archivo primero.";
+                return;
             }
 
-        } catch (error) {
-            console.error('Error al subir el archivo de curso:', error);
-        }
-    },
+            const formData = new FormData();
+            formData.append('file', this.selectedFile);
 
-    async uploadCursoFile() {
-        console.log('Subir archivo de curso');
-        if (!this.selectedFile) {
-            this.message = "Por favor, selecciona un archivo primero.";
-            return;
-        }
+            try {
+                const response = await axios.post('http://localhost:3333/csv/importModulos', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
 
-        const formData = new FormData();
-        formData.append('file', this.selectedFile);
+                });
+                this.message = response.data.message;
 
-        try {
-            const response = await axios.post('http://localhost:3333/csv/importCurso', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
+                if (response.data.success) {
+                    this.fetchCursos();
+                } else {
+                    console.error('Error en el archivo:', response.data.message);
+                }
 
-            });
-            this.message = response.data.message;
+            } catch (error) {
+                console.error('Error al subir el archivo de curso:', error);
+            }
+        },
 
-            if (response.data.success) {
-                this.fetchCursos();
-            } else {
-                console.error('Error en el archivo:', response.data.message);
+        async uploadalumnosFile() {
+            console.log('Subir archivo de curso');
+            if (!this.selectedFile) {
+                this.message = "Por favor, selecciona un archivo primero.";
+                return;
             }
 
-        } catch (error) {
-            console.error('Error al subir el archivo de curso:', error);
-        }
+            const formData = new FormData();
+            formData.append('file', this.selectedFile);
+
+            try {
+                const response = await axios.post('http://localhost:3333/csv/importCursoInstance', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+
+                });
+                this.message = response.data.message;
+
+                if (response.data.success) {
+                    this.fetchCursos();
+                } else {
+                    console.error('Error en el archivo:', response.data.message);
+                }
+
+            } catch (error) {
+                console.error('Error al subir el archivo de curso:', error);
+            }
+        },
+
+        async uploadCursoFile() {
+            console.log('Subir archivo de curso');
+            if (!this.selectedFile) {
+                this.message = "Por favor, selecciona un archivo primero.";
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', this.selectedFile);
+
+            try {
+                const response = await axios.post('http://localhost:3333/csv/importCurso', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+
+                });
+                this.message = response.data.message;
+
+                if (response.data.success) {
+                    this.fetchCursos();
+                } else {
+                    console.error('Error en el archivo:', response.data.message);
+                }
+
+            } catch (error) {
+                console.error('Error al subir el archivo de curso:', error);
+            }
+        },
     },
 }
 </script>
