@@ -29,11 +29,13 @@ const cursoController = require('../controllers/cursoController');
 const profesorController = require('../controllers/ProfesorController');
 const estudianteController = require('../controllers/EstudianteController');
 const cursoInstanceController = require('../controllers/cursoIController');
+const ModulosController = require('../controllers/ModulosController');
 // Rutas de carga de archivos
 datos.post('/importCurso', upload.single('file'), cursoController.importCurso);
 datos.post('/importProfesor', upload.single('file'), profesorController.importProfesor);
 datos.post('/importEstudiante', upload.single('file'), estudianteController.importEstudiante);
 datos.post('/importCursoInstance', upload.single('file'), cursoInstanceController.insertCsvcourseInstanceControllerFn);
+datos.post('/importModulos', upload.single('file'), ModulosController.importModulos);
 datos.get('/getCurso', cursoController.getCurso);
 
 module.exports = datos;
