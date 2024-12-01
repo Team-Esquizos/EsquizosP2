@@ -26,7 +26,7 @@
                 <!-- Campos del formulario -->
                 <div class="form-group mb-3" v-for="(label, key) in formFields" :key="key">
                     <label :for="key">{{ label }}</label>
-                    <input type="text" :id="key" v-model="alumno[key]" class="form-control" :required="requiredFields.includes(key)" />
+                    <input :type="['fecNac', 'fecIng'].includes(key) ? 'date' : 'text'" :id="key" v-model="alumno[key]" class="form-control" :required="requiredFields.includes(key)" />
                 </div>
 
                 <!-- Botones de acción -->
@@ -74,8 +74,12 @@
                     <td class="align-middle">{{ alumno.nombres }} {{ alumno.apellidoP }} {{ alumno.apellidoM }}</td>
                     <td class="align-middle">{{ alumno.rut }}</td>
                     <td class="align-middle">{{ alumno.matricula }}</td>
-                    <td class="align-middle">{{ alumno.fecNac }}</td>
-                    <td class="align-middle">{{ alumno.fecIng }}</td>
+                    <td class="align-middle">
+                                <input type="date" v-model="alumno.fecNac" class="form-control" readonly>
+                            </td>
+                            <td class="align-middle">
+                                <input type="date" v-model="alumno.fecIng" class="form-control" readonly>
+                            </td>
                     <td class="align-middle">
                         <button @click="goperfilalumno(alumno.matricula,alumno.nombres)" class="btn btn-sm btn-primary mx-1">
                             <i class="far fa-eye"></i>
