@@ -52,6 +52,30 @@
                 </div>
             </section>
 
+            <div class="flags-container">
+              <flag 
+              :regularColor="'#00FF00'" 
+              :solidColor="'#006400'" 
+              :texto="'Buen comportamiento'" 
+              :checked="selectedFlag === 'buenComportamiento'"
+              @update:checked="updateSelectedFlag('buenComportamiento')"
+              v-model="newComment.flag"/>
+              <flag 
+              :regularColor="'#FFFF00'" 
+              :solidColor="'#FFD700'" 
+              :texto="'Advertencia'"
+              :checked="selectedFlag === 'advertencia'"
+              @update:checked="updateSelectedFlag('advertencia')" 
+              v-model="newComment.flag"/>
+              <flag 
+              :regularColor="'#FF0000'" 
+              :solidColor="'#8B0000'" 
+              :texto="'Mal comportamiento'" 
+              :checked="selectedFlag === 'malComportamiento'"
+              @update:checked="updateSelectedFlag('malComportamiento')"
+              v-model="newComment.flag"/>
+            </div>
+
             <!-- Add a Commentary -->
             <section class="comment-section">
                 <h2>Add a Custom Comment</h2>
@@ -83,6 +107,7 @@ import Swal from 'sweetalert2';
 import jsPDF from 'jspdf';
 import logo from '@/assets/Utalca.png';
 import Slide from '@/components/Slide.vue';
+import flag from '@/components/Flag.vue';
 
 export default {
     name: 'PerfilAlumno',
@@ -90,7 +115,8 @@ export default {
     mixins: [GoBackMixin],
     components: {
         navBar,
-        Slide
+        Slide,
+        flag
     },
     data() {
         return {
@@ -99,8 +125,10 @@ export default {
                 codDocente: '',
                 comentario: '',
                 peso: 0,
+                flag: '',
             },
             comments: [],
+            selectedFlag: null, // Controla la flag seleccionada
         };
     },
     created() {
@@ -259,6 +287,7 @@ Atentamente,
                     await axios.post('http://localhost:3333/api/comments/add', this.newComment);
                     this.newComment = {};
                     this.fetchComments();
+                    this.selectedFlag = null;
 
                     Swal.fire({
                         title: 'Comentario añadido',
@@ -366,6 +395,10 @@ Atentamente,
                 });
             }
         },
+        updateSelectedFlag(flag) {
+          this.selectedFlag = flag;
+          this.newComment.flag = flag;
+        },
     },
 };
 </script>
@@ -385,7 +418,7 @@ Atentamente,
 .header-container {
     display: flex;
     align-items: center;
-    gap: 390px; /* Espaciado entre el botón y el título */
+    gap: 30%; /* Espaciado entre el botón y el título */
     justify-content: flex-start; /* Alinear los elementos hacia la izquierda */
     margin-top: 5.2%;
 }
@@ -534,5 +567,10 @@ button:hover {
 
 .delete-button:hover {
     background-color: #d32f2f;
+}
+
+.flags-container{
+  margin-top: 2%;
+  margin-bottom: 2%;
 }
 </style>

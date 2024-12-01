@@ -1,7 +1,7 @@
 <template>
     <div class="range-slider">
       <label for="steps-range" class="label">
-        Range steps
+        Valor acción
       </label>
       <input 
         id="steps-range" 
