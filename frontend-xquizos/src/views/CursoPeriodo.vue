@@ -1,4 +1,5 @@
 <template>
+<img src="../assets/fondogestor2.jpg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
   <div>
     <navBar />
     <div class="container mt-4">
