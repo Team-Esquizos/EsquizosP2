@@ -15,7 +15,7 @@ const importCurso = async (req, res) => {
 
             // Iterar sobre el arreglo de objetos y guardarlos en el arreglo datosData
             for (var i = 0; i < response.length; i++) {
-                const matriculas = response[i].matricula.split(',').map(matricula => ({ matricula: matricula.trim() }));
+                
                 datosData.push({
                     
                     codigo: response[i].codigo,
