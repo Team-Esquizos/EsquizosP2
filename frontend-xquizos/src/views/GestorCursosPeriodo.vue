@@ -55,6 +55,7 @@
         </div>
     </div>
 
+    <!-- Tabla de cursos -->
     <div class="table-responsive" ref="tableContainer" style="border-radius: 15px; max-height: 300px; overflow-y: auto; position: relative;">
         <table class="table table-striped table-hover table-bordered text-center">
             <thead class="thead-light" style="position: sticky; top: 0; z-index: 1; background-color: white;">
@@ -68,7 +69,8 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="cursoPeriodo in cursosPeriodo" :key="cursoPeriodo.course[0]?.nombre + cursoPeriodo.course[0]?.seccion + cursoPeriodo.course[0]?.semestre">
+                <!-- Mostrar los cursos correspondientes a la página actual -->
+                <tr v-for="cursoPeriodo in paginatedCursos" :key="cursoPeriodo.course[0]?.nombre + cursoPeriodo.course[0]?.seccion + cursoPeriodo.course[0]?.semestre">
                     <td class="align-middle">{{ cursoPeriodo.codCurso }}</td>
                     <td class="align-middle">{{ cursoPeriodo.codDocente }}</td>
                     <td class="align-middle">{{ cursoPeriodo.course[0]?.nombre }}</td>
@@ -86,6 +88,13 @@
             </tbody>
         </table>
     </div>
+
+    <!-- Botones de paginación -->
+    <div class="pagination-container d-flex justify-content-center mt-4">
+        <button @click="goToPage(currentPage - 1)" :disabled="currentPage <= 1" class="btn btn-secondary">Anterior</button>
+        <span class="mx-2">Página {{ currentPage }} de {{ totalPages }}</span>
+        <button @click="goToPage(currentPage + 1)" :disabled="currentPage >= totalPages" class="btn btn-secondary">Siguiente</button>
+    </div>
 </div>
 </template>
 
@@ -102,34 +111,42 @@ export default {
         navBar
     },
     data() {
-        return {
-            cursos: [],
-            curso: {
-                codigo: '',
-                carrera: '',
-                nombre: '',
-                semestre: '',
-                seccion: ''
-            },
-            cursoPeriodo: {
-                codCurso: '',
-                codDocente: '',
-                alumnos: ''
-            },
-            cursosPeriodo: [],
-            formVisible: false,
-            isEditMode: false,
-            formFields: {
-                codCurso: 'Código del curso',
-                codDocente: 'Rut del docente'
-            },
-            requiredFields: ['codCurso', 'codDocente']
-        };
-    },
+    return {
+        cursos: [],
+        curso: {
+            codigo: '',
+            carrera: '',
+            nombre: '',
+            semestre: '',
+            seccion: ''
+        },
+        cursoPeriodo: {
+            codCurso: '',
+            codDocente: '',
+            alumnos: ''
+        },
+        cursosPeriodo: [],
+        formVisible: false,
+        isEditMode: false,
+        formFields: {
+            codCurso: 'Código del curso',
+            codDocente: 'Rut del docente'
+        },
+        requiredFields: ['codCurso', 'codDocente'],
+        currentPage: 1,        // Página actual
+            itemsPerPage: 5,       // Número de items por página
+    };
+},
     created() {
         this.fetchCursos();
     },
     methods: {
+        goToPage(page) {
+            // Asegurarse de que la página esté dentro del rango permitido
+            if (page >= 1 && page <= this.totalPages) {
+                this.currentPage = page;
+            }
+        },
         viewCurso(cursoPeriodo){
             console.log(cursoPeriodo.codCurso);
             this.$router.push({
@@ -152,7 +169,6 @@ export default {
             try {
                 const response = await axios.get('http://localhost:3333/api/courseInstance/get');
                 this.cursosPeriodo = response.data.courseInstances;
-                console.log(this.cursosPeriodo);
             } catch (error) {
                 console.error('Error al obtener cursos:', error);
             }
@@ -323,7 +339,20 @@ export default {
                 console.error('Error al subir el archivo de curso:', error);
             }
         },
-    }
+    },
+    computed: {
+        // Calcular la cantidad total de páginas
+        totalPages() {
+            return Math.ceil(this.cursosPeriodo.length / this.itemsPerPage);
+        },
+
+        // Calcular los cursos a mostrar en la página actual
+        paginatedCursos() {
+            const start = (this.currentPage - 1) * this.itemsPerPage;
+            const end = start + this.itemsPerPage;
+            return this.cursosPeriodo.slice(start, end);
+        }
+    },
 };
 </script>
 

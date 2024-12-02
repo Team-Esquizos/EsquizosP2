@@ -66,7 +66,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="docente in docentes" :key="docente.rut">
+                <tr v-for="docente in paginatedDocentes" :key="docente.rut">
                     <td class="align-middle">
                         <img class="img-fluid rounded-circle" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Avatar" style="width: 50px; height: 50px;" />
                     </td>
@@ -88,6 +88,28 @@
                 </tr>
             </tbody>
         </table>
+        <!-- Paginación -->
+        <div class="pagination-container d-flex justify-content-center mt-4">
+            <button 
+                class="btn btn-secondary" 
+                :disabled="currentPage === 1" 
+                @click="currentPage = 1">Primera</button>
+
+            <button 
+                class="btn btn-secondary mx-2" 
+                :disabled="currentPage === 1" 
+                @click="currentPage--">Anterior</button>
+
+            <button 
+                class="btn btn-secondary mx-2" 
+                :disabled="currentPage === totalPages" 
+                @click="currentPage++">Siguiente</button>
+
+            <button 
+                class="btn btn-secondary" 
+                :disabled="currentPage === totalPages" 
+                @click="currentPage = totalPages">Última</button>
+        </div>
     </div>
 </div>
 </template>
@@ -125,7 +147,9 @@ export default {
                 titulo: 'Título',
                 gradoMax: 'Grado Máximo',
             },
-            requiredFields: ['nombres', 'apellidoP', 'apellidoM', 'rut', 'titulo', 'gradoMax']
+            requiredFields: ['nombres', 'apellidoP', 'apellidoM', 'rut', 'titulo', 'gradoMax'],
+            currentPage: 1, // Página actual
+            itemsPerPage: 5, // Docentes por página
         };
     },
     created() {
@@ -287,7 +311,17 @@ export default {
                 console.error('Error al subir el archivo de curso:', error);
             }
         },
-    }
+    },
+    computed: {
+        paginatedDocentes() {
+            const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+            const endIndex = startIndex + this.itemsPerPage;
+            return this.docentes.slice(startIndex, endIndex);
+        },
+        totalPages() {
+            return Math.ceil(this.docentes.length / this.itemsPerPage);
+        }
+    },
 };
 </script>
 
@@ -374,5 +408,13 @@ export default {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     max-width: 600px;
     width: 100%;
+}
+.pagination-container {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.pagination-container .btn {
+    margin: 0 5px;
 }
 </style>

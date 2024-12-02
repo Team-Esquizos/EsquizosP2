@@ -1,99 +1,123 @@
 <template>
 <img src="../assets/fondogestor2.jpg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
-<navBar />
+<div class="body">
+    <navBar />
 
-<div class="gestor-alumnos-container container my-5" style="opacity: 0.9;">
+    <div class="gestor-alumnos-container container my-5" style="opacity: 0.9;">
 
-    <!-- Contenedor principal para el botón y el título -->
-    <div class="header-container container my-5">
-        <div class="d-flex align-items-center">
-            <!-- Botón de retroceso a la izquierda -->
-            <button class="btn btn-secondary back-button" @click="goBack">
-                <i class="fa-solid fa-circle-left"></i> Volver a GestorDatos
-            </button>
-
-            <!-- Título centrado -->
-            <h1 class="title" style="border-radius: 15px;">Gestor de Alumnos</h1>
-        </div>
-    </div>
-
-    <!-- Modal del formulario para agregar/editar alumno -->
-    <div v-if="formVisible" class="modal-overlay" @click.self="clearForm">
-        <div class="modal-content">
-            <form @submit.prevent="handleSubmit">
-                <h3 class="text-center mb-4">{{ isEditMode ? 'Editar Alumno' : 'Agregar Alumno' }}</h3>
-
-                <!-- Campos del formulario -->
-                <div class="form-group mb-3" v-for="(label, key) in formFields" :key="key">
-                    <label :for="key">{{ label }}</label>
-                    <input :type="['fecNac', 'fecIng'].includes(key) ? 'date' : 'text'" :id="key" v-model="alumno[key]" class="form-control" :required="requiredFields.includes(key)" />
-                </div>
-
-                <!-- Botones de acción -->
-                <div class="d-flex justify-content-between mt-4">
-                    <button type="submit" class="btn btn-success">{{ isEditMode ? 'Actualizar' : 'Agregar' }}</button>
-                    <button type="button" class="btn btn-secondary" @click="clearForm">Cancelar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Lista de alumnos con el botón Agregar Alumno a la derecha del título -->
-    <div class="d-flex align-items-center justify-content-between section-title mb-4">
-        <h3 style="border-radius: 15px;">Lista de Alumnos</h3>
-        <div class="d-flex">
-            <button class="btn btn-primary" @click="toggleForm('add')"><i class="fa-solid fa-user-plus"></i> Agregar Alumno</button>
-            <!-- Botón de importar CSV -->
-            <div class="ms-2">
-                <input type="file" ref="fileInput" @change="onFileSelected" style="display: none;" accept=".csv" />
-                <button class="btn btn-success" @click="triggerFileInput">
-                    <i class="fa-solid fa-file-csv"></i> Importar desde CSV
+        <!-- Contenedor principal para el botón y el título -->
+        <div class="header-container container my-5">
+            <div class="d-flex align-items-center">
+                <!-- Botón de retroceso a la izquierda -->
+                <button class="btn btn-secondary back-button" @click="goBack">
+                    <i class="fa-solid fa-circle-left"></i> Volver a GestorDatos
                 </button>
+
+                <!-- Título centrado -->
+                <h1 class="title" style="border-radius: 15px;">Gestor de Alumnos</h1>
             </div>
         </div>
-    </div>
 
-    <div class="table-responsive" ref="tableContainer" style="border-radius: 15px; ">
-        <table class="table table-striped table-hover table-bordered text-center">
-            <thead class="thead-light" style="position: sticky; top: 0; z-index: 1; background-color: white;">
-                <tr>
-                    <th>Foto</th>
-                    <th>Nombre Completo</th>
-                    <th>Rut</th>
-                    <th>Matricula</th>
-                    <th>Fecha Nacimiento</th>
-                    <th>Fecha Ingreso</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="alumno in alumnos" :key="alumno.matricula">
-                    <td class="align-middle">
-                        <img class="img-fluid rounded-circle" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Avatar" style="width: 50px; height: 50px;" />
-                    </td>
-                    <td class="align-middle">{{ alumno.nombres }} {{ alumno.apellidoP }} {{ alumno.apellidoM }}</td>
-                    <td class="align-middle">{{ alumno.rut }}</td>
-                    <td class="align-middle">{{ alumno.matricula }}</td>
-                    <td class="align-middle">
-                                <input type="date" v-model="alumno.fecNac" class="form-control" readonly>
-                            </td>
-                            <td class="align-middle">
-                                <input type="date" v-model="alumno.fecIng" class="form-control" readonly>
-                            </td>
-                    <td class="align-middle">
-                        <button @click="goperfilalumno(alumno.matricula,alumno.nombres)" class="btn btn-sm btn-primary mx-1">
-                            <i class="far fa-eye"></i>
-                        </button>
-                        <button @click="toggleForm('edit', alumno)" class="btn btn-sm btn-info mx-1">
-                            <i class="fas fa-pencil-alt"></i>
-                        </button>
-                        <button @click="deleteAlumno(alumno.matricula)" class="btn btn-sm btn-danger mx-1">
-                            <i class="far fa-trash-alt"></i>
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <!-- Modal del formulario para agregar/editar alumno -->
+        <div v-if="formVisible" class="modal-overlay" @click.self="clearForm">
+            <div class="modal-content">
+                <form @submit.prevent="handleSubmit">
+                    <h3 class="text-center mb-4">{{ isEditMode ? 'Editar Alumno' : 'Agregar Alumno' }}</h3>
+
+                    <!-- Campos del formulario -->
+                    <div class="form-group mb-3" v-for="(label, key) in formFields" :key="key">
+                        <label :for="key">{{ label }}</label>
+                        <input :type="['fecNac', 'fecIng'].includes(key) ? 'date' : 'text'" :id="key" v-model="alumno[key]" class="form-control" :required="requiredFields.includes(key)" />
+                    </div>
+
+                    <!-- Botones de acción -->
+                    <div class="d-flex justify-content-between mt-4">
+                        <button type="submit" class="btn btn-success">{{ isEditMode ? 'Actualizar' : 'Agregar' }}</button>
+                        <button type="button" class="btn btn-secondary" @click="clearForm">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Lista de alumnos con el botón Agregar Alumno a la derecha del título -->
+        <div class="d-flex align-items-center justify-content-between section-title mb-4">
+            <h3 style="border-radius: 15px;">Lista de Alumnos</h3>
+            <div class="d-flex">
+                <button class="btn btn-primary" @click="toggleForm('add')"><i class="fa-solid fa-user-plus"></i> Agregar Alumno</button>
+                <!-- Botón de importar CSV -->
+                <div class="ms-2">
+                    <input type="file" ref="fileInput" @change="onFileSelected" style="display: none;" accept=".csv" />
+                    <button class="btn btn-success" @click="triggerFileInput">
+                        <i class="fa-solid fa-file-csv"></i> Importar desde CSV
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive" ref="tableContainer" style="border-radius: 15px; ">
+            <table class="table table-striped table-hover table-bordered text-center">
+                <thead class="thead-light" style="position: sticky; top: 0; z-index: 1; background-color: white;">
+                    <tr>
+                        <th>Foto</th>
+                        <th>Nombre Completo</th>
+                        <th>Rut</th>
+                        <th>Matricula</th>
+                        <th>Fecha Nacimiento</th>
+                        <th>Fecha Ingreso</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="alumno in paginatedAlumnos" :key="alumno.matricula">
+                        <td class="align-middle">
+                            <img class="img-fluid rounded-circle" src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Avatar" style="width: 50px; height: 50px;" />
+                        </td>
+                        <td class="align-middle">{{ alumno.nombres }} {{ alumno.apellidoP }} {{ alumno.apellidoM }}</td>
+                        <td class="align-middle">{{ alumno.rut }}</td>
+                        <td class="align-middle">{{ alumno.matricula }}</td>
+                        <td class="align-middle">
+                            <input type="date" v-model="alumno.fecNac" class="form-control" readonly>
+                        </td>
+                        <td class="align-middle">
+                            <input type="date" v-model="alumno.fecIng" class="form-control" readonly>
+                        </td>
+                        <td class="align-middle">
+                            <button @click="goperfilalumno(alumno.matricula,alumno.nombres)" class="btn btn-sm btn-primary mx-1">
+                                <i class="far fa-eye"></i>
+                            </button>
+                            <button @click="toggleForm('edit', alumno)" class="btn btn-sm btn-info mx-1">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+                            <button @click="deleteAlumno(alumno.matricula)" class="btn btn-sm btn-danger mx-1">
+                                <i class="far fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- Paginación -->
+            <div class="pagination-container d-flex justify-content-center mt-4">
+                <button 
+                    class="btn btn-secondary" 
+                    :disabled="currentPage === 1" 
+                    @click="currentPage = 1">Primera</button>
+
+                <button 
+                    class="btn btn-secondary mx-2" 
+                    :disabled="currentPage === 1" 
+                    @click="currentPage--">Anterior</button>
+
+                <button 
+                    class="btn btn-secondary mx-2" 
+                    :disabled="currentPage === totalPages" 
+                    @click="currentPage++">Siguiente</button>
+
+                <button 
+                    class="btn btn-secondary" 
+                    :disabled="currentPage === totalPages" 
+                    @click="currentPage = totalPages">Última</button>
+            </div>
+        </div>
     </div>
 </div>
 </template>
@@ -118,6 +142,14 @@ export default {
         // Computed property para verificar si el usuario es admin
         isAdmin() {
             return localStorage.getItem('isAdmin') === 'true' || sessionStorage.getItem('isAdmin') === 'true';
+        },
+            paginatedAlumnos() {
+            const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+            const endIndex = startIndex + this.itemsPerPage;
+            return this.alumnos.slice(startIndex, endIndex);
+        },
+        totalPages() {
+            return Math.ceil(this.alumnos.length / this.itemsPerPage);
         }
     },
     data() {
@@ -143,7 +175,9 @@ export default {
                 fecNac: 'Fecha de nacimiento',
                 fecIng: 'Fecha de ingreso'
             },
-            requiredFields: ['nombres', 'apellidoP', 'apellidoM', 'rut', 'matricula', 'fecNac', 'fecIng']
+            requiredFields: ['nombres', 'apellidoP', 'apellidoM', 'rut', 'matricula', 'fecNac', 'fecIng'],
+            currentPage: 1, // Página actual
+            itemsPerPage: 5, // Alumnos por página
         };
     },
     created() {
@@ -334,7 +368,7 @@ export default {
 
 <style scoped>
 .gestor-alumnos-container {
-    padding-top: 30px;
+    padding-top: 3px;
     padding-bottom: 50px;
 }
 
@@ -415,5 +449,13 @@ export default {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     max-width: 600px;
     width: 100%;
+}
+.pagination-container {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.pagination-container .btn {
+    margin: 0 5px;
 }
 </style>
