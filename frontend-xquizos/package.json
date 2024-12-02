@@ -16,6 +16,7 @@
     "flowbite-vue": "^0.1.6",
     "frontend-xquizos": "file:",
     "jquery": "^3.7.1",
+    "jspdf": "^2.5.2",
     "sweetalert2": "^11.14.5",
     "vue": "^3.2.13",
     "vue-router": "^4.4.5"

@@ -2,20 +2,32 @@ var teachingService = require('./teachingServices.js');
 
 var registerTeachingControllerFn = async (req, res) => {
     try {
-
         var status = await teachingService.registerTeachingDBService(req.body);
-        //console.log(status);
 
-        if(status){
-            res.send({"status": true, "message": "Teaching registered succesfully"});
+        if (status === 'duplicate') {
+            return res.status(409).send({
+                status: false,
+                message: "El docente ya está registrado"
+            });
+        } else if (status) {
+            return res.status(201).send({
+                status: true,
+                message: "Docente registrado exitosamente"
+            });
         } else {
-            res.send({"status": false, "message": "Failed teaching registration"});
+            return res.status(500).send({
+                status: false,
+                message: "Fallo en el registro del docente"
+            });
         }
-
     } catch (err) {
-        console.log(err);
+        console.error(err);
+        return res.status(500).send({
+            status: false,
+            message: "Error interno del servidor"
+        });
     }
-}
+};
 
 var getTeachingsControllerFn = async (req, res) => {
     try {
