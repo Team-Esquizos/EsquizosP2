@@ -61,4 +61,48 @@ var buscarUserControllerFn = async (req, res) => {
     }
 }
 
-module.exports = {registerUserControllerFn, loginUserControllerFn, buscarUserControllerFn};
+var subirImagenControllerFn = async (req, res) => {
+    try {
+        const username = decodeURIComponent(req.params.username);
+        const imagen = req.file;
+        console.log('Archivo recibido:', imagen);
+    
+        var result = await userService.subirImagenDBService(username, imagen);
+    
+        if (result.status) {
+          res.status(200).json({ imageUrl: result.users[0].imagen });
+        } else {
+          res.status(404).json({ message: result.msg });
+        }
+      } catch (err) {
+        res.status(500).json({ status: false, message: 'Error en el servidor' });
+        console.log(err);
+      }
+}
+
+
+var obtenerImagenControllerFn = async (req, res) => {
+    try {
+        const username = decodeURIComponent(req.params.username);
+        
+        var result = await userService.obtenerImagenDBService(username);
+        
+        if (result.status) {
+            // Convertir la imagen base64 a Buffer y enviarla como respuesta
+            const imgBuffer = Buffer.from(result.imagen, 'base64');
+            res.writeHead(200, {
+                'Content-Type': 'image/png', // Cambia el tipo MIME según el tipo de imagen
+                'Content-Length': imgBuffer.length
+            });
+            res.end(imgBuffer);
+        } else {
+            res.status(404).json({ message: result.msg });
+        }
+    } catch (err) {
+        res.status(500).json({ status: false, message: 'Error en el servidor' });
+        console.log(err);
+    }
+};
+
+
+module.exports = {registerUserControllerFn, loginUserControllerFn, buscarUserControllerFn, subirImagenControllerFn, obtenerImagenControllerFn};
