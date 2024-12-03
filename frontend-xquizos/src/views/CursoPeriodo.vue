@@ -74,6 +74,7 @@
             <i class="fa-solid fa-file-csv"></i> Importar alumnos por CSV
           </button>
         </div>
+        
         <button class="btn btn-primary" @click="toggleAddAlumno">
           <i class="fa-solid fa-user-plus"></i> Agregar Alumno
         </button>
