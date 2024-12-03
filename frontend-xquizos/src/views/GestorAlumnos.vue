@@ -108,7 +108,7 @@ import navBar from '@/components/AppNavbarAdm.vue';
 import autenticadorSesion from '../mixins/AutenticadorSesion.js';
 import Swal from 'sweetalert2';
 import * as XLSX from 'xlsx';
-
+import _ from 'lodash';
 export default {
     name: 'GestorAlumnos',
     mixins: [autenticadorSesion],
@@ -339,9 +339,9 @@ export default {
         
                 // Asegúrate de que response.data tenga los datos en formato JSON
                 const data = response.data;
-
+                const filteredData = data.map(obj => _.omit(obj, ['_id','lista_de_acciones', '__v']));
                 // Convertir los datos a una hoja de cálculo
-                const worksheet = XLSX.utils.json_to_sheet(data);
+                const worksheet = XLSX.utils.json_to_sheet(filteredData);
                 const workbook = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(workbook, worksheet, 'Datos');
 
