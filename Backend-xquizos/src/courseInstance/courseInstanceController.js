@@ -175,6 +175,30 @@ var addStudentToCourseInstanceControllerFn = async (req, res) => {
     }
 };
 
+var removeStudentFromCourseInstanceControllerFn = async (req, res) => {
+    try {
+        const codCurso = req.params.codCurso; 
+        const matricula = req.params.matricula; 
+
+        console.log("codCurso:", codCurso);
+        console.log("alumno:", matricula);
+
+        // Llama al servicio para actualizar codDocente
+        const result = await courseInstanceService.removeStudentFromCourseInstanceDBService(codCurso,matricula);
+
+        if (result.status) {
+            res.json(result); // Responde con el resultado del servicio
+            console.log("Estudiante eliminado");
+        } else {
+            res.status(404).send({ status: false, msg: "Estudiante no encontrado" });
+            console.log("Estudiante no encontrado");
+        }
+    } catch (err) {
+        res.status(500).send({ status: false, msg: "Error en el servidor" });
+        console.log("Error en el servidor:", err);
+    }
+};
+
 var getTeacherCourseInstanceControllerFn = async (req, res) => {
     try {
         const rut = req.params.rut; 
@@ -198,5 +222,4 @@ var getTeacherCourseInstanceControllerFn = async (req, res) => {
 };
 module.exports = {registerCourseInstanceControllerFn, getCourseInstanceControllerFn, updateCodDocenteInCourseInstanceControllerFn, removeCourseInstanceControllerFn,
     getStudentsFromCourseInstanceControllerFn, getTeachingFromCourseInstanceControllerFn, addStudentToCourseInstanceControllerFn, getTeacherCourseInstanceControllerFn
-    ,getAllCoursesInstanceControllerFn 
-};
+    ,getAllCoursesInstanceControllerFn, removeStudentFromCourseInstanceControllerFn};

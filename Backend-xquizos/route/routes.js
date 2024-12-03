@@ -51,6 +51,7 @@ const upload = multer();
     router.route('/courseInstance/setTeaching/:codCurso/:codDocente').put(courseInstanceController.updateCodDocenteInCourseInstanceControllerFn); 
     router.route('/courseInstance/addStudent/:codCurso/:matricula').post(courseInstanceController.addStudentToCourseInstanceControllerFn);
     router.route('/courseInstance/getteacherinstance/:rut').get(courseInstanceController.getTeacherCourseInstanceControllerFn);
+    router.route('/courseInstance/removeStudent/:codCurso/:matricula').delete(courseInstanceController.removeStudentFromCourseInstanceControllerFn);
     
     
     

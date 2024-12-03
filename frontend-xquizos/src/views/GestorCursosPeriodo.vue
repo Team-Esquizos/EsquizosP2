@@ -64,6 +64,7 @@
                     <th>Nombre</th>
                     <th>Sección</th>
                     <th>Semestre</th>
+                    <th>Periodo</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -74,6 +75,7 @@
                     <td class="align-middle">{{ cursoPeriodo.course[0]?.nombre }}</td>
                     <td class="align-middle">{{ cursoPeriodo.course[0]?.seccion }}</td>
                     <td class="align-middle">{{ cursoPeriodo.course[0]?.semestre }}</td>
+                    <td class="align-middle">{{ cursoPeriodo.periodo }}</td>
                     <td class="align-middle">
                         <button @click="viewCurso(cursoPeriodo)" class="btn btn-sm btn-primary mx-1">
                             <i class="far fa-eye"></i>
@@ -114,6 +116,7 @@ export default {
             cursoPeriodo: {
                 codCurso: '',
                 codDocente: '',
+                periodo: '',
                 alumnos: ''
             },
             cursosPeriodo: [],
@@ -121,9 +124,10 @@ export default {
             isEditMode: false,
             formFields: {
                 codCurso: 'Código del curso',
-                codDocente: 'Rut del docente'
+                codDocente: 'Rut del docente (opcional)',
+                periodo: 'Año',
             },
-            requiredFields: ['codCurso', 'codDocente']
+            requiredFields: ['codCurso','periodo']
         };
     },
     created() {
@@ -138,7 +142,8 @@ export default {
                     nombre: cursoPeriodo.course[0].nombre,
                     seccion: cursoPeriodo.course[0].seccion,
                     semestre: cursoPeriodo.course[0].semestre,
-                    codCurso: cursoPeriodo.codCurso
+                    codCurso: cursoPeriodo.codCurso,
+                    periodo: cursoPeriodo.periodo
                 }
             });
         },  

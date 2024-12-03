@@ -10,7 +10,7 @@ module.exports.registerCourseInstanceDBService = (courseData) => {
         var courseInstanceModelData = new courseInstanceModel();
 
         courseInstanceModelData.codCurso = courseData.codCurso.toUpperCase();
-        courseInstanceModelData.codDocente = "XD";
+        courseInstanceModelData.periodo = courseData.periodo;
 
         try {
             await courseInstanceModelData.save();
@@ -25,7 +25,8 @@ module.exports.registerCourseInstanceDBService = (courseData) => {
 module.exports.getCourseInstanceDBService = async (curso) => {
     try {
         console.log(curso.codCurso);
-        const result = await courseInstanceModel.findOne({ codCurso: curso.codCurso });
+        console.log("Periodo: ", curso.periodo);
+        const result = await courseInstanceModel.findOne({ codCurso: curso.codCurso }, {periodo: curso.periodo});
         console.log(result);
         if (result) {
             console.log("Curso encontrado");
@@ -210,7 +211,7 @@ module.exports.addStudentToCourseInstanceDBService = async (curso, alumno) => {
             };
         }
 
-        const result = await this.getCourseInstanceDBService(curso);
+        const result = await courseInstanceModel.findOne(curso);
 
         if (result && result.courseInstance) {
             const courseInstance = result.courseInstance;
@@ -249,6 +250,53 @@ module.exports.addStudentToCourseInstanceDBService = async (curso, alumno) => {
         return { status: false, msg: "Error al agregar alumno" };
     }
 };
+
+module.exports.removeStudentFromCourseInstanceDBService = async (curso, alumno) => {
+    try {
+        // Log para debug
+        console.log("Curso:", curso);
+        console.log("Alumno a eliminar:", alumno);
+
+        // Busca la instancia del curso por su código
+        const result = await courseInstanceModel.find({codCurso: curso});
+        console.log(result);
+        if (result) {
+            const courseInstance = result.courseInstance;
+
+            // Verifica si el alumno está registrado en el curso
+            const alumnoIndex = courseInstance.alumnos.findIndex(
+                (a) => a.matricula === alumno
+            );
+
+            if (alumnoIndex === -1) {
+                return {
+                    status: false,
+                    msg: "El alumno no está matriculado en el curso",
+                };
+            }
+
+            // Elimina al alumno del arreglo de alumnos
+            courseInstance.alumnos.splice(alumnoIndex, 1);
+
+            // Guarda los cambios en la base de datos
+            await courseInstance.save();
+
+            console.log("Alumno eliminado:", alumno);
+            return {
+                status: true,
+                msg: "Alumno eliminado correctamente",
+                alumnos: courseInstance.alumnos,
+            };
+        } else {
+            console.log("Curso no encontrado");
+            return { status: false, msg: "Curso no encontrado" };
+        }
+    } catch (error) {
+        console.log("Error al eliminar alumno:", error);
+        return { status: false, msg: "Error al eliminar alumno" };
+    }
+};
+
 
 
 

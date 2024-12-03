@@ -9,7 +9,7 @@
             <div class="card-header bg-primary text-white text-center">
               <h4 class="mb-0">
                 <i class="bi bi-journal-bookmark-fill me-2"></i>
-                {{ nombre }} - {{ seccion }}
+                {{ nombre }} // {{ periodo }} - {{ seccion }}
               </h4>
             </div>
             <div class="card-body">
@@ -169,7 +169,7 @@ import axios from "axios";
 export default {
   name: "CursoPeriodo",
   components: { navBar },
-  props: ["nombre", "seccion", "semestre", "codCurso"],
+  props: ["nombre", "seccion", "semestre", "codCurso", "periodo"],
   data() {
     return {
       docente: {
@@ -180,19 +180,19 @@ export default {
       },
       alumnos: [],
       showAddAlumno: false,
-      newMatricula: "", // Para capturar el número de matrícula
-      suggestions: [], // Lista de sugerencias de matrículas
-      showModal: false,  // Para mostrar el modal
-      availableTeachers: [],  // Lista de docentes disponibles
-      newDocente: null,  // Docente seleccionado para cambiar
+      newMatricula: "",
+      suggestions: [], 
+      showModal: false, 
+      availableTeachers: [], 
+      newDocente: null, 
     };
   },
   async created() {
     try {
-      const teacherData = await axios.get(`http://localhost:3333/api/courseInstance/get/teacher/${this.codCurso}`);
       const teachersData = await axios.get("http://localhost:3333/api/teaching/get");
-      console.log(teachersData.data);
       this.availableTeachers = teachersData.data;
+      const teacherData = await axios.get(`http://localhost:3333/api/courseInstance/get/teacher/${this.codCurso}`);
+      console.log(teachersData.data);
 
       if (teacherData.data.teaching) {
         this.docente = teacherData.data.teaching;
@@ -307,7 +307,7 @@ export default {
     },
     async deleteAlumno(matricula) {
         try {
-            await axios.delete(`http://localhost:3333/api/student/remove/${matricula}`);
+            await axios.delete(`http://localhost:3333/api/courseInstance/removeStudent/${this.codCurso}/${matricula}`);
             this.fetchAlumnos();
         } catch (error) {
             console.error('Error al eliminar el alumno:', error);
