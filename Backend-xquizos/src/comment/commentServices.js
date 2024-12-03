@@ -19,6 +19,7 @@ module.exports.addCommentDBService = (commentData) => {
         commentModelData.codDocente = commentData.codDocente;
         commentModelData.comentario = commentData.comentario;
         commentModelData.peso = commentData.peso;
+        commentModelData.flag = commentData.flag;
 
 
         try {
