@@ -87,7 +87,7 @@ const routes = [
     props: true
   },
   { 
-    path: '/cursoPeriodo/:nombre/:seccion/:semestre/:codCurso',
+    path: '/cursoPeriodo/:nombre/:seccion/:semestre/:codCurso/:periodo',
     name: 'CursoPeriodo',
     component: () => import("@/views/CursoPeriodo.vue"),
     props: true,
