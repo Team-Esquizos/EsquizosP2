@@ -1,4 +1,5 @@
 var userModel = require('./userModel.js');
+const fs = require('fs');
 
 module.exports.registerUserDBService = (userData) => {
     return new Promise(async function myFn(resolve, reject) {
@@ -57,5 +58,42 @@ module.exports.buscarUserDBService = async (userData) => {
     } catch (error) {
         console.log("INVALID DATA");
         return { status: false, msg: "INVALID DATA" };
+    }
+};
+
+module.exports.subirImagenDBService = async (username, imagen) => {
+    try {
+      const base64 = imagen.buffer.toString('base64');
+      const users = await userModel.find({ username });
+      console.log(users);
+      console.log(username);
+      if (users && users.length > 0) {
+        for (let user of users) {
+          user.imagen = base64;
+          await user.save();
+        }
+        return { status: true, msg: "Imagen subida", users };
+      } else {
+        console.log("No se encontraron usuarios");
+        return { status: false, msg: "No se encontraron usuarios" };
+      }
+    } catch (error) {
+      console.log("Error al subir la imagen:", error);
+      return { status: false, msg: "Error al subir la imagen" };
+    }
+  };
+
+  module.exports.obtenerImagenDBService = async (username) => {
+    try {
+        const user = await userModel.findOne({ username });
+        
+        if (user && user.imagen) {
+            return { status: true, imagen: user.imagen };
+        } else {
+            return { status: false, msg: 'Imagen no encontrada' };
+        }
+    } catch (error) {
+        console.log('Error al obtener la imagen:', error);
+        return { status: false, msg: 'Error al obtener la imagen' };
     }
 };

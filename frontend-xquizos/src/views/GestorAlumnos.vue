@@ -26,7 +26,7 @@
                 <!-- Campos del formulario -->
                 <div class="form-group mb-3" v-for="(label, key) in formFields" :key="key">
                     <label :for="key">{{ label }}</label>
-                    <input type="text" :id="key" v-model="alumno[key]" class="form-control" :required="requiredFields.includes(key)" />
+                    <input :type="['fecNac', 'fecIng'].includes(key) ? 'date' : 'text'" :id="key" v-model="alumno[key]" class="form-control" :required="requiredFields.includes(key)" />
                 </div>
 
                 <!-- Botones de acción -->
@@ -44,6 +44,10 @@
         <div class="d-flex">
             <button class="btn btn-primary" @click="toggleForm('add')"><i class="fa-solid fa-user-plus"></i> Agregar Alumno</button>
             <!-- Botón de importar CSV -->
+
+            <button class="btn btn-success" @click="generateExcel">
+                <i class="fa-solid fa-file-csv"></i> Exportar en Excel
+            </button>
             <div class="ms-2">
                 <input type="file" ref="fileInput" @change="onFileSelected" style="display: none;" accept=".csv" />
                 <button class="btn btn-success" @click="triggerFileInput">
@@ -53,7 +57,7 @@
         </div>
     </div>
 
-    <div class="table-responsive" ref="tableContainer" style="border-radius: 15px; max-height: 300px; overflow-y: auto; position: relative;">
+    <div class="table-responsive" ref="tableContainer" style="border-radius: 15px; ">
         <table class="table table-striped table-hover table-bordered text-center">
             <thead class="thead-light" style="position: sticky; top: 0; z-index: 1; background-color: white;">
                 <tr>
@@ -74,8 +78,12 @@
                     <td class="align-middle">{{ alumno.nombres }} {{ alumno.apellidoP }} {{ alumno.apellidoM }}</td>
                     <td class="align-middle">{{ alumno.rut }}</td>
                     <td class="align-middle">{{ alumno.matricula }}</td>
-                    <td class="align-middle">{{ alumno.fecNac }}</td>
-                    <td class="align-middle">{{ alumno.fecIng }}</td>
+                    <td class="align-middle">
+                                <input type="date" v-model="alumno.fecNac" class="form-control" readonly>
+                            </td>
+                            <td class="align-middle">
+                                <input type="date" v-model="alumno.fecIng" class="form-control" readonly>
+                            </td>
                     <td class="align-middle">
                         <button @click="goperfilalumno(alumno.matricula,alumno.nombres)" class="btn btn-sm btn-primary mx-1">
                             <i class="far fa-eye"></i>
@@ -98,6 +106,8 @@
 import axios from 'axios';
 import navBar from '@/components/AppNavbarAdm.vue';
 import autenticadorSesion from '../mixins/AutenticadorSesion.js';
+import Swal from 'sweetalert2';
+import * as XLSX from 'xlsx';
 
 export default {
     name: 'GestorAlumnos',
@@ -185,16 +195,54 @@ export default {
         },
         async addAlumno() {
             try {
+                // Enviar datos del alumno al backend
                 await axios.post('http://localhost:3333/api/student/register', this.alumno);
+
+                // Actualizar la lista de alumnos después de agregar uno nuevo
                 this.fetchAlumnos();
-                alert('Alumno agregado exitosamente.');
+
+                // Mostrar alerta de éxito
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: 'Alumno agregado exitosamente.',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#4CAF50'
+                });
             } catch (error) {
-                console.log(error);
-                if (error.response && error.response.status === 409) {
-                    alert('El alumno ya está registrado. Verifica los datos.');
+                // Mostrar detalles del error en la consola para depuración
+                console.error('Error al agregar alumno:', error);
+
+                // Manejar errores específicos basados en la respuesta del servidor
+                if (error.response) {
+                    if (error.response.status === 409) {
+                        // Código 409: Duplicado
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Registro duplicado',
+                            text: 'El alumno ya está registrado. Verifica los datos.',
+                            confirmButtonText: 'Entendido',
+                            confirmButtonColor: '#d33'
+                        })
+                    } else {
+                        // Otros errores con respuesta del servidor
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: error.response.data.message || 'Ocurrió un problema al agregar el alumno.',
+                            confirmButtonText: 'Aceptar',
+                            confirmButtonColor: '#d33'
+                        });
+                    }
                 } else {
-                    console.error('Error al agregar alumno:', error);
-                    alert('Ocurrió un error al agregar el alumno. Intenta nuevamente.');
+                    // Error sin respuesta del servidor (problemas de red, etc.)
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        text: 'No se pudo conectar al servidor. Intenta nuevamente.',
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor: '#d33'
+                    })
                 }
             }
         },
@@ -202,6 +250,13 @@ export default {
             try {
                 await axios.put(`http://localhost:3333/api/student/${this.alumno.matricula}`, this.alumno);
                 this.fetchAlumnos();
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: 'Alumno actualizado exitosamente.',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#4CAF50'
+                });
             } catch (error) {
                 console.error('Error al actualizar alumno:', error);
             }
@@ -210,6 +265,13 @@ export default {
             try {
                 await axios.delete(`http://localhost:3333/api/student/remove/${matricula}`);
                 this.fetchAlumnos();
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: 'Alumno eliminado exitosamente.',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#4CAF50'
+                });
             } catch (error) {
                 console.error('Error al eliminar alumno:', error);
             }
@@ -271,6 +333,24 @@ export default {
                 console.error('Error al subir el archivo de curso:', error);
             }
         },
+        async generateExcel() {
+            try {
+                const response = await axios.get('http://localhost:3333/api/student/get');
+        
+                // Asegúrate de que response.data tenga los datos en formato JSON
+                const data = response.data;
+
+                // Convertir los datos a una hoja de cálculo
+                const worksheet = XLSX.utils.json_to_sheet(data);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, 'Datos');
+
+                // Exportar el archivo Excel
+                XLSX.writeFile(workbook, 'Alumnos.xlsx');
+            } catch (error) {
+                console.error('Error al generar el Excel:', error);
+            }
+        }
     }
 };
 </script>

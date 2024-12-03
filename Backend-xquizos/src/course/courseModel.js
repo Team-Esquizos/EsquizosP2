@@ -9,6 +9,7 @@ var courseSchema = new Schema ({
     seccion: {
         type: String,
         required: true,
+        
         match: /^[A-Z]$/ // Solo letras mayúsculas de la A a la Z
     }
 

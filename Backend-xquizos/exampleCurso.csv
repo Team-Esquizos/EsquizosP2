@@ -1,2 +1,4 @@
-nombre,seccion,area,docente,rut,matricula
-"Introducción a la Programación","C","Computer Science","John Doe",12345678-9,"55667788-9,12345678-9"
+codigo,carrera,nombre,semestre,seccion
+4111,Ingenieria en Computacion,Algoritmos,1,A
+2231312,Ingenieria en Computacion,Base de Datos,1,A
+312312,Ingenieria en Computacion,Redes,1,A

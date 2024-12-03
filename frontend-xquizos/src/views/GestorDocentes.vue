@@ -49,11 +49,16 @@
                 <button class="btn btn-success" @click="triggerFileInput">
                     <i class="fa-solid fa-file-csv"></i> Importar desde CSV
                 </button>
+
+            </div>
+            <div class="ms-2">
+            <button class="btn btn-primary" @click="generateExcel">
+                <i class="fa-solid fa-user-plus"></i> Descargar en Excel </button>
             </div>
         </div>
     </div>
 
-    <div class="table-responsive" ref="tableContainer" style="border-radius: 15px; max-height: 500px; overflow-y: auto; position: relative;">
+    <div class="table-responsive" ref="tableContainer" style="border-radius: 15px; ">
         <table class="table table-striped table-hover table-bordered text-center">
             <thead class="thead-light" style="position: sticky; top: 0; z-index: 1; background-color: white;">
                 <tr>
@@ -96,7 +101,8 @@
 import axios from 'axios';
 import navBar from '@/components/AppNavbarAdm.vue';
 import autenticadorSesion from '../mixins/AutenticadorSesion.js';
-
+import Swal from 'sweetalert2';
+import * as XLSX from 'xlsx';
 export default {
     name: 'GestorDocentes',
     mixins: [autenticadorSesion],
@@ -164,13 +170,39 @@ export default {
             try {
                 await axios.post('http://localhost:3333/api/teaching/register', this.docente);
                 this.fetchDocentes();
-                alert('Docente agregado exitosamente.');
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: 'Profesor agregado exitosamente.',
+                    confirmButtonText: 'Aceptar'
+                });
             } catch (error) {
-                if (error.response && error.response.status === 409) {
-                    alert('El docente ya está registrado. Verifica los datos.');
+                if (error.response) {
+                    if (error.response.status === 409) {
+                        // Código 409: Duplicado
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Registro duplicado',
+                            text: 'El Profesor ya está registrado. Verifica los datos.',
+                            confirmButtonText: 'Entendido'
+                        })
+                    } else {
+                        // Otros errores con respuesta del servidor
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: error.response.data.message || 'Ocurrió un problema al agregar el Profesor.',
+                            confirmButtonText: 'Aceptar'
+                        });
+                    }
                 } else {
-                    console.error('Error al agregar docente:', error);
-                    alert('Ocurrió un error al agregar el docente. Intenta nuevamente.');
+                    // Error sin respuesta del servidor (problemas de red, etc.)
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error de conexión',
+                        text: 'No se pudo conectar al servidor. Intenta nuevamente.',
+                        confirmButtonText: 'Aceptar'
+                    })
                 }
             }
         },
@@ -178,6 +210,13 @@ export default {
             try {
                 await axios.put(`http://localhost:3333/api/teaching/${this.docente.rut}`, this.docente);
                 this.fetchDocentes();
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: 'Profesor actualizado exitosamente.',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#5cb85c'
+                });
             } catch (error) {
                 console.error('Error al actualizar docente:', error);
             }
@@ -186,6 +225,13 @@ export default {
             try {
                 await axios.delete(`http://localhost:3333/api/teaching/remove/${rut}`);
                 this.fetchDocentes();
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Éxito!',
+                    text: 'Profesor eliminado exitosamente.',
+                    confirmButtonText: 'Aceptar',
+                    confirmButtonColor: '#d33'
+                });
             } catch (error) {
                 console.error('Error al eliminar Docente:', error);
             }
@@ -246,6 +292,25 @@ export default {
                 console.error('Error al subir el archivo de curso:', error);
             }
         },
+        
+        async generateExcel() {
+            try {
+                const response = await axios.get('http://localhost:3333/api/teaching/get');
+        
+                // Asegúrate de que response.data tenga los datos en formato JSON
+                const data = response.data;
+
+                // Convertir los datos a una hoja de cálculo
+                const worksheet = XLSX.utils.json_to_sheet(data);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, 'Datos');
+
+                // Exportar el archivo Excel
+                XLSX.writeFile(workbook, 'Profesores.xlsx');
+            } catch (error) {
+                console.error('Error al generar el Excel:', error);
+            }
+        }
     }
 };
 </script>

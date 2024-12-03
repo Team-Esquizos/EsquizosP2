@@ -45,7 +45,7 @@
             <button class="btn btn-primary" @click="toggleForm('add')"><i class="fa-solid fa-user-plus"></i> Agregar Curso</button>
             <!-- Botón de importar CSV -->
             <div class="ms-2">
-                <input type="file" ref="fileInput" @change="onFileSelected" style="display: none;" accept=".csv" />
+                <input type="file" ref="fileInput" @change="onFileCurso" style="display: none;" accept=".csv" />
                 <button class="btn btn-success" @click="triggerFileInput">
                     <i class="fa-solid fa-file-csv"></i> Importar desde CSV
                 </button>
@@ -93,6 +93,7 @@
 import axios from 'axios';
 import navBar from '@/components/AppNavbarAdm.vue';
 import autenticadorSesion from '../mixins/AutenticadorSesion.js';
+import Swal from 'sweetalert2';
 
 export default {
     name: 'GestorCursosPeriodo',
@@ -177,13 +178,31 @@ export default {
             try {
                 await axios.post('http://localhost:3333/api/courseInstance/register', this.cursoPeriodo);
                 this.fetchCursos();
-                alert('Curso agregado exitosamente.');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Curso agregado',
+                    text: 'El curso se ha agregado correctamente.',
+                    confirmButton: 'Aceptar',
+                    confirmButtonColor: '#3498db'
+                });
             } catch (error) {
                 if (error.response && error.response.status === 409) {
-                    alert('El curso ya está registrado. Verifica los datos.');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Curso duplicado',
+                        text: 'El curso ya existe en el sistema.',
+                        confirmButton: 'Aceptar',
+                    confirmButtonColor: '#3498db'
+                    });
                 } else {
                     console.error('Error al agregar curso:', error);
-                    alert('Ocurrió un error al agregar el curso. Intenta nuevamente.');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error al agregar curso',
+                        text: 'Ha ocurrido un error al agregar el curso.',
+                        confirmButton: 'Aceptar',
+                        confirmButtonColor: '#3498db'
+                    });
                 }
             }
         },
@@ -191,6 +210,13 @@ export default {
             try {
                 await axios.put(`http://localhost:3333/api/courseInstance/update/${this.curso.codigo}`, this.curso);
                 this.fetchCursos();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Curso actualizado',
+                    text: 'El curso se ha actualizado correctamente.',
+                    confirmButton: 'Aceptar',
+                    confirmButtonColor: '#3498db'
+                });
             } catch (error) {
                 console.error('Error al actualizar Curso:', error);
             }
@@ -199,6 +225,13 @@ export default {
             try {
                 await axios.delete(`http://localhost:3333/api/courseInstance/remove/${codCurso}`);
                 this.fetchCursos();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Curso eliminado',
+                    text: 'El curso se ha eliminado correctamente.',
+                    confirmButton: 'Aceptar',
+                    confirmButtonColor: '#3498db'
+                });
             } catch (error) {
                 console.error('Error al eliminar Curso:', error);
             }
@@ -220,47 +253,11 @@ export default {
         handleAddFile() {
             this.$refs.fileInput.click();
         },
-
-        onFileSelected(event) {
+        onFileCurso(event) {
             this.selectedFile = event.target.files[0];
             //this.uploadFile();
             this.uploadCursoFile(); // Llama a la nueva función para enviar el archivo a importCurso
         },
-        onFileAlumnos(event) {
-            this.selectedFile = event.target.files[0];
-            //this.uploadFile();
-            this.uploadalumnosFile(); // Llama a la nueva función para enviar el archivo a importCurso
-        },
-        async uploadalumnosFile() {
-            console.log('Subir archivo de curso');
-            if (!this.selectedFile) {
-                this.message = "Por favor, selecciona un archivo primero.";
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('file', this.selectedFile);
-
-            try {
-                const response = await axios.post('http://localhost:3333/csv/importCursoInstance', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-
-                });
-                this.message = response.data.message;
-
-                if (response.data.success) {
-                    this.fetchCursos();
-                } else {
-                    console.error('Error en el archivo:', response.data.message);
-                }
-
-            } catch (error) {
-                console.error('Error al subir el archivo de curso:', error);
-            }
-        },
-
         async uploadCursoFile() {
             console.log('Subir archivo de curso');
             if (!this.selectedFile) {
@@ -272,6 +269,7 @@ export default {
             formData.append('file', this.selectedFile);
 
             try {
+                
                 const response = await axios.post('http://localhost:3333/csv/importCurso', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
