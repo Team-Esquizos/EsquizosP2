@@ -1,7 +1,6 @@
 <template>
-<img src="../assets/fondogestor2.jpg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
-<navBar />
-
+<navBar />  
+<div class="maincontent">
 <div class="gestor-alumnos-container container my-5" style="opacity: 0.9;">
 
     <!-- Contenedor principal para el botón y el título -->
@@ -95,6 +94,7 @@
             </tbody>
         </table>
     </div>
+</div>
 </div>
 </template>
 
@@ -333,6 +333,11 @@ export default {
 </script>
 
 <style scoped>
+.maincontent {
+  background-image: url('../assets/fondogestor2.jpg'); 
+  background-size: cover; /* Cubrir todo el contenedor */
+  background-attachment: fixed; /* Fijar la imagen de fondo */
+}
 .gestor-alumnos-container {
     padding-top: 30px;
     padding-bottom: 50px;
@@ -416,4 +421,18 @@ export default {
     max-width: 600px;
     width: 100%;
 }
+
+body {
+  background-image: url('../assets/fondogestor2.jpg'); 
+  background-size: cover; /* Cubrir todo el contenedor */
+  background-attachment: fixed; /* Fijar la imagen de fondo */
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+
 </style>
