@@ -169,7 +169,7 @@ import axios from "axios";
 export default {
   name: "CursoPeriodo",
   components: { navBar },
-  props: ["nombre", "seccion", "semestre", "codCurso", "periodo"],
+  props: ["nombre", "seccion", "semestre", "codCurso", 'periodo'],
   data() {
     return {
       docente: {
@@ -189,9 +189,10 @@ export default {
   },
   async created() {
     try {
+      console.log("PERIODO RECIBIDO: ", this.periodo);
       const teachersData = await axios.get("http://localhost:3333/api/teaching/get");
       this.availableTeachers = teachersData.data;
-      const teacherData = await axios.get(`http://localhost:3333/api/courseInstance/get/teacher/${this.codCurso}`);
+      const teacherData = await axios.get(`http://localhost:3333/api/courseInstance/get/teacher/${this.codCurso}/${this.periodo}`);
       console.log(teachersData.data);
 
       if (teacherData.data.teaching) {
@@ -205,18 +206,16 @@ export default {
       this.docente = { nombres: "Por", apellidoP: "Definir", apellidoM: "" };
     }
 
-    this.fetchAlumnos(); // Para cargar alumnos como se hacía antes
+    this.fetchAlumnos(); 
   },
   methods: {
-    // Función para seleccionar un docente
     selectTeacher(teacher) {
         this.newDocente = teacher;
     },
-    // Función para actualizar el docente en el backend
     async updateTeacher() {
         if (this.newDocente) {
         try {
-            await axios.put(`http://localhost:3333/api/courseInstance/setTeaching/${this.codCurso}/${this.newDocente.rut}`, {
+            await axios.put(`http://localhost:3333/api/courseInstance/setTeaching/${this.codCurso}/${this.periodo}/${this.newDocente.rut}`, {
             codDocente: this.newDocente.rut
             });
             this.docente = { ...this.newDocente };  // Actualizar los datos del docente
@@ -228,17 +227,14 @@ export default {
         }
     },
     async fetchSuggestions() {
-      // No buscar si el texto es muy corto
       if (this.newMatricula.length < 2) {
         this.suggestions = [];
         return;
       }
       try {
-        // Llamada a la API para obtener todos los estudiantes
         const response = await axios.get('http://localhost:3333/api/student/get');
         console.log(response.data);
         if (response.data.status) {
-          // Filtrar estudiantes cuyo número de matrícula coincida parcialmente con la entrada
           const query = this.newMatricula.toLowerCase();
           this.suggestions = response.data.filter(student =>
             student.matricula.toLowerCase().includes(query)
@@ -253,8 +249,8 @@ export default {
       }
     },
     selectSuggestion(matricula) {
-      this.newMatricula = matricula; // Establecer la matrícula seleccionada
-      this.suggestions = []; // Limpiar las sugerencias
+      this.newMatricula = matricula; 
+      this.suggestions = []; 
     },
     toggleAddAlumno() {
       this.showAddAlumno = true;
@@ -265,7 +261,7 @@ export default {
     },
     async fetchAlumnos() {
       try {
-        const response = await axios.get(`http://localhost:3333/api/courseInstance/get/students/${this.codCurso}`);
+        const response = await axios.get(`http://localhost:3333/api/courseInstance/get/students/${this.codCurso}/${this.periodo}`);
         if (response.data.status) {
           this.alumnos = response.data.students;
         } else {
@@ -282,7 +278,7 @@ export default {
       }
 
       try {
-        const response = await axios.post(`http://localhost:3333/api/courseInstance/addStudent/${this.codCurso}/${this.newMatricula}`);
+        const response = await axios.post(`http://localhost:3333/api/courseInstance/addStudent/${this.codCurso}/${this.periodo}/${this.newMatricula}`);
         this.newMatricula = ''
         if (response.data.status) {
           alert("Alumno agregado exitosamente.");

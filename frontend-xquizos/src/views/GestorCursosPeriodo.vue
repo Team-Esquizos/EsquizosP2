@@ -116,8 +116,8 @@ export default {
             cursoPeriodo: {
                 codCurso: '',
                 codDocente: '',
+                alumnos: '',
                 periodo: '',
-                alumnos: ''
             },
             cursosPeriodo: [],
             formVisible: false,

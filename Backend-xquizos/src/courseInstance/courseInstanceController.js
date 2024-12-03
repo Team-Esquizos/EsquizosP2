@@ -86,10 +86,11 @@ var getAllCoursesInstanceControllerFn = async (req, res) => {
 var getStudentsFromCourseInstanceControllerFn = async (req, res) => {
     try {
 
-        const codCurso = req.params.codCurso;
-        console.log(codCurso);
+        const curso = req.params;
         
-        var result = await courseInstanceService.getStudentsFromCourseInstanceDBService( {codCurso: codCurso} );
+        console.log(curso);
+        
+        var result = await courseInstanceService.getStudentsFromCourseInstanceDBService(curso);
 
         if(result.status){
             res.json(result);
@@ -108,10 +109,10 @@ var getStudentsFromCourseInstanceControllerFn = async (req, res) => {
 var getTeachingFromCourseInstanceControllerFn = async (req, res) => {
     try {
 
-        const codCurso = req.params.codCurso;
-        console.log(codCurso);
+        const curso = req.params;
+        console.log("CURSO DONDE BUSCAR EL TEACHER: ",curso);
         
-        var result = await courseInstanceService.getTeachingFromCourseInstanceDBService( {codCurso: codCurso} );
+        var result = await courseInstanceService.getTeachingFromCourseInstanceDBService(curso);
 
         if(result.status){
             res.json(result);
@@ -129,14 +130,14 @@ var getTeachingFromCourseInstanceControllerFn = async (req, res) => {
 
 var updateCodDocenteInCourseInstanceControllerFn = async (req, res) => {
     try {
-        const codCurso = req.params.codCurso; // Código del curso
-        const codDocente = req.params.codDocente; // Código del docente
+        const curso = req.params
 
-        console.log("codCurso:", codCurso);
-        console.log("codDocente:", codDocente);
+        console.log("codCurso:", curso.codCurso);
+        console.log("NEWcodDocente:", curso.codDocente);
+        console.log("periodo:", curso.periodo);
 
         // Llama al servicio para actualizar codDocente
-        const result = await courseInstanceService.updateCodDocenteInCourseInstance({codCurso: codCurso}, {codDocente: codDocente});
+        const result = await courseInstanceService.updateCodDocenteInCourseInstance(curso);
 
         if (result.status) {
             res.json(result); // Responde con el resultado del servicio
@@ -153,14 +154,15 @@ var updateCodDocenteInCourseInstanceControllerFn = async (req, res) => {
 
 var addStudentToCourseInstanceControllerFn = async (req, res) => {
     try {
-        const codCurso = req.params.codCurso; 
-        const matricula = req.params.matricula; 
+        const data = req.params; 
 
-        console.log("codCurso:", codCurso);
-        console.log("alumno:", matricula);
+
+        console.log("codCurso:", data.codCurso);
+        console.log("periodo:", data.periodo);
+        console.log("alumno:", data.matricula);
 
         // Llama al servicio para actualizar codDocente
-        const result = await courseInstanceService.addStudentToCourseInstanceDBService({codCurso: codCurso}, {alumno: matricula});
+        const result = await courseInstanceService.addStudentToCourseInstanceDBService(data);
 
         if (result.status) {
             res.json(result); // Responde con el resultado del servicio

@@ -4,7 +4,7 @@ var Schema = mongoose.Schema;
 var courseInstanceSchema = new Schema ({
     codCurso: {type: String, required: true, unique: false},
     codDocente: {type: String, required: false, unique: false},
-    periodo: {type: String, required: false, unique: false},
+    periodo: {type: String, required: true, unique: false},
     alumnos: [
         {
         matricula: {type: String, required: false}

@@ -10,6 +10,11 @@ module.exports.registerCourseInstanceDBService = (courseData) => {
         var courseInstanceModelData = new courseInstanceModel();
 
         courseInstanceModelData.codCurso = courseData.codCurso.toUpperCase();
+        if(!courseData.codDocente){
+            courseInstanceModelData.codDocente = ''; 
+        } else {
+            courseInstanceModelData.codDocente = courseData.codDocente;
+        }
         courseInstanceModelData.periodo = courseData.periodo;
 
         try {
@@ -25,8 +30,8 @@ module.exports.registerCourseInstanceDBService = (courseData) => {
 module.exports.getCourseInstanceDBService = async (curso) => {
     try {
         console.log(curso.codCurso);
-        console.log("Periodo: ", curso.periodo);
-        const result = await courseInstanceModel.findOne({ codCurso: curso.codCurso }, {periodo: curso.periodo});
+        console.log("Periodo: ",curso.periodo);
+        const result = await courseInstanceModel.findOne({ codCurso: curso.codCurso, periodo: curso.periodo});
         console.log(result);
         if (result) {
             console.log("Curso encontrado");
@@ -114,7 +119,8 @@ module.exports.getTeacherCourseInstancesDBService = async (codDocente) => {
 
 module.exports.getStudentsFromCourseInstanceDBService = async (curso) => {
     try {
-        console.log("Código del curso:", curso);
+        console.log("Código del curso:", curso.codCurso);
+        console.log("Periodo del curso:", curso.periodo);
 
         const result = await this.getCourseInstanceDBService(curso);
         if (!result) {
@@ -150,10 +156,11 @@ module.exports.getStudentsFromCourseInstanceDBService = async (curso) => {
 
 module.exports.getTeachingFromCourseInstanceDBService = async (curso) => {
     try {
-        console.log(curso);
+        console.log("CODCURSO: ",curso.codCurso);
+        console.log("PERIODO: ",curso.periodo);
         const result = await this.getCourseInstanceDBService(curso);
         
-        console.log("Instancia de curso: ",result.courseInstance);
+        console.log("Instancia de curso: ",result);
         console.log("Codigo del docente: ",result.courseInstance.codDocente);
         const teaching = await teachingModel.findOne({ rut: result.courseInstance.codDocente });
         console.log(teaching);
@@ -173,20 +180,21 @@ module.exports.getTeachingFromCourseInstanceDBService = async (curso) => {
 
 
 
-module.exports.updateCodDocenteInCourseInstance = async (curso, newCodDocente) => {
+module.exports.updateCodDocenteInCourseInstance = async (curso) => {
     try {
         // Busca la instancia del curso por su código
-        console.log(curso);
-        console.log(newCodDocente);
-        const result = await this.getCourseInstanceDBService(curso);
-        console.log(result.courseInstance);
+        console.log("CURSO:",curso.codCurso);
+        console.log("NUEVO DOCENTE:",curso.codDocente);
+        console.log("PERIODO:",curso.periodo);
+        const result = await courseInstanceModel.findOne({codCurso: curso.codCurso, periodo: curso.periodo});
+        console.log("RESULT: ",result);
 
         if (result) {
-            result.courseInstance.codDocente = newCodDocente.codDocente; 
-            await result.courseInstance.save();
+            result.codDocente = curso.codDocente; 
+            await result.save();
 
-            console.log("codDocente actualizado:", result.courseInstance.codDocente);
-            return { status: true, msg: "codDocente actualizado correctamente", codDocente : result.courseInstance.codDocente };
+            console.log("codDocente actualizado:", result.codDocente);
+            return { status: true, msg: "codDocente actualizado correctamente", codDocente : result.codDocente };
         } else {
             console.log("Curso no encontrado");
             return { status: false, msg: "Curso no encontrado" };
@@ -197,11 +205,13 @@ module.exports.updateCodDocenteInCourseInstance = async (curso, newCodDocente) =
     }
 };
 
-module.exports.addStudentToCourseInstanceDBService = async (curso, alumno) => {
+module.exports.addStudentToCourseInstanceDBService = async (curso) => {
     try {
         // Busca la instancia del curso por su código
-        console.log("Curso:", curso);
-        const newAlumno = alumno.alumno;
+        console.log("Curso:", curso.codCurso);
+        console.log("Periodo:", curso.periodo);
+        console.log("Matricula:", curso.matricula);
+        const newAlumno = curso.matricula;
         console.log("Nuevo alumno:", newAlumno);
         const response = await studentModel.findOne({matricula: newAlumno});
         if(!response){
@@ -211,10 +221,11 @@ module.exports.addStudentToCourseInstanceDBService = async (curso, alumno) => {
             };
         }
 
-        const result = await courseInstanceModel.findOne(curso);
+        const result = await courseInstanceModel.findOne({codCurso: curso.codCurso, periodo: curso.periodo});
+        console.log("RESULTADO CTM: ", result);
 
-        if (result && result.courseInstance) {
-            const courseInstance = result.courseInstance;
+        if (result) {
+            const courseInstance = result;
 
             // Verifica si ya existe un alumno con la misma matrícula
             const isAlumnoExist = courseInstance.alumnos.some(
