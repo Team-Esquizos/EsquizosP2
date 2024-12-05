@@ -45,7 +45,7 @@
             <button class="btn btn-primary" @click="toggleForm('add')"><i class="fa-solid fa-user-plus"></i> Agregar Curso</button>
             <!-- Botón de importar CSV -->
             <div class="ms-2">
-                <input type="file" ref="fileInput" @change="onFileSelected" style="display: none;" accept=".csv" />
+                <input type="file" ref="fileInput" @change="onFileCurso" style="display: none;" accept=".csv" />
                 <button class="btn btn-success" @click="triggerFileInput">
                     <i class="fa-solid fa-file-csv"></i> Importar desde CSV
                 </button>
@@ -64,6 +64,7 @@
                     <th>Nombre</th>
                     <th>Sección</th>
                     <th>Semestre</th>
+                    <th>Periodo</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -74,6 +75,7 @@
                     <td class="align-middle">{{ cursoPeriodo.course[0]?.nombre }}</td>
                     <td class="align-middle">{{ cursoPeriodo.course[0]?.seccion }}</td>
                     <td class="align-middle">{{ cursoPeriodo.course[0]?.semestre }}</td>
+                    <td class="align-middle">{{ cursoPeriodo.periodo }}</td>
                     <td class="align-middle">
                         <button @click="viewCurso(cursoPeriodo)" class="btn btn-sm btn-primary mx-1">
                             <i class="far fa-eye"></i>
@@ -114,16 +116,18 @@ export default {
             cursoPeriodo: {
                 codCurso: '',
                 codDocente: '',
-                alumnos: ''
+                alumnos: '',
+                periodo: '',
             },
             cursosPeriodo: [],
             formVisible: false,
             isEditMode: false,
             formFields: {
                 codCurso: 'Código del curso',
-                codDocente: 'Rut del docente'
+                codDocente: 'Rut del docente (opcional)',
+                periodo: 'Año',
             },
-            requiredFields: ['codCurso', 'codDocente']
+            requiredFields: ['codCurso','periodo']
         };
     },
     created() {
@@ -138,7 +142,8 @@ export default {
                     nombre: cursoPeriodo.course[0].nombre,
                     seccion: cursoPeriodo.course[0].seccion,
                     semestre: cursoPeriodo.course[0].semestre,
-                    codCurso: cursoPeriodo.codCurso
+                    codCurso: cursoPeriodo.codCurso,
+                    periodo: cursoPeriodo.periodo
                 }
             });
         },  
@@ -253,47 +258,11 @@ export default {
         handleAddFile() {
             this.$refs.fileInput.click();
         },
-
-        onFileSelected(event) {
+        onFileCurso(event) {
             this.selectedFile = event.target.files[0];
             //this.uploadFile();
             this.uploadCursoFile(); // Llama a la nueva función para enviar el archivo a importCurso
         },
-        onFileAlumnos(event) {
-            this.selectedFile = event.target.files[0];
-            //this.uploadFile();
-            this.uploadalumnosFile(); // Llama a la nueva función para enviar el archivo a importCurso
-        },
-        async uploadalumnosFile() {
-            console.log('Subir archivo de curso');
-            if (!this.selectedFile) {
-                this.message = "Por favor, selecciona un archivo primero.";
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('file', this.selectedFile);
-
-            try {
-                const response = await axios.post('http://localhost:3333/csv/importCursoInstance', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-
-                });
-                this.message = response.data.message;
-
-                if (response.data.success) {
-                    this.fetchCursos();
-                } else {
-                    console.error('Error en el archivo:', response.data.message);
-                }
-
-            } catch (error) {
-                console.error('Error al subir el archivo de curso:', error);
-            }
-        },
-
         async uploadCursoFile() {
             console.log('Subir archivo de curso');
             if (!this.selectedFile) {
@@ -305,6 +274,7 @@ export default {
             formData.append('file', this.selectedFile);
 
             try {
+                
                 const response = await axios.post('http://localhost:3333/csv/importCurso', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
