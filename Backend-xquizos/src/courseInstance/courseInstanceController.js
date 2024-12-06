@@ -182,7 +182,7 @@ var getTeacherCourseInstanceControllerFn = async (req, res) => {
         console.log("Rut:", rut);
 
         // Llama al servicio para actualizar codDocente
-        const result = await courseInstanceService.getTeacherCourseInstanceDBService(rut);
+        const result = await courseInstanceService.getTeacherCourseInstancesDBService(rut);
 
         if (result.status) {
             res.json(result); // Responde con el resultado del servicio

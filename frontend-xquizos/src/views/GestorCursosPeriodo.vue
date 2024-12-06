@@ -48,13 +48,8 @@
                 <input type="file" ref="fileInput" @change="onFileSelected" style="display: none;" accept=".csv" />
                 <button class="btn btn-success" @click="triggerFileInput">
                     <i class="fa-solid fa-file-csv"></i> Importar desde CSV
-            
-                
                 </button>
-                <input type="file" ref="fileInput" @change="onFileAlumnos" style="display: none;" accept=".csv" />
-                <button class="btn btn-success" @click="triggerFileInput">
-                    <i class="fa-solid fa-file-csv"></i> Importar alumnos por CSV
-                </button>
+
             </div>
             
         </div>
