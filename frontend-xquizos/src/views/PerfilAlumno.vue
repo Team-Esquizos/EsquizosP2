@@ -1,75 +1,101 @@
 <template>
-<navBar />
-<div class="student-profile">
-    <header>
-        <button class="btn btn-secondary back-button" @click="goBack">
-            <i class="fa-solid fa-circle-left"></i> Volver a los modulos
-        </button>
-        <h1>Perfil del alumno</h1>
-    </header>
-    <section class="student-info">
-        <p><strong>Name:</strong> {{ nombrealum }}</p>
-        <p><strong>Matricula:</strong> {{ matriculaalum }}</p>
-        <button @click="showChoiceDialog">Generar Carta de Recomendación</button>
+    <div class="body">
+        <navBar class="navbar"/>
+        <div class="student-profile">
+            <header class="header-container">
+                <button class="btn btn-secondary back-button" @click="goBack">
+                    <i class="fa-solid fa-circle-left"></i> Volver a los estudiantes
+                </button>
+                <h1>Perfil del alumno</h1>
+            </header>
+            <section class="student-info">
+                <p><strong>Name:</strong> {{ nombrealum }}</p>
+                <p><strong>Matricula:</strong> {{ matriculaalum }}</p>
+                <button @click="showChoiceDialog">Generar Carta de Recomendación</button>
 
-        <button @click="iraEstadisticas">Ver estadistica</button>
-    </section>
-</div>
-<div class="container">
-    <!-- Default Comments -->
-    <section class="default-comments">
-        <h2>Default Comments</h2>
-        <div class="default-comments-group">
-            <div class="comment-category">
-                <h3>Positive Comments</h3>
-                <ul>
-                    <li class="comment-box positive" @click="addDefaultComment('Ayuda a sus compañeros con la materia', 9)">
-                        Ayuda a sus compañeros con la materia
-                    </li>
-                    <li class="comment-box positive" @click="addDefaultComment('Alumno Puntual', 10)">
-                        Alumno Puntual
-                    </li>
-                    <li class="comment-box positive" @click="addDefaultComment('Participativo en clases', -5)">
-                        Participativo en clases
-                    </li>
-                </ul>
-            </div>
-            <div class="comment-category">
-                <h3>Negative Comments</h3>
-                <ul>
-                    <li class="comment-box negative" @click="addDefaultComment('Copia de prueba', -8)">
-                        Copia de prueba
-                    </li>
-                    <li class="comment-box negative" @click="addDefaultComment('Copia proyecto', -10)">
-                        Copia proyecto
-                    </li>
-                    <li class="comment-box negative" @click="addDefaultComment('Golpeo al jefe de grupo', -2)">
-                        Golpeo al jefe de grupo
-                    </li>
-                </ul>
-            </div>
+                <button @click="iraEstadisticas">Ver estadistica</button>
+            </section>
         </div>
-    </section>
+        <div class="container">
+            <!-- Default Comments -->
+            <section class="default-comments">
+                <h2>Default Comments</h2>
+                <div class="default-comments-group">
+                    <div class="comment-category">
+                        <h3>Positive Comments</h3>
+                        <ul>
+                            <li class="comment-box positive" @click="addDefaultComment('Ayuda a sus compañeros con la materia', 9)">
+                                Ayuda a sus compañeros con la materia
+                            </li>
+                            <li class="comment-box positive" @click="addDefaultComment('Alumno Puntual', 10)">
+                                Alumno Puntual
+                            </li>
+                            <li class="comment-box positive" @click="addDefaultComment('Participativo en clases', -5)">
+                                Participativo en clases
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="comment-category">
+                        <h3>Negative Comments</h3>
+                        <ul>
+                            <li class="comment-box negative" @click="addDefaultComment('Copia de prueba', -8)">
+                                Copia de prueba
+                            </li>
+                            <li class="comment-box negative" @click="addDefaultComment('Copia proyecto', -10)">
+                                Copia proyecto
+                            </li>
+                            <li class="comment-box negative" @click="addDefaultComment('Golpeo al jefe de grupo', -2)">
+                                Golpeo al jefe de grupo
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
 
-    <!-- Add a Commentary -->
-    <section class="comment-section">
-        <h2>Add a Custom Comment</h2>
-        <textarea v-model="newComment.comentario" placeholder="Write a comment..."></textarea>
-        <div>
-            <label for="commentWeight">Puntaje:</label>
-            <input id="commentWeight" type="number" v-model.number="newComment.peso" min="-5" max="5" step="1" placeholder="0" />
+            <div class="flags-container">
+              <flag 
+              :regularColor="'#00FF00'" 
+              :solidColor="'#006400'" 
+              :texto="'Buen comportamiento'" 
+              :checked="selectedFlag === 'buenComportamiento'"
+              @update:checked="updateSelectedFlag('buenComportamiento')"
+              v-model="newComment.flag"/>
+              <flag 
+              :regularColor="'#FFFF00'" 
+              :solidColor="'#FFD700'" 
+              :texto="'Advertencia'"
+              :checked="selectedFlag === 'advertencia'"
+              @update:checked="updateSelectedFlag('advertencia')" 
+              v-model="newComment.flag"/>
+              <flag 
+              :regularColor="'#FF0000'" 
+              :solidColor="'#8B0000'" 
+              :texto="'Mal comportamiento'" 
+              :checked="selectedFlag === 'malComportamiento'"
+              @update:checked="updateSelectedFlag('malComportamiento')"
+              v-model="newComment.flag"/>
+            </div>
+
+            <!-- Add a Commentary -->
+            <section class="comment-section">
+                <h2>Add a Custom Comment</h2>
+                <textarea v-model="newComment.comentario" placeholder="Write a comment..."></textarea>
+                <div>
+                    <Slide v-model="newComment.peso"/>
+                    <p>Peso seleccionado: {{ newComment.peso }}</p>
+                </div>
+                <button @click="addComment">Add Comment</button>
+                <div class="comments-list">
+                    <h3>Comments:</h3>
+                    <ul>
+                        <li v-for="(comment, index) in comments" :key="index" class="comment-box">
+                            {{ comment.comentario }}
+                            <button @click="deleteComment(comment._id)" class="delete-button">Delete</button>
+                        </li>
+                    </ul>
+                </div>
+            </section>
         </div>
-        <button @click="addComment">Add Comment</button>
-        <div class="comments-list">
-            <h3>Comments:</h3>
-            <ul>
-                <li v-for="(comment, index) in comments" :key="index" class="comment-box">
-                    {{ comment.comentario }}
-                    <button @click="deleteComment(comment._id)" class="delete-button">Delete</button>
-                </li>
-            </ul>
-        </div>
-    </section>
 </div>
 </template>
 
@@ -80,13 +106,17 @@ import GoBackMixin from '@/mixins/AutenticadorSesion';
 import Swal from 'sweetalert2';
 import jsPDF from 'jspdf';
 import logo from '@/assets/Utalca.png';
+import Slide from '@/components/Slide.vue';
+import flag from '@/components/Flag.vue';
 
 export default {
     name: 'PerfilAlumno',
     props: ['matriculaalum', 'nombrealum'],
     mixins: [GoBackMixin],
     components: {
-        navBar
+        navBar,
+        Slide,
+        flag
     },
     data() {
         return {
@@ -94,9 +124,11 @@ export default {
                 matricula: '',
                 codDocente: '',
                 comentario: '',
-                peso: '',
+                peso: 0,
+                flag: '',
             },
             comments: [],
+            selectedFlag: null, // Controla la flag seleccionada
         };
     },
     created() {
@@ -255,6 +287,7 @@ Atentamente,
                     await axios.post('http://localhost:3333/api/comments/add', this.newComment);
                     this.newComment = {};
                     this.fetchComments();
+                    this.selectedFlag = null;
 
                     Swal.fire({
                         title: 'Comentario añadido',
@@ -362,22 +395,37 @@ Atentamente,
                 });
             }
         },
+        updateSelectedFlag(flag) {
+          this.selectedFlag = flag;
+          this.newComment.flag = flag;
+        },
     },
 };
 </script>
 
 <style scoped>
-/* General Styling */
-body {
+.body {
     font-family: 'Arial', sans-serif;
-    background-color: #f4f4f9;
+    background-image: url(../assets/text.jpg);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     color: #333;
     margin: 0;
     padding: 0;
 }
 
+.header-container {
+    display: flex;
+    align-items: center;
+    gap: 30%; /* Espaciado entre el botón y el título */
+    justify-content: flex-start; /* Alinear los elementos hacia la izquierda */
+    margin-top: 5.2%;
+}
+
+
 .back-button {
-    margin-right: 20px;
+    margin-left: 1%; /* Opcional, ajusta si hay márgenes no deseados */
 }
 
 /* Profile Header */
@@ -393,12 +441,13 @@ body {
 .student-info {
     display: inline-block;
     padding: 20px;
-    background-color: #ffffff;
+    background-color: #ffffffaf;
     border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     text-align: left;
 }
+
 
 .student-info p {
     margin: 5px 0;
@@ -409,7 +458,7 @@ body {
     max-width: 900px;
     margin: 0 auto;
     padding: 20px;
-    background-color: #fff;
+    background-color: #ffffffaf;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -427,7 +476,7 @@ body {
 
 .comment-category {
     flex: 1;
-    background-color: #f9f9f9;
+    background-color: #ffffff;
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -518,5 +567,10 @@ button:hover {
 
 .delete-button:hover {
     background-color: #d32f2f;
+}
+
+.flags-container{
+  margin-top: 2%;
+  margin-bottom: 2%;
 }
 </style>

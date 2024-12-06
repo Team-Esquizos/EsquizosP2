@@ -11,6 +11,7 @@
                 <button class="btn btn-secondary back-button" @click="goBack">
                     <i class="fa-solid fa-circle-left"></i> Volver a los modulos
                 </button>
+                <button class="btn btn-primary" @click="GenerateExcel">Exportar Alumnos en Excel</button>
     
                 <!-- Título centrado -->
                 <h1 class="title" style="border-radius: 15px;">{{ nombreCurso }} -  {{ seccionCurso }}</h1>
@@ -65,13 +66,31 @@
 
                 <div class="flags-action-container">
                 <div class="flags-container">
-                    <flag :regularColor="'#00FF00'" :solidColor="'#006400'" :texto="'Buen comportamiento'" />
-                    <flag :regularColor="'#FFFF00'" :solidColor="'#FFD700'" :texto="'Advertencia'" />
-                    <flag :regularColor="'#FF0000'" :solidColor="'#8B0000'" :texto="'Mal comportamiento'" />
+                    <flag 
+                    :regularColor="'#00FF00'" 
+                    :solidColor="'#006400'" 
+                    :texto="'Buen comportamiento'" 
+                    :checked="selectedFlag === 'buenComportamiento'"
+                    @update:checked="updateSelectedFlag('buenComportamiento')"
+                    v-model="newComment.flag"/>
+                    <flag 
+                    :regularColor="'#FFFF00'" 
+                    :solidColor="'#FFD700'" 
+                    :texto="'Advertencia'"
+                    :checked="selectedFlag === 'advertencia'"
+                    @update:checked="updateSelectedFlag('advertencia')" 
+                    v-model="newComment.flag"/>
+                    <flag 
+                    :regularColor="'#FF0000'" 
+                    :solidColor="'#8B0000'" 
+                    :texto="'Mal comportamiento'" 
+                    :checked="selectedFlag === 'malComportamiento'"
+                    @update:checked="updateSelectedFlag('malComportamiento')"
+                    v-model="newComment.flag"/>
                 </div>
                 <div class="action-value-container">
-                    <label for="valorAccion">Valor acción</label>
-                    <input id="valorAccion" type="text" v-model="newComment.peso" class="form-control" placeholder="Ingrese valor" />
+                    <Slide v-model="newComment.peso"/>
+                    <p>Peso seleccionado: {{ newComment.peso }}</p>
                 </div>
                 </div>
 
@@ -95,7 +114,9 @@
     import navBar from '@/components/AppNavbarAdm.vue';
     import flag from '@/components/Flag.vue';
     import autenticadorSesion from '../mixins/AutenticadorSesion.js';
-    
+    import Slide from '@/components/Slide.vue';
+    import * as XLSX from 'xlsx';
+
     export default {
         name: 'VistaAlumnos',
         mixins: [autenticadorSesion],
@@ -106,6 +127,7 @@
         components: {
             navBar,
             flag,
+            Slide
         },
         computed: {
             userRole() {
@@ -135,10 +157,12 @@
                     matricula: '',
                     codDocente: '',
                     comentario: '',
-                    peso: '',
+                    peso: 0,
+                    flag: '',
                 },
                 formVisible: false,
                 isEditMode: false,
+                selectedFlag: null, // Controla la flag seleccionada
                 formFields: {
                     nombres: 'Nombres',
                     apellidoP: 'Apellido Paterno',
@@ -206,6 +230,7 @@
                 this.isEditMode = mode === 'edit';
                 this.alumno = { ...alumno, valorAccion: '', comentario: '' };
                 this.formVisible = true;
+                this.selectedFlag = null;
             },
             handleSubmit() {
                 console.log('Comentario agregado:', this.alumno);
@@ -229,6 +254,7 @@
             },
             clearForm() {
                 this.formVisible = false;
+                this.selectedFlag = null; 
             },
             
     
@@ -278,6 +304,22 @@
             mounted() {
                 const nombreCurso = this.$route.params.nombre; 
                 console.log(nombreCurso); 
+            },
+            updateSelectedFlag(flag) {
+                this.selectedFlag = flag;
+                this.newComment.flag = flag;
+            },
+            async GenerateExcel() {
+                const camposExcluidos = ['_id', 'lista_de_acciones', '__v'];
+                const filteredData = this.alumnos.map(obj =>
+                    Object.fromEntries(Object.entries(obj).filter(([key]) => !camposExcluidos.includes(key)))
+                );
+                const ws = XLSX.utils.json_to_sheet(filteredData);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Alumnos');
+                
+                const nombrearchivo = 'ALUMNOS DE '+this.nombreCurso+'.xlsx';
+                XLSX.writeFile(wb, nombrearchivo);
             },
         }
     };

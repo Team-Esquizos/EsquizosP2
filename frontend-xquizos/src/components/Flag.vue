@@ -1,6 +1,10 @@
 <template>
   <label class="container">
-    <input type="checkbox">
+    <input 
+      type="checkbox" 
+      :checked="checked" 
+      @change="handleChange"
+    >
     <div class="flag-icons">
       <!-- Ícono de bandera regular -->
       <svg 
@@ -40,6 +44,16 @@ export default {
     texto: {
       type: String,
       required: true, // Obliga a que se pase un texto
+    },
+    checked: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  methods: {
+    handleChange(event) {
+      // Emitir el cambio para que el componente padre lo controle
+      this.$emit("update:checked", event.target.checked);
     },
   },
 };
