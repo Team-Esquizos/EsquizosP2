@@ -11,7 +11,7 @@
             <section class="student-info">
                 <p><strong>Name:</strong> {{ nombrealum }}</p>
                 <p><strong>Matricula:</strong> {{ matriculaalum }}</p>
-                <button @click="showChoiceDialog">Generar Carta de Recomendación</button>
+                <button @click="showChoiceDialog">Generar Carta</button>
 
                 <button @click="iraEstadisticas">Ver estadistica</button>
             </section>
@@ -19,10 +19,10 @@
         <div class="container">
             <!-- Default Comments -->
             <section class="default-comments">
-                <h2>Default Comments</h2>
+                <h2>Comentarios por defecto</h2>
                 <div class="default-comments-group">
                     <div class="comment-category">
-                        <h3>Positive Comments</h3>
+                        <h3>Comentarios positivos</h3>
                         <ul>
                             <li class="comment-box positive" @click="addDefaultComment('Ayuda a sus compañeros con la materia', 9)">
                                 Ayuda a sus compañeros con la materia
@@ -36,7 +36,7 @@
                         </ul>
                     </div>
                     <div class="comment-category">
-                        <h3>Negative Comments</h3>
+                        <h3>comentarios negativos</h3>
                         <ul>
                             <li class="comment-box negative" @click="addDefaultComment('Copia de prueba', -8)">
                                 Copia de prueba
@@ -78,19 +78,19 @@
 
             <!-- Add a Commentary -->
             <section class="comment-section">
-                <h2>Add a Custom Comment</h2>
+                <h2>añadir comentario personalizado</h2>
                 <textarea v-model="newComment.comentario" placeholder="Write a comment..."></textarea>
                 <div>
                     <Slide v-model="newComment.peso"/>
                     <p>Peso seleccionado: {{ newComment.peso }}</p>
                 </div>
-                <button @click="addComment">Add Comment</button>
+                <button @click="addComment">Añadir Comentario</button>
                 <div class="comments-list">
-                    <h3>Comments:</h3>
+                    <h3>Comentarios:</h3>
                     <ul>
                         <li v-for="(comment, index) in comments" :key="index" class="comment-box">
                             {{ comment.comentario }}
-                            <button @click="deleteComment(comment._id)" class="delete-button">Delete</button>
+                            <button @click="deleteComment(comment._id)" class="delete-button">Eliminar</button>
                         </li>
                     </ul>
                 </div>
