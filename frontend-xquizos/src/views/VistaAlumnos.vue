@@ -120,7 +120,7 @@
     export default {
         name: 'VistaAlumnos',
         mixins: [autenticadorSesion],
-        props: ['nombreCurso, seccionCurso, codigo'], 
+        props: ['nombreCurso, seccionCurso, codigo, periodo'], 
         mounted() {
         console.log(this.$route.params.nombreCurso);
         },
@@ -181,7 +181,8 @@
             this.nombreCurso = this.$route.params.nombreCurso || 'Sin nombre';
             this.seccionCurso = this.$route.params.seccionCurso || 'Sin sección';
             this.codigo = this.$route.params.codigo || 'Sin sección';
-            this.fetchCursos();
+            this.periodo = this.$route.params.periodo || 'Sin sección';
+            this.fetchAlumnos();
         },
         methods: {
             goperfilalumno(matricula, nombrePrimer) {
@@ -210,20 +211,17 @@
                     name: 'VistaDocente'
                 });
             },
-            async fetchCursos() {
+            async fetchAlumnos() {
+                console.log(this.codigo, this.periodo)
                 try {
-                    const nombre = this.$route.params.nombreCurso;
-                    const seccion = this.$route.params.seccionCurso;
-                    const codigo = this.$route.params.codigo;
-                    console.log(nombre, seccion, codigo)
-                    const response = await axios.get(`http://localhost:3333/api/courseInstance/get/students/${encodeURIComponent(codigo)}`);
-                if (response.data.status) {
+                    const response = await axios.get(`http://localhost:3333/api/courseInstance/get/students/${this.codigo}/${this.periodo}`);
+                    if (response.data.status) {
                     this.alumnos = response.data.students;
-                } else {
+                    } else {
                     console.error(response.data.msg);
-                }
+                    }
                 } catch (error) {
-                console.error('Error al obtener cursos:', error);
+                    console.error("Error al obtener alumnos:", error);
                 }
             },
             toggleForm(mode, alumno = {}) {
