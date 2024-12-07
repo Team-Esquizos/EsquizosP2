@@ -310,10 +310,16 @@
                 this.newComment.flag = flag;
             },
             async GenerateExcel() {
-                const ws = XLSX.utils.json_to_sheet(this.alumnos);
+                const camposExcluidos = ['_id', 'lista_de_acciones', '__v'];
+                const filteredData = this.alumnos.map(obj =>
+                    Object.fromEntries(Object.entries(obj).filter(([key]) => !camposExcluidos.includes(key)))
+                );
+                const ws = XLSX.utils.json_to_sheet(filteredData);
                 const wb = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(wb, ws, 'Alumnos');
-                XLSX.writeFile(wb, 'AlumnosCurso.xlsx');
+                
+                const nombrearchivo = 'ALUMNOS DE '+this.nombreCurso+'.xlsx';
+                XLSX.writeFile(wb, nombrearchivo);
             },
         }
     };
