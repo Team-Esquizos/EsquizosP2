@@ -11,6 +11,7 @@
                 <button class="btn btn-secondary back-button" @click="goBack">
                     <i class="fa-solid fa-circle-left"></i> Volver a los modulos
                 </button>
+                <button class="btn btn-primary" @click="GenerateExcel">Exportar Alumnos en Excel</button>
     
                 <!-- Título centrado -->
                 <h1 class="title" style="border-radius: 15px;">{{ nombreCurso }} -  {{ seccionCurso }}</h1>
@@ -114,7 +115,8 @@
     import flag from '@/components/Flag.vue';
     import autenticadorSesion from '../mixins/AutenticadorSesion.js';
     import Slide from '@/components/Slide.vue';
-    
+    import * as XLSX from 'xlsx';
+
     export default {
         name: 'VistaAlumnos',
         mixins: [autenticadorSesion],
@@ -306,6 +308,18 @@
             updateSelectedFlag(flag) {
                 this.selectedFlag = flag;
                 this.newComment.flag = flag;
+            },
+            async GenerateExcel() {
+                const camposExcluidos = ['_id', 'lista_de_acciones', '__v'];
+                const filteredData = this.alumnos.map(obj =>
+                    Object.fromEntries(Object.entries(obj).filter(([key]) => !camposExcluidos.includes(key)))
+                );
+                const ws = XLSX.utils.json_to_sheet(filteredData);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Alumnos');
+                
+                const nombrearchivo = 'ALUMNOS DE '+this.nombreCurso+'.xlsx';
+                XLSX.writeFile(wb, nombrearchivo);
             },
         }
     };

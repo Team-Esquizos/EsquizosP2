@@ -53,6 +53,11 @@
                 </button>
                 </div>
             </div>
+            <div class="ms-2">
+                <button class="btn btn-success" @click="GenerarExcel">
+                    <i class="fa-solid fa-file-"></i> Exportar Cursos por excel
+                </button>
+            </div>
 
         </div>
     </div>
@@ -99,7 +104,8 @@ import axios from 'axios';
 import navBar from '@/components/AppNavbarAdm.vue';
 import autenticadorSesion from '../mixins/AutenticadorSesion.js';
 import Swal from 'sweetalert2';
-
+import * as XLSX from 'xlsx';
+import _ from 'lodash';
 export default {
     name: 'GestorCursos',
     mixins: [autenticadorSesion],
@@ -292,6 +298,25 @@ export default {
 
             } catch (error) {
                 console.error('Error al subir el archivo de curso:', error);
+            }
+        },
+        async GenerarExcel() {
+            try {
+                const response = await axios.get('http://localhost:3333/api/courses/get');
+        
+                // Asegúrate de que response.data tenga los datos en formato JSON
+                const data = response.data;
+                const filteredData = data.map(obj => _.omit(obj, ['_id', '__v']));
+
+                // Convertir los datos a una hoja de cálculo
+                const worksheet = XLSX.utils.json_to_sheet(filteredData);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, 'Datos');
+
+                // Exportar el archivo Excel
+                XLSX.writeFile(workbook, 'Cursos.xlsx');
+            } catch (error) {
+                console.error('Error al generar el Excel:', error);
             }
         },
 
