@@ -1,13 +1,10 @@
 <template>
-
-
-
     <div class="gestor-datos-container">
       <h1 class="header-title">Gestor de Datos</h1>
       <div class="card-container">
         <!-- Card Gestor de Alumnos -->
         <div class="card shadow-lg" @click="goToGestorAlumnos">
-          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTqj1l24c3TO8_1DiRxDWOAWXoQRIuCr17Hg&s" class="card-img-top" alt="Gestor Alumnos" />
+          <img src="https://www.utalca.cl/content/uploads/2021/01/web-42.png" class="card-img-top" alt="Gestor Alumnos" />
           <div class="card-body">
             <h5 class="card-title">Gestor de Alumnos</h5>
             <p class="card-text">Administra los alumnos del sistema.</p>
@@ -16,13 +13,13 @@
   
         <!-- Card Gestor de Docentes -->
         <div class="card shadow-lg" @click="goToGestorDocentes">
-          <img src="https://www.cinconoticias.com/wp-content/uploads/tipos-de-profesores.1.jpg" class="card-img-top" alt="Gestor Docentes" />
+          <img src="https://www.udima.es/sites/udima.es/files/GettyImages-1468138682.jpg" class="card-img-top" alt="Gestor Docentes" />
           <div class="card-body">
             <h5 class="card-title">Gestor de Docentes</h5>
             <p class="card-text">Gestiona la información de los docentes.</p>
           </div>
         </div>
-  
+
         <!-- Card Gestor de Cursos -->
         <div class="card shadow-lg" @click="goToGestorCursos">
           <img src="https://d11cuk1a0j5b57.cloudfront.net/blog/wp-content/uploads/2022/08/18125803/Mejores-plataformas-de-cursos.jpg" class="card-img-top" alt="Gestor Cursos" />
@@ -31,6 +28,17 @@
             <p class="card-text">Gestiona los cursos disponibles en el sistema.</p>
           </div>
         </div>
+
+        <!-- Card Gestor de Cursos -->
+        <div class="card shadow-lg" @click="goToGestorCursosPeriodo">
+          <img src="https://conidea.mx/wp-content/uploads/2020/06/cursos-en-linea-para-mejorar.jpg" class="card-img-top" alt="Gestor Cursos Periodo" />
+          <div class="card-body">
+            <h5 class="card-title">Gestor de Cursos Periodo</h5>
+            <p class="card-text">Gestiona los cursos disponibles en el sistema por semestre.</p>
+          </div>
+        </div>
+        
+        
       </div>
     </div>
   </template>
@@ -54,6 +62,9 @@ import autenticadorSesion from '../mixins/AutenticadorSesion.js';
       },
       goToGestorCursos() {
         this.$router.push('/gestorCursos');
+      },
+      goToGestorCursosPeriodo() {
+        this.$router.push('/gestorCursosPeriodo');
       }
     }
   };
@@ -91,12 +102,14 @@ import autenticadorSesion from '../mixins/AutenticadorSesion.js';
   .card-container {
     display: flex;
     justify-content: center;
-    gap: 50px;
+    gap: 30px;
+    margin-top: 180px;
+    flex-wrap: wrap; /* Permite que las cards se ajusten en pantallas pequeñas */
   }
   
   .card {
-    width: 370px; /* Ajusta este valor para agrandar el ancho de la carta */
-    height: 400px; 
+    width: 300px; /* Ancho fijo para todas las cards */
+    height: 400px; /* Alto fijo para todas las cards */
     cursor: pointer;
     transition: transform 0.3s, box-shadow 0.3s;
   }
@@ -107,24 +120,30 @@ import autenticadorSesion from '../mixins/AutenticadorSesion.js';
   }
   
   .card-img-top {
-    height: 220px;
+    height: 200px; /* Alto fijo para todas las imágenes */
     object-fit: cover;
+    width: 100%;
     border-bottom: 2px solid #000000;
   }
   
   .card-body {
-    padding: 50px;
+    padding: 20px;
+    height: 200px; /* Alto fijo para el contenido */
+    display: flex;
+    flex-direction: column;
   }
   
   .card-title {
     font-size: 1.50em;
     color: #000000;
     font-weight: 600; 
+    margin-bottom: 10px;
   }
   
   .card-text {
     color: #666;
     font-size: 1.25em;
+    flex-grow: 1; /* Permite que el texto ocupe el espacio restante */
   }
   
   .card:hover .card-title {
@@ -134,13 +153,4 @@ import autenticadorSesion from '../mixins/AutenticadorSesion.js';
   .card:hover .card-text {
     color: #333;
   }
-
-  .card-container {
-    display: flex;
-    justify-content: center;
-    gap: 80px;
-    margin-top: 180px;
-    
-  }
   </style>
-  

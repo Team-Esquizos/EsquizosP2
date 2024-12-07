@@ -11,7 +11,7 @@
             <section class="student-info">
                 <p><strong>Name:</strong> {{ nombrealum }}</p>
                 <p><strong>Matricula:</strong> {{ matriculaalum }}</p>
-                <button @click="showChoiceDialog">Generar Carta de Recomendación</button>
+                <button @click="showChoiceDialog">Generar Carta</button>
 
                 <button @click="iraEstadisticas">Ver estadistica</button>
             </section>
@@ -19,10 +19,10 @@
         <div class="container">
             <!-- Default Comments -->
             <section class="default-comments">
-                <h2>Default Comments</h2>
+                <h2>Comentarios por defecto</h2>
                 <div class="default-comments-group">
                     <div class="comment-category">
-                        <h3>Positive Comments</h3>
+                        <h3>Comentarios positivos</h3>
                         <ul>
                             <li class="comment-box positive" @click="addDefaultComment('Ayuda a sus compañeros con la materia', 9)">
                                 Ayuda a sus compañeros con la materia
@@ -36,7 +36,7 @@
                         </ul>
                     </div>
                     <div class="comment-category">
-                        <h3>Negative Comments</h3>
+                        <h3>comentarios negativos</h3>
                         <ul>
                             <li class="comment-box negative" @click="addDefaultComment('Copia de prueba', -8)">
                                 Copia de prueba
@@ -78,19 +78,19 @@
 
             <!-- Add a Commentary -->
             <section class="comment-section">
-                <h2>Add a Custom Comment</h2>
+                <h2>añadir comentario personalizado</h2>
                 <textarea v-model="newComment.comentario" placeholder="Write a comment..."></textarea>
                 <div>
                     <Slide v-model="newComment.peso"/>
                     <p>Peso seleccionado: {{ newComment.peso }}</p>
                 </div>
-                <button @click="addComment">Add Comment</button>
+                <button @click="addComment">Añadir Comentario</button>
                 <div class="comments-list">
-                    <h3>Comments:</h3>
+                    <h3>Comentarios:</h3>
                     <ul>
                         <li v-for="(comment, index) in comments" :key="index" class="comment-box">
                             {{ comment.comentario }}
-                            <button @click="deleteComment(comment._id)" class="delete-button">Delete</button>
+                            <button @click="deleteComment(comment._id)" class="delete-button">Eliminar</button>
                         </li>
                     </ul>
                 </div>
@@ -127,15 +127,17 @@ export default {
                 peso: 0,
                 flag: '',
             },
+            profesorNombre: '',
             comments: [],
             selectedFlag: null, // Controla la flag seleccionada
         };
     },
     created() {
         this.fetchComments();
+        this.profesorNombre = localStorage.getItem('user') || sessionStorage.getItem('user') || 'Usuario';
     },
     methods: {
-        async generatePDF(type) {
+        async generatePDF(type, positiveComments, negativeComments) {
             const doc = new jsPDF();
             const imgData = await this.loadLogo();
 
@@ -153,18 +155,17 @@ Estimado/a:
 Por la presente, recomiendo ampliamente a ${this.nombrealum}, con matrícula ${this.matriculaalum}, por su destacada participación en el programa académico. 
 Durante su tiempo con nosotros, demostró ser una persona comprometida, proactiva y orientada a resultados.
 
-Entre sus logros más destacados se encuentran:
-- [Logro 1].
-- [Logro 2].
-- [Logro 3].
+Comentarios destacados:
+${positiveComments.map(comment => `- ${comment.comentario}`).join('\n')}
 
 Estoy convencido de que ${this.nombrealum} será un gran activo para cualquier organización o proyecto en el que participe.
-        `;
+
+Atentamente,
+${this.profesorNombre}
+                `;
                 doc.setFont("Times", "normal");
                 doc.setFontSize(12);
-                doc.text(recommendationContent, 10, 40, {
-                    maxWidth: 190
-                });
+                doc.text(recommendationContent, 10, 40, { maxWidth: 190 });
             } else if (type === "sumario") {
                 // Encabezado de carta de sumario
                 doc.addImage(imgData, "PNG", 10, 10, 30, 30); // Logo
@@ -180,26 +181,17 @@ Fecha: ${new Date().toLocaleDateString()}
 
 A quien corresponda:
 
-Por medio de la presente, solicitamos información adicional sobre el estudiante ${this.nombrealum}, con matrícula ${this.matriculaalum}, 
-quien se encuentra registrado en nuestro sistema académico. Esta solicitud se realiza con el fin de llevar a cabo un seguimiento 
-detallado de su desempeño y cumplimiento con las políticas institucionales.
+Se realiza esta comunicación con el propósito de detallar observaciones y comentarios negativos sobre el desempeño del estudiante ${this.nombrealum}:
 
-Los datos requeridos incluyen, pero no se limitan a:
-1. Historial académico detallado.
-2. Información sobre actividades extracurriculares realizadas.
-3. Cualquier observación relevante sobre su conducta o desempeño.
-
-Le solicitamos que esta información sea proporcionada a la brevedad posible, en un plazo no mayor a [insertar plazo], 
-para proceder con las evaluaciones correspondientes. Si requiere más información, no dude en contactarnos.
+Comentarios destacados:
+${negativeComments.map(comment => `- ${comment.comentario}`).join('\n')}
 
 Atentamente,
-[Tu nombre]
-        `;
+${this.profesorNombre}
+                `;
                 doc.setFont("Times", "normal");
                 doc.setFontSize(12);
-                doc.text(summaryContent, 10, 40, {
-                    maxWidth: 190
-                });
+                doc.text(summaryContent, 10, 40, { maxWidth: 190 });
             }
 
             // Guardar el archivo PDF
@@ -223,22 +215,39 @@ Atentamente,
         },
 
         async showChoiceDialog() {
-            const result = await Swal.fire({
-                title: "Seleccione el tipo de carta",
-                text: "¿Qué carta desea generar?",
-                icon: "question",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",  
-                confirmButtonText: "Recomendación",
-                cancelButtonColor: "#d33",
-                cancelButtonText: "Sumario",
-                reverseButtons: true,
-            });
+            try {
+                // Obtiene los comentarios
+                const response = await axios.get(
+                    `http://localhost:3333/api/comments/getFromMatricula/${this.matriculaalum}`
+                );
+                this.comments = response.data.comments || [];
+                
+                // Filtra comentarios positivos y negativos
+                const positiveComments = this.comments.filter(comment => comment.peso > 0);
+                const negativeComments = this.comments.filter(comment => comment.peso < 0);
 
-            if (result.isConfirmed) {
-                this.generatePDF("recomendacion");
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                this.generatePDF("sumario");
+                // Determina el tipo de carta según la suma total
+                const totalPeso = this.comments.reduce((sum, comment) => sum + (comment.peso || 0), 0);
+                const type = totalPeso > 0 ? "recomendacion" : "sumario";
+
+                // Genera la carta automáticamente
+                await this.generatePDF(type, positiveComments, negativeComments);
+
+                Swal.fire({
+                    title: `Carta generada`,
+                    text: `Se ha descargado automáticamente la carta de ${type === "recomendacion" ? "recomendación" : "sumario"}.`,
+                    icon: "success",
+                    confirmButtonText: "Aceptar",
+                    confirmButtonColor: "#3085d6",
+                });
+            } catch (error) {
+                console.error("Error al calcular los comentarios o generar la carta:", error);
+                Swal.fire({
+                    title: "Error",
+                    text: "Ocurrió un problema al generar la carta. Por favor, inténtalo de nuevo.",
+                    icon: "error",
+                    confirmButtonText: "Aceptar",
+                });
             }
         },
         async iraEstadisticas() {
