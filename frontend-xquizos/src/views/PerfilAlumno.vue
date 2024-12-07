@@ -14,8 +14,13 @@
                 <button @click="showChoiceDialog">Generar Carta</button>
 
                 <button @click="iraEstadisticas">Ver estadistica</button>
+
             </section>
+            <ResumenAlum
+            :key="`${rut}`" 
+            />
         </div>
+        
         <div class="container">
             <!-- Default Comments -->
             <section class="default-comments">
@@ -108,6 +113,7 @@ import jsPDF from 'jspdf';
 import logo from '@/assets/Utalca.png';
 import Slide from '@/components/Slide.vue';
 import flag from '@/components/Flag.vue';
+import ResumenAlum from '@/components/ResumenAlum.vue'
 
 export default {
     name: 'PerfilAlumno',
@@ -116,7 +122,8 @@ export default {
     components: {
         navBar,
         Slide,
-        flag
+        flag,
+        ResumenAlum
     },
     data() {
         return {
