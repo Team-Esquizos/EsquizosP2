@@ -1,412 +1,455 @@
 <template>
-<img src="../assets/fondogestor2.jpg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1;">
-<navBar />
-
-<div class="gestor-cursos-container container my-5" style="opacity: 0.9;">
-
-    <!-- Contenedor principal para el botón y el título -->
-    <div class="header-container container my-5">
-        <div class="d-flex align-items-center">
-            <!-- Botón de retroceso a la izquierda -->
-            <button class="btn btn-secondary back-button" @click="goBack">
-                <i class="fa-solid fa-circle-left"></i> Volver a GestorDatos
+    <navBar />
+  
+    <div class="maincontent">
+      <div class="gestor-cursos-container">
+        <!-- Botón de retroceso y título -->
+        <div class="header-container">
+          <button class="btn btn-secondary back-button" @click="goBack">
+            <i class="fa-solid fa-circle-left"></i> Volver a GestorDatos
+          </button>
+          <h1 class="title">Gestor de Cursos</h1>
+        </div>
+  
+        <!-- Lista de cursos con botones de acción -->
+        <div class="section-title">
+          <h3>Lista de Cursos</h3>
+  
+          <div class="action-buttons">
+            <button class="btn btn-primary" @click="toggleForm('add')">
+              <i class="fa-solid fa-user-plus"></i> Agregar Curso
             </button>
-
-            <!-- Título centrado -->
-            <h1 class="title" style="border-radius: 15px;">Gestor de Cursos</h1>
+            <button class="btn btn-success" @click="GenerarExcel">
+              <i class="fa-solid fa-file-excel"></i> Exportar Cursos por Excel
+            </button>
+            <button class="btn btn-success" @click="triggerFileInput">
+              <i class="fa-solid fa-file-import"></i> Importar Módulos por Excel
+            </button>
+            <input
+              type="file"
+              ref="fileInput"
+              @change="onFileModulos"
+              style="display: none;"
+              accept=".xlsx, .xls"
+            />
+          </div>
         </div>
-    </div>
-
-    <!-- Modal del formulario para agregar/editar alumno -->
-    <div v-if="formVisible" class="modal-overlay" @click.self="clearForm">
-        <div class="modal-content">
-            <form @submit.prevent="handleSubmit">
-                <h3 class="text-center mb-4">{{ isEditMode ? 'Editar Curso' : 'Agregar Curso' }}</h3>
-
-                <!-- Campos del formulario -->
-                <div class="form-group mb-3" v-for="(label, key) in formFields" :key="key">
-                    <label :for="key">{{ label }}</label>
-                    <input type="text" :id="key" v-model="curso[key]" class="form-control" :required="requiredFields.includes(key)" />
-                </div>
-
-                <!-- Botones de acción -->
-                <div class="d-flex justify-content-between mt-4">
-                    <button type="submit" class="btn btn-success">{{ isEditMode ? 'Actualizar' : 'Agregar' }}</button>
-                    <button type="button" class="btn btn-secondary" @click="clearForm">Cancelar</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Lista de alumnos con el botón Agregar Alumno a la derecha del título -->
-    <div class="d-flex align-items-center justify-content-between section-title mb-4">
-        <h3 style="border-radius: 15px;">Lista de Cursos</h3>
-        <div class="d-flex">
-            <button class="btn btn-primary" @click="toggleForm('add')"><i class="fa-solid fa-user-plus"></i> Agregar Curso</button>
-            <!-- Botón de importar CSV -->
-            <div class="ms-2">
-                <div>
-                <input type="file" ref="fileInput" @change="onFileModulos" style="display: none;" accept=".xlsx" />
-                <button class="btn btn-success" @click="triggerFileInput">
-                    
-                    <i class="fa-solid fa-file-"></i> Importar Modulos por excel
-                </button>
-                </div>
-            </div>
-            <div class="ms-2">
-                <button class="btn btn-success" @click="GenerarExcel">
-                    <i class="fa-solid fa-file-"></i> Exportar Cursos por excel
-                </button>
-            </div>
-
-        </div>
-    </div>
-
-    <div class="table-responsive" ref="tableContainer" style="border-radius: 15px; ">
-        <table class="table table-striped table-hover table-bordered text-center">
-            <thead class="thead-light" style="position: sticky; top: 0; z-index: 1; background-color: white;">
-                <tr>
-                    <th>Código</th>
-                    <th>Carrera</th>
-                    <th>Nombre</th>
-                    <th>Semestre</th>
-                    <th>Sección</th>
-                    <th>Acciones</th>
-                </tr>
+  
+        <!-- Tabla de cursos -->
+        <div class="table-container">
+          <table class="table table-striped table-hover table-bordered text-center">
+            <thead class="thead-light">
+              <tr>
+                <th>Código</th>
+                <th>Carrera</th>
+                <th>Nombre</th>
+                <th>Semestre</th>
+                <th>Sección</th>
+                <th>Acciones</th>
+              </tr>
             </thead>
             <tbody>
-                <tr v-for="curso in cursos" :key="curso.nombre + '-' + curso.seccion">
-                    <td class="align-middle">{{ curso.codigo }}</td>
-                    <td class="align-middle">{{ curso.carrera }}</td>
-                    <td class="align-middle">{{ curso.nombre }}</td>
-                    <td class="align-middle">{{ curso.semestre }}</td>
-                    <td class="align-middle">{{ curso.seccion }}</td>
-                    <td class="align-middle">
-                        <button @click="viewCurso(curso)" class="btn btn-sm btn-primary mx-1">
-                            <i class="far fa-eye"></i>
-                        </button>
-                        <button @click="toggleForm('edit', curso)" class="btn btn-sm btn-info mx-1">
-                            <i class="fas fa-pencil-alt"></i>
-                        </button>
-                        <button @click="deleteCurso(curso.nombre, curso.seccion)" class="btn btn-sm btn-danger mx-1">
-                            <i class="far fa-trash-alt"></i>
-                        </button>
-                    </td>
-                </tr>
+              <tr v-for="curso in cursos" :key="curso.codigo">
+                <td>{{ curso.codigo }}</td>
+                <td>{{ curso.carrera }}</td>
+                <td>{{ curso.nombre }}</td>
+                <td>{{ curso.semestre }}</td>
+                <td>{{ curso.seccion }}</td>
+                <td>
+                  <button @click="viewCurso(curso)" class="btn btn-sm btn-primary mx-1">
+                    <i class="far fa-eye"></i>
+                  </button>
+                  <button
+                    @click="toggleForm('edit', curso)"
+                    class="btn btn-sm btn-info mx-1"
+                  >
+                    <i class="fas fa-pencil-alt"></i>
+                  </button>
+                  <button
+                    @click="deleteCurso(curso.codigo)"
+                    class="btn btn-sm btn-danger mx-1"
+                  >
+                    <i class="far fa-trash-alt"></i>
+                  </button>
+                </td>
+              </tr>
             </tbody>
-        </table>
+          </table>
+        </div>
+  
+        <!-- Modal del formulario -->
+        <div v-if="formVisible" class="modal-overlay" @click.self="clearForm">
+          <div class="modal-content">
+            <form @submit.prevent="handleSubmit">
+              <h3 class="text-center mb-4">
+                {{ isEditMode ? 'Editar Curso' : 'Agregar Curso' }}
+              </h3>
+  
+              <!-- Campos del formulario -->
+              <div
+                class="form-group mb-3"
+                v-for="(label, key) in formFields"
+                :key="key"
+              >
+                <label :for="key">{{ label }}</label>
+                <input
+                  :type="getInputType(key)"
+                  :id="key"
+                  v-model="curso[key]"
+                  class="form-control"
+                  :required="requiredFields.includes(key)"
+                />
+              </div>
+  
+              <!-- Botones de acción -->
+              <div class="d-flex justify-content-between mt-4">
+                <button type="submit" class="btn btn-success">
+                  {{ isEditMode ? 'Actualizar' : 'Agregar' }}
+                </button>
+                <button type="button" class="btn btn-secondary" @click="clearForm">
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
-</div>
-</template>
-
-<script>
-import axios from 'axios';
-import navBar from '@/components/AppNavbarAdm.vue';
-import autenticadorSesion from '../mixins/AutenticadorSesion.js';
-import Swal from 'sweetalert2';
-import * as XLSX from 'xlsx';
-import _ from 'lodash';
-export default {
-    name: 'GestorCursos',
+  </template>
+  
+  <script>
+  import axios from "axios";
+  import navBar from "@/components/AppNavbarAdm.vue";
+  import autenticadorSesion from "../mixins/AutenticadorSesion.js";
+  import Swal from "sweetalert2";
+  import * as XLSX from "xlsx";
+  import _ from "lodash";
+  
+  export default {
+    name: "GestorCursos",
     mixins: [autenticadorSesion],
     components: {
-        navBar
+      navBar,
     },
     data() {
-        return {
-            cursos: [],
-            curso: {
-                codigo: '',
-                carrera: '',
-                nombre: '',
-                semestre: '',
-                seccion: ''
-            },
-            formVisible: false,
-            isEditMode: false,
-            formFields: {
-                codigo: 'Código del curso',
-                carrera: 'Carrera',
-                nombre: 'Nombre Curso',
-                semestre: 'Semestre',
-                seccion: 'Sección'
-            },
-            requiredFields: ['codigo', 'carrera', 'nombre', 'semestre', 'seccion']
-        };
+      return {
+        cursos: [],
+        curso: {
+          codigo: "",
+          carrera: "",
+          nombre: "",
+          semestre: "",
+          seccion: "",
+        },
+        formVisible: false,
+        isEditMode: false,
+        formFields: {
+          codigo: "Código del curso",
+          carrera: "Carrera",
+          nombre: "Nombre Curso",
+          semestre: "Semestre",
+          seccion: "Sección",
+        },
+        requiredFields: ["codigo", "carrera", "nombre", "semestre", "seccion"],
+      };
     },
     created() {
-        this.fetchCursos();
+      this.fetchCursos();
     },
     methods: {
-        goBack() {
-            this.$router.push({
-                name: 'VistaAdministrador'
-            });
-        },
-
-        async fetchCursos() {
-            try {
-                const response = await axios.get('http://localhost:3333/api/courses/get');
-                this.cursos = response.data;
-            } catch (error) {
-                console.error('Error al obtener cursos:', error);
+      goBack() {
+        this.$router.push({ name: "VistaAdministrador" });
+      },
+      async fetchCursos() {
+        try {
+          const response = await axios.get("http://localhost:3333/api/courses/get");
+          this.cursos = response.data;
+        } catch (error) {
+          console.error("Error al obtener cursos:", error);
+        }
+      },
+      toggleForm(mode, curso = {}) {
+        this.isEditMode = mode === "edit";
+        this.curso = { ...curso };
+        this.formVisible = !this.formVisible;
+      },
+      async handleSubmit() {
+        if (this.isEditMode) {
+          await this.updateCurso();
+        } else {
+          await this.addCurso();
+        }
+        this.clearForm();
+      },
+      async addCurso() {
+        try {
+          await axios.post("http://localhost:3333/api/courses/register", this.curso);
+          this.fetchCursos();
+          Swal.fire("¡Éxito!", "Curso agregado exitosamente.", "success");
+        } catch (error) {
+          console.error("Error al agregar curso:", error);
+          Swal.fire("Error", "No se pudo agregar el curso.", "error");
+        }
+      },
+      async updateCurso() {
+        try {
+          await axios.put(
+            `http://localhost:3333/api/courses/${this.curso.codigo}`,
+            this.curso
+          );
+          this.fetchCursos();
+          Swal.fire("¡Éxito!", "Curso actualizado exitosamente.", "success");
+        } catch (error) {
+          console.error("Error al actualizar curso:", error);
+          Swal.fire("Error", "No se pudo actualizar el curso.", "error");
+        }
+      },
+      async deleteCurso(codigo) {
+        try {
+          await axios.delete(`http://localhost:3333/api/courses/remove/${codigo}`);
+          this.fetchCursos();
+          Swal.fire("¡Éxito!", "Curso eliminado exitosamente.", "success");
+        } catch (error) {
+          console.error("Error al eliminar curso:", error);
+          Swal.fire("Error", "No se pudo eliminar el curso.", "error");
+        }
+      },
+      clearForm() {
+        this.curso = {
+          codigo: "",
+          carrera: "",
+          nombre: "",
+          semestre: "",
+          seccion: "",
+        };
+        this.formVisible = false;
+      },
+      triggerFileInput() {
+        this.$refs.fileInput.click();
+      },
+      onFileModulos(event) {
+        this.selectedFile = event.target.files[0];
+        this.uploadModulosFile();
+      },
+      async uploadModulosFile() {
+        if (!this.selectedFile) {
+          Swal.fire("Advertencia", "Por favor selecciona un archivo.", "warning");
+          return;
+        }
+  
+        const formData = new FormData();
+        formData.append("file", this.selectedFile);
+  
+        try {
+          const response = await axios.post(
+            "http://localhost:3333/csv/importModulos",
+            formData,
+            {
+              headers: { "Content-Type": "multipart/form-data" },
             }
-        },
-        toggleForm(mode, curso = {}) {
-            this.isEditMode = mode === 'edit';
-            this.curso = {
-                ...curso
-            };
-            this.formVisible = !this.formVisible;
-        },
-
-        async handleSubmit() {
-            if (this.isEditMode) {
-                await this.updateCurso();
-            } else {
-                await this.addCurso();
-            }
-            this.clearForm();
-        },
-
-        async addCurso() {
-            try {
-                await axios.post('http://localhost:3333/api/courses/register', this.curso);
-                this.fetchCursos();
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Éxito!',
-                    text: 'Curso agregado exitosamente.',
-                    confirmButtonText: 'Aceptar'
-                });
-            } catch (error) {
-                if (error.response) {
-                    if (error.response.status === 409) {
-                        // Código 409: Duplicado
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Registro duplicado',
-                            text: 'El Curso ya está registrado. Verifica los datos.',
-                            confirmButtonText: 'Entendido'
-                        })
-                    } else {
-                        // Otros errores con respuesta del servidor
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: error.response.data.message || 'Ocurrió un problema al agregar el Curso.',
-                            confirmButtonText: 'Aceptar'
-                        });
-                    }
-                } else {
-                    // Error sin respuesta del servidor (problemas de red, etc.)
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error de conexión',
-                        text: 'No se pudo conectar al servidor. Intenta nuevamente.',
-                        confirmButtonText: 'Aceptar'
-                    })
-                }
-            }
-        },
-    
-        async updateCurso() {
-            try {
-                await axios.put(`http://localhost:3333/api/courses/${this.curso.codigo}`, this.curso);
-                this.fetchCursos();
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Éxito!',
-                    text: 'Curso actualizado exitosamente.',
-                    confirmButtonText: 'Aceptar',
-                    confirmButtonColor  : '#2ecc71'
-                });
-            } catch (error) {
-                console.error('Error al actualizar Curso:', error);
-            }
-        },
-        async deleteCurso(nombre, seccion) {
-            try {
-                await axios.delete(`http://localhost:3333/api/courses/remove/${encodeURIComponent(nombre)}/${seccion}`);
-                this.fetchCursos();
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Éxito!',
-                    text: 'Curso eliminado exitosamente.',
-                    confirmButtonText: 'Aceptar',
-                    confirmButtonColor  : '#2ecc71'
-                });
-            } catch (error) {
-                console.error('Error al eliminar Curso:', error);
-            }
-        },
-        clearForm() {
-            this.curso = {
-                nombre: '',
-                seccion: '',
-                area: '',
-                docente: ''
-            };
-            this.formVisible = false;
-        },
-
-        triggerFileInput() {
-            console.log('Trigger file input');
-            this.$refs.fileInput.click();
-        },
-
-        handleAddFile() {
-            this.$refs.fileInput.click();
-        },
-
-        onFileSelected(event) {
-            this.selectedFile = event.target.files[0];
-            //this.uploadFile();
-            this.uploadCursoFile(); // Llama a la nueva función para enviar el archivo a importCurso
-        },
-       
-        onFileModulos(event) {
-            this.selectedFile = event.target.files[0];
-            //this.uploadFile();
-            this.uploadModulosFile(); // Llama a la nueva función para enviar el archivo a importCurso
-        },
-
-        async uploadModulosFile() {
-            console.log('Subir archivo de curso');
-            if (!this.selectedFile) {
-                this.message = "Por favor, selecciona un archivo primero.";
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('file', this.selectedFile);
-
-            try {
-                const response = await axios.post('http://localhost:3333/csv/importModulos', formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-
-                });
-                this.message = response.data.message;
-
-                if (response.data.success) {
-                    this.fetchCursos();
-                } else {
-                    console.error('Error en el archivo:', response.data.message);
-                }
-
-            } catch (error) {
-                console.error('Error al subir el archivo de curso:', error);
-            }
-        },
-        async GenerarExcel() {
-            try {
-                const response = await axios.get('http://localhost:3333/api/courses/get');
-        
-                // Asegúrate de que response.data tenga los datos en formato JSON
-                const data = response.data;
-                const filteredData = data.map(obj => _.omit(obj, ['_id', '__v']));
-
-                // Convertir los datos a una hoja de cálculo
-                const worksheet = XLSX.utils.json_to_sheet(filteredData);
-                const workbook = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(workbook, worksheet, 'Datos');
-
-                // Exportar el archivo Excel
-                XLSX.writeFile(workbook, 'Cursos.xlsx');
-            } catch (error) {
-                console.error('Error al generar el Excel:', error);
-            }
-        },
-
-        
+          );
+          if (response.data.success) {
+            this.fetchCursos();
+          }
+        } catch (error) {
+          console.error("Error al subir el archivo:", error);
+        }
+      },
+      async GenerarExcel() {
+        try {
+          const response = await axios.get("http://localhost:3333/api/courses/get");
+          const data = response.data.map((obj) => _.omit(obj, ["_id", "__v"]));
+          const worksheet = XLSX.utils.json_to_sheet(data);
+          const workbook = XLSX.utils.book_new();
+          XLSX.utils.book_append_sheet(workbook, worksheet, "Cursos");
+          XLSX.writeFile(workbook, "Cursos.xlsx");
+        } catch (error) {
+          console.error("Error al generar el Excel:", error);
+        }
+      },
+      getInputType(key) {
+        const inputTypes = {
+          codigo: "text",
+          carrera: "text",
+          nombre: "text",
+          semestre: "number",
+          seccion: "text",
+        };
+        return inputTypes[key] || "text";
+      },
     },
-}
+  };
 </script>
 
 <style scoped>
+/* Fondo de la página */
+.background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+
+/* Contenedor principal */
+.maincontent {
+  background-color: var(--background);
+  min-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  overflow-x: hidden;
+}
+
+/* Contenedor de Gestor de Cursos */
 .gestor-cursos-container {
-    padding-top: 30px;
-    padding-bottom: 50px;
+  max-width: 1200px;
+  width: 100%;
+  margin: auto;
+  background-color: rgba(255, 255, 255, 0.9); /* Añadido opacidad */
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
-.d-flex {
-    justify-content: left;
+/* Header */
+.header-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 60px;
+  position: relative;
 }
 
+/* Botón de retroceso */
 .back-button {
-    margin-right: 20px;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  padding: 10px 20px;
+  background-color: #f8f9fa;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+  color: #333;
 }
 
+.back-button:hover {
+  background-color: #e2e6ea;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  color: #333;
+}
+
+/* Título */
 .title {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #2c3e50;
-    padding: 15px;
-    border: 2px solid #eaeaea;
-    border-radius: 8px;
-    background-color: #ffffff;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    text-align: center;
-    flex-grow: 1;
-    /* Permite al título ocupar el espacio restante */
+  font-size: 2rem;
+  font-weight: bold;
+  color: #2c3e50;
+  padding: 15px;
+  border: 2px solid #eaeaea;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+}
+
+/* Sección de título y botones de acción */
+.section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
 
 .section-title h3 {
-    font-size: 1.8rem;
-    font-weight: 600;
-    color: #34495e;
-    padding: 10px;
-    margin-bottom: 0;
-    background-color: #ffffff;
-    display: inline-block;
-    border-radius: 4px;
+  font-size: 1.5rem;
+  color: #2c3e50;
+  margin: 0;
+  padding: 10px;
+  border-bottom: 3px solid #3498db;
+  background-color: #ffffff;
+  display: inline-block;
+  border-radius: 4px;
 }
 
-.section-title h3 {
-    font-size: 1.8rem;
-    font-weight: 600;
-    color: #34495e;
-    padding: 10px;
-    border-bottom: 3px solid #3498db;
-    margin-bottom: 20px;
-    background-color: #ffffff;
-    display: inline-block;
-    border-radius: 4px;
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+/* Contenedor de la tabla */
+.table-container {
+  overflow-x: auto;
+  border-radius: 10px;
+}
+
+/* Estilos de la tabla */
+.table {
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 .table td,
 .table th {
-    vertical-align: middle;
+  vertical-align: middle;
+  padding: 10px;
 }
 
+/* Imágenes redondas */
 .img-fluid.rounded-circle {
-    width: 50px;
-    height: 50px;
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
 }
 
+/* Modal */
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 
 .modal-content {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    max-width: 600px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 600px;
+  width: 100%;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+  .section-title {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .action-buttons {
+    flex-direction: column;
     width: 100%;
+  }
+
+  .action-buttons .btn {
+    width: 100%;
+  }
 }
 </style>
