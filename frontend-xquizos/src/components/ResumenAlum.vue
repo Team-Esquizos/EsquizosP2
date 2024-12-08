@@ -12,17 +12,17 @@
           <div>
 
           </div>
-          <div>Matricula</div>
+          <div>{{ matricula }}</div>
         </div>
         <div class="temperature"></div>
-        <div class="range">Rut</div>
+        <div class="range">{{ rut }}</div>
       </div>
       <div class="right-side">
         <div>
-          <div class="hour">Nombre</div>
-          <div class="date">Apellidos</div>
+          <div class="hour"> {{ nombres }} </div>
+          <div class="date">{{ apellidoP }} {{ apellidoM }}</div>
         </div>
-        <div class="city">Fecha ingreso</div>
+        <div class="city">{{ fecIng}}</div>
       </div>
     </section>
     <section class="days-section">
@@ -51,8 +51,43 @@
   </template>
   
   <script>
+  export default{
+    props: {
+      nombres: {
+        type: String,
+        required: true
+      },
+      apellidoP: {
+        type: String,
+        required:true
+      },
+      apellidoM: {
+        type: String,
+        required:true
+      },
+      rut: {
+        type: String,
+        required:true
+      },
+      matricula: {
+        type: String,
+        required:true
+      },
+      fecNac: {
+        type: String,
+        required:true
+      },
+      fecIng: {
+        type: String,
+        required:true
+      },
+    },
+    created ()
+    {console.log("Nombre alumno: ", this.nombres)}
+      
   
   
+  }
   </script>
   
   <style>

@@ -15,6 +15,15 @@
 
             <button @click="iraEstadisticas">Ver estadistica</button>
         </section>
+        <ResumenAlum
+            :nombres="this.alumno.nombres" 
+            :apellidoP="alumno.apellidoP" 
+            :apellidoM="alumno.apellidoM"  
+            :rut="alumno.rut" 
+            :matricula="alumno.matricula" 
+            :fecNac="alumno.fecNac"
+            :fecIng="alumno.fecIng"
+        />
     </div>
     <div class="container">
         <!-- Default Comments -->
@@ -136,8 +145,12 @@ export default {
         async fetchAlumno() {
             try {
                 const response = await axios.get(`http://localhost:3333/api/student/get/${this.matriculaalum}`);
+                console.log("response", response.data.nombres)
                 if (response.data) {
-                this.alumnos = response.data.student;
+                    console.log("data", response.data)
+                    this.alumno = response.data;
+                    console.log("alumnos", this.alumno)
+                    console.log("Alumno:", this.alumno[0])
                 } else {
                 console.error(response.data.msg);
                 }

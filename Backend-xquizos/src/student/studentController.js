@@ -152,8 +152,8 @@ var getCourseByNomControllerFn = async (req, res) => {
 var getStudentByMatriculaControllerFn = async (req, res) => {
     try {
         // Obtenemos la matrícula del parámetro de la solicitud
-        const { matricula } = req.params;
-
+        const  matricula  = req.params.matricula;
+        console.log("matricula:", matricula)
         // Llamamos al servicio para obtener el estudiante por matrícula
         var result = await studentService.getStudentByMatriculaDBService(matricula);
 
