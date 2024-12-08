@@ -110,6 +110,7 @@ import logo from '@/assets/Utalca.png';
 import Slide from '@/components/Slide.vue';
 import flag from '@/components/Flag.vue';
 
+
 export default {
     name: 'PerfilAlumno',
     props: ['matriculaalum', 'nombrealum', 'codCurso', 'periodo'],
@@ -124,6 +125,8 @@ export default {
             newComment: {
                 matricula: '',
                 codDocente: '',
+                codCurso: this.codCurso,
+                periodo: this.periodo,
                 comentario: '',
                 peso: 0,
                 flag: '',
@@ -330,7 +333,8 @@ Profesor(a) responsable
         async iraEstadisticas() {
             this.$router.push({
                 name: 'VistaEstadisticas',
-                params: { matricula: this.matriculaalum }
+                params: { matricula: this.matriculaalum },
+                name: 'VistaEstadisticas'
             });
         },
         async fetchComments() {
