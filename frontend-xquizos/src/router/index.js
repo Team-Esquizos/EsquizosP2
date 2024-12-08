@@ -39,7 +39,7 @@ const routes = [
     component: VistaDocente
   },
   {
-    path: '/VistaAlumnos/:nombreCurso/:seccionCurso/:codigo',
+    path: '/VistaAlumnos/:nombreCurso/:seccionCurso/:codigo/:periodo',
     name: 'VistaAlumnos',
     component: VistaAlumnos,
   },
