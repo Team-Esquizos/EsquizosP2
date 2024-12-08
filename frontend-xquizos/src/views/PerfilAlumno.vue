@@ -15,6 +15,15 @@
 
             <button @click="iraEstadisticas">Ver estadistica</button>
         </section>
+        <ResumenAlum
+            :nombres="this.alumno.nombres" 
+            :apellidoP="alumno.apellidoP" 
+            :apellidoM="alumno.apellidoM"  
+            :rut="alumno.rut" 
+            :matricula="alumno.matricula" 
+            :fecNac="alumno.fecNac"
+            :fecIng="alumno.fecIng"
+        />
     </div>
     <div class="container">
         <!-- Default Comments -->
@@ -112,16 +121,44 @@ export default {
                 peso: 0,
                 flag: '',
             },
+            alumnos: [],
+            alumno: {
+                nombres: '',
+                apellidoP: '',
+                apellidoM: '',
+                rut: '',
+                matricula: '',
+                fecNac: '',
+                fecIng: '',
+            },
             profesorNombre: '',
             comments: [],
             selectedFlag: null, // Controla la flag seleccionada
+            requiredFields: ['nombrePrimer', 'apellidoP', 'rut', 'matricula', 'fecNac', 'fecIng'],
         };
     },
     created() {
         this.fetchComments();
+        this.fetchAlumno()
         this.profesorNombre = localStorage.getItem('user') || sessionStorage.getItem('user') || 'Usuario';
     },
     methods: {
+        async fetchAlumno() {
+            try {
+                const response = await axios.get(`http://localhost:3333/api/student/get/${this.matriculaalum}`);
+                console.log("response", response.data.nombres)
+                if (response.data) {
+                    console.log("data", response.data)
+                    this.alumno = response.data;
+                    console.log("alumnos", this.alumno)
+                    console.log("Alumno:", this.alumno[0])
+                } else {
+                console.error(response.data.msg);
+                }
+            } catch (error) {
+                console.error("Error al obtener alumnos:", error);
+            }
+        },
         async generatePDF(type, positiveComments, negativeComments) {
             const doc = new jsPDF();
             const imgData = await this.loadLogo();

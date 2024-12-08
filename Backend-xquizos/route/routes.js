@@ -26,6 +26,7 @@ const upload = multer();
 
     router.route('/student/register').post(studentController.registerStudentControllerFn);
     router.route('/student/get').get(studentController.getStudentsControllerFn);
+    router.route('/student/get/:matricula').get(studentController.getStudentByMatriculaControllerFn);
     router.route('/student/:matricula').put(studentController.editStudentControllerFn);
     router.route('/student/remove/:matricula').delete(studentController.removeStudentControllerFn);
     router.route('/student/getcoursebynom/:nombre/:seccion').get(studentController.getCourseByNomControllerFn);
@@ -50,7 +51,7 @@ const upload = multer();
     router.route('/courseInstance/get/students/:codCurso/:periodo').get(courseInstanceController.getStudentsFromCourseInstanceControllerFn);
     router.route('/courseInstance/setTeaching/:codCurso/:periodo/:codDocente').put(courseInstanceController.updateCodDocenteInCourseInstanceControllerFn); 
     router.route('/courseInstance/addStudent/:codCurso/:periodo/:matricula').post(courseInstanceController.addStudentToCourseInstanceControllerFn);
-    router.route('/courseInstance/getteacherinstance/:rut').get(courseInstanceController.getTeacherCourseInstanceControllerFn);
+    router.route('/courseInstance/getteacherinstance/:rut/:periodo').get(courseInstanceController.getTeacherCourseInstanceControllerFn);
     router.route('/courseInstance/removeStudent/:codCurso/:matricula').delete(courseInstanceController.removeStudentFromCourseInstanceControllerFn);
     
     
