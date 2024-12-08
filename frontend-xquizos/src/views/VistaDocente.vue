@@ -3,7 +3,16 @@
       <navBara />
       <div class="body">
         <!-- Usa v-for para iterar sobre los módulos y crear una tarjeta para cada uno -->
-        <modulos v-for="curso in cursos" :key="curso.id" :nombre="curso.nombre" :seccion="curso.seccion" :area="curso.carrera"  :codigo="curso.codigo" />
+        <modulos 
+          v-for="curso in cursos" 
+          :key="`${curso.codigo}-${curso.instancia.periodo}`" 
+          :nombre="curso.nombre" 
+          :seccion="curso.seccion" 
+          :area="curso.carrera"  
+          :codigo="curso.codigo" 
+          :semestre="curso.semestre" 
+          :periodo="curso.instancia.periodo"
+        />
       </div>
     </div>
   </template>
@@ -27,7 +36,11 @@
         cursos: [],
         curso: {
             nombre: '', seccion: '', carrera: '', codigo: '',
-            semestre: ''
+            semestre: '', periodo: ''
+        },
+        instancias: [],
+        instancia: {
+            codCurso: '', codDocente: '', periodo: '',
         },
         formFields: {
             nombre: 'Nombre Curso', seccion: 'Sección',
@@ -45,19 +58,32 @@
       },
 
       async fetchCursos() {
-        try {
-          const storedUser = localStorage.getItem('rut') || sessionStorage.getItem('rut');
-          console.log('Rut:', storedUser);
-          const response = await axios.get(`http://localhost:3333/api/courseInstance/getteacherinstance/${storedUser}`);
-          if (response.data.status) {
-            this.cursos = response.data.courses;
-          } else {
-            console.error(response.data.msg);
-          }
-        } catch (error) {
-          console.error('Error al obtener cursos:', error);
+      try {
+        const storedUser = localStorage.getItem('rut') || sessionStorage.getItem('rut');
+        console.log('Rut:', storedUser);
+        const response = await axios.get(`http://localhost:3333/api/courseInstance/getteacherinstance/${storedUser}`);
+        
+        if (response.data.status) {
+          const { courses, instance } = response.data;
+
+          // Combinar cursos e instancias en el frontend
+          const combinedData = courses.map(course => {
+            const relatedInstance = instance.find(inst => inst.codCurso === course.codigo);
+            return {
+              ...course, // Datos del curso
+              instancia: relatedInstance ? relatedInstance : null // Instancia relacionada o null si no hay coincidencia
+            };
+          });
+
+          this.cursos = combinedData;
+          console.log(this.cursos);
+        } else {
+          console.error(response.data.msg);
         }
-      },
+      } catch (error) {
+        console.error('Error al obtener cursos:', error);
+      }
+    }
     }
   };
 </script>
