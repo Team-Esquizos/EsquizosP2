@@ -1,38 +1,37 @@
 <template>
-    <div class="estadistica-container">
-      <navBar/>
-      <div class="content">
-        <div class="transparent-box">
-            <h1 class="titulo">Estadísticas</h1>
-          <div class="charts-container">
-            <div class="chart">
-              <h2>Gráfico de Barras</h2>
-              <canvas ref="barChart"></canvas>
-            </div>
-            <div class="chart">
-              <h2>Gráfico Circular</h2>
-              <canvas ref="pieChart"></canvas>
-            </div>
-            <div class="chart">
-              <h2>Gráfico de Puntos</h2>
-              <canvas ref="scatterChart"></canvas>
-            </div>
+  <div class="estadistica-container">
+    <navBar/>
+    <div class="content">
+      <div class="transparent-box">
+          <h1 class="titulo">Estadísticas</h1>
+        <div class="charts-container">
+          <div class="chart">
+            <h2>Gráfico de Barras Apiladas</h2>
+            <canvas ref="barChart"></canvas>
           </div>
-          <div class="statistics-box">
-            <h3>Estadísticas</h3>
-            <p>Promedio: {{ average }}</p>
-            <p>Moda: {{ mode }}</p>
-            <p>Desviación Estándar: {{ standardDeviation }}</p>
+          <div class="chart">
+            <h2>Gráfico Circular</h2>
+            <canvas ref="pieChart"></canvas>
           </div>
-          
-          
-
+          <div class="chart">
+            <h2>Gráfico de Puntos</h2>
+            <canvas ref="scatterChart"></canvas>
+          </div>
+        </div>
+        <div class="statistics-box">
+          <h3>Estadísticas</h3>
+          <p>Promedio: {{ average }}</p>
+          <p>Moda: {{ mode }}</p>
+          <p>Desviación Estándar: {{ standardDeviation }}</p>
         </div>
       </div>
     </div>
+  </div>
 </template>
+
 <script>
 import navBar from '@/components/AppNavbarAdm.vue';
+import axios from 'axios';
 import { 
   Chart, 
   BarController, 
@@ -76,10 +75,38 @@ export default {
       dataValues: [12, 19, 3, 5, 2, 3], // Reemplaza con tus datos reales
       average: 0,
       mode: '',
-      standardDeviation: 0
+      standardDeviation: 0,
+      positiveWeights: {
+        buenComportamiento: [],
+        advertencia: [],
+        malComportamiento: []
+      },
+      negativeWeights: {
+        buenComportamiento: [],
+        advertencia: [],
+        malComportamiento: []
+      }
     };
   },
   methods: {
+    async fetchComments(matricula) {
+      try {
+        const response = await axios.get(`http://localhost:3333/api/comments/getFromMatricula/${matricula}`);
+        const comments = response.data.comments;
+
+        this.positiveWeights.buenComportamiento = comments.filter(comment => comment.peso > 0 && comment.flag === 'buenComportamiento').map(comment => comment.peso);
+        this.positiveWeights.advertencia = comments.filter(comment => comment.peso > 0 && comment.flag === 'advertencia').map(comment => comment.peso);
+        this.positiveWeights.malComportamiento = comments.filter(comment => comment.peso > 0 && comment.flag === 'malComportamiento').map(comment => comment.peso);
+
+        this.negativeWeights.buenComportamiento = comments.filter(comment => comment.peso < 0 && comment.flag === 'buenComportamiento').map(comment => comment.peso);
+        this.negativeWeights.advertencia = comments.filter(comment => comment.peso < 0 && comment.flag === 'advertencia').map(comment => comment.peso);
+        this.negativeWeights.malComportamiento = comments.filter(comment => comment.peso < 0 && comment.flag === 'malComportamiento').map(comment => comment.peso);
+
+        this.renderBarChart();
+      } catch (error) {
+        console.error("Error al obtener comentarios:", error);
+      }
+    },
     calculateStatistics() {
       // Promedio
       const sum = this.dataValues.reduce((a, b) => a + b, 0);
@@ -112,20 +139,41 @@ export default {
       this.barChart = new Chart(this.$refs.barChart, {
         type: 'bar',
         data: {
-          labels: ['Rojo', 'Azul', 'Amarillo', 'Verde', 'Morado', 'Naranja'],
-          datasets: [{
-            label: 'Cantidad',
-            data: this.dataValues,
-            backgroundColor: 'rgba(54, 162, 235, 0.6)',
-            borderColor: 'rgba(54, 162, 235, 1)',
-            borderWidth: 1
-          }]
+          labels: ['Buen Comportamiento', 'Advertencia', 'Mal Comportamiento'],
+          datasets: [
+            {
+              label: 'Pesos Positivos',
+              data: [
+                this.positiveWeights.buenComportamiento.reduce((a, b) => a + b, 0),
+                this.positiveWeights.advertencia.reduce((a, b) => a + b, 0),
+                this.positiveWeights.malComportamiento.reduce((a, b) => a + b, 0)
+              ],
+              backgroundColor: 'rgba(54, 162, 235, 0.6)',
+              borderColor: 'rgba(54, 162, 235, 1)',
+              borderWidth: 1
+            },
+            {
+              label: 'Pesos Negativos',
+              data: [
+                this.negativeWeights.buenComportamiento.reduce((a, b) => a + b, 0),
+                this.negativeWeights.advertencia.reduce((a, b) => a + b, 0),
+                this.negativeWeights.malComportamiento.reduce((a, b) => a + b, 0)
+              ],
+              backgroundColor: 'rgba(255, 99, 132, 0.6)',
+              borderColor: 'rgba(255, 99, 132, 1)',
+              borderWidth: 1
+            }
+          ]
         },
         options: {
           responsive: true,
           plugins: {
-            legend: { display: false },
-            title: { display: true, text: 'Gráfico de Barras' }
+            legend: { display: true },
+            title: { display: true, text: 'Gráfico de Barras Apiladas' }
+          },
+          scales: {
+            x: { stacked: true },
+            y: { stacked: true }
           }
         }
       });
@@ -186,113 +234,114 @@ export default {
   },
   mounted() {
     this.calculateStatistics();
-    this.renderBarChart();
     this.renderPieChart();
     this.renderScatterChart();
+    this.fetchComments('d'); // Reemplaza '6' con la matrícula del estudiante
   }
 };
 </script>
-  <style scoped>
-  .estadistica-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0;
-    margin: 0;
-    background-image: url('../assets/estadistica.jpg'); /* Ruta a tu imagen de fondo */
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    width: 100vw; /* Ocupa todo el ancho de la ventana */
-    /*height: calc(100vh - 60px);*/
-    overflow: hidden; /* Evita que el contenido se desborde */
-  }
-  
-  .content {
-    margin-top: 100px; /* Ajusta este valor según la altura de tu navbar */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: calc(100vh - 100px); /* Ajusta la altura del contenido */
-    width: 100%;
-  } 
-  
-  .transparent-box {
-    background-color: rgba(255, 255, 255, 0.3);
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    width: 90vw;
-    height: 90vh;
-    margin: 20px auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start; /* Alinea el contenido hacia arriba */
-  }
-  
-  .centro {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-top: 250px;
-  }
-  
-  #qualitativeChart {
-    width: 100%;
-    max-width: 600px;
-    height: 400px;
-    margin-top: 20px;
-  }
 
-  .charts-container {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    width: 100%;
-    gap: 20px;
-    margin-bottom: 30px;
-    margin-top: 50px;
+<style scoped>
+.estadistica-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+  background-image: url('../assets/estadistica.jpg'); /* Ruta a tu imagen de fondo */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100vw; /* Ocupa todo el ancho de la ventana */
+  /*height: calc(100vh - 60px);*/
+  overflow: hidden; /* Evita que el contenido se desborde */
+}
+
+.content {
+  margin-top: 100px; /* Ajusta este valor según la altura de tu navbar */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 100px); /* Ajusta la altura del contenido */
+  width: 100%;
+} 
+
+.transparent-box {
+  background-color: rgba(255, 255, 255, 0.3);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  width: 90vw;
+  height: 90vh;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* Alinea el contenido hacia arriba */
+}
+
+.centro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 250px;
+}
+
+#qualitativeChart {
+  width: 100%;
+  max-width: 600px;
+  height: 400px;
+  margin-top: 20px;
+}
+
+.charts-container {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 20px;
+  margin-bottom: 30px;
+  margin-top: 50px;
 }
 
 .chart {
-    width: 30%;
-    min-width: 250px;
-    background-color: rgba(255, 255, 255, 0.9); /* Aumenta la opacidad */
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  width: 30%;
+  min-width: 250px;
+  background-color: rgba(255, 255, 255, 0.9); /* Aumenta la opacidad */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .statistics-box {
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 20px;
-    width: 50%;
-    min-width: 300px;
-    background-color: #f9f9f9;
-    text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  width: 50%;
+  min-width: 300px;
+  background-color: #f9f9f9;
+  text-align: center;
 }
 
 .statistics-box h3 {
-    margin-bottom: 15px;
+  margin-bottom: 15px;
 }
 
 @media (max-width: 768px) {
-    .charts-container {
-        flex-direction: column;
-        align-items: center;
-    }
+  .charts-container {
+    flex-direction: column;
+    align-items: center;
+  }
 
-    .chart {
-        width: 80%;
-    }
+  .chart {
+    width: 80%;
+  }
 
-    .statistics-box {
-        width: 80%;
-    }
+  .statistics-box {
+    width: 80%;
+  }
 }
 
 .titulo {
@@ -316,4 +365,4 @@ export default {
   transform: scale(1.05);
   box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.3);
 }
-  </style>
+</style>
