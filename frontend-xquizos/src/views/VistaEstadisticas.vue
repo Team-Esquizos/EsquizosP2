@@ -3,26 +3,20 @@
     <navBar/>
     <div class="content">
       <div class="transparent-box">
-          <h1 class="titulo">Estadísticas</h1>
-        <div class="charts-container">
+        <h1 class="titulo">Estadísticas</h1>
+        <div class="charts-and-stats">
           <div class="chart">
             <h2>Gráfico de Barras Apiladas</h2>
             <canvas ref="barChart"></canvas>
           </div>
-          <div class="chart">
-            <h2>Gráfico Circular</h2>
-            <canvas ref="pieChart"></canvas>
+          <div class="statistics-box">
+            <h3>Estadísticas</h3>
+            <p> Según los datos recolectados del estudiante durante todos los periodos que ha estado inscrito
+            en la institución, se ha determinado un "Estado de comportamiento" basado en los pesos de los comentarios
+            que ha recibido por parte de l@s docentes.
+            </p>
+            <p>Estado del Estudiante: {{ studentStatus }}</p>
           </div>
-          <div class="chart">
-            <h2>Gráfico de Puntos</h2>
-            <canvas ref="scatterChart"></canvas>
-          </div>
-        </div>
-        <div class="statistics-box">
-          <h3>Estadísticas</h3>
-          <p>Promedio: {{ average }}</p>
-          <p>Moda: {{ mode }}</p>
-          <p>Desviación Estándar: {{ standardDeviation }}</p>
         </div>
       </div>
     </div>
@@ -67,6 +61,8 @@ export default {
   components: {
     navBar
   },
+  props: ['matricula'],
+  
   data() {
     return {
       barChart: null,
@@ -76,6 +72,7 @@ export default {
       average: 0,
       mode: '',
       standardDeviation: 0,
+      studentStatus: '',
       positiveWeights: {
         buenComportamiento: [],
         advertencia: [],
@@ -102,38 +99,36 @@ export default {
         this.negativeWeights.advertencia = comments.filter(comment => comment.peso < 0 && comment.flag === 'advertencia').map(comment => comment.peso);
         this.negativeWeights.malComportamiento = comments.filter(comment => comment.peso < 0 && comment.flag === 'malComportamiento').map(comment => comment.peso);
 
+        this.calculateStatistics();
         this.renderBarChart();
+        
       } catch (error) {
         console.error("Error al obtener comentarios:", error);
       }
     },
     calculateStatistics() {
-      // Promedio
-      const sum = this.dataValues.reduce((a, b) => a + b, 0);
-      this.average = (sum / this.dataValues.length).toFixed(2);
+      const totalPositiveWeights = this.positiveWeights.buenComportamiento.reduce((a, b) => a + b, 0) +
+                                   this.positiveWeights.advertencia.reduce((a, b) => a + b, 0) +
+                                   this.positiveWeights.malComportamiento.reduce((a, b) => a + b, 0);
 
-      // Moda
-      const frequency = {};
-      let maxFreq = 0;
-      let mode = [];
-      this.dataValues.forEach(item => {
-        frequency[item] = (frequency[item] || 0) + 1;
-        if (frequency[item] > maxFreq) {
-          maxFreq = frequency[item];
+      const totalNegativeWeights = this.negativeWeights.buenComportamiento.reduce((a, b) => a + b, 0) +
+                                   this.negativeWeights.advertencia.reduce((a, b) => a + b, 0) +
+                                   this.negativeWeights.malComportamiento.reduce((a, b) => a + b, 0);
+
+      if (this.negativeWeights.malComportamiento.length === 0) {
+        this.studentStatus = "excelente estudiante";
+      } else if (totalPositiveWeights > Math.abs(totalNegativeWeights)) {
+        this.studentStatus = "buen estudiante";
+      } else if (Math.abs(totalNegativeWeights) > totalPositiveWeights) {
+        const difference = Math.abs(totalNegativeWeights) - totalPositiveWeights;
+        if (difference < 3) {
+          this.studentStatus = "estudiante regular";
+        } else {
+          this.studentStatus = "mal estudiante";
         }
-      });
-      for (const key in frequency) {
-        if (frequency[key] === maxFreq) {
-          mode.push(key);
-        }
+      } else {
+        this.studentStatus = "estudiante regular";
       }
-      this.mode = mode.join(', ');
-
-      // Desviación Estándar
-      const mean = sum / this.dataValues.length;
-      const sqDiff = this.dataValues.map(value => Math.pow(value - mean, 2));
-      const avgSqDiff = sqDiff.reduce((a, b) => a + b, 0) / this.dataValues.length;
-      this.standardDeviation = Math.sqrt(avgSqDiff).toFixed(2);
     },
     renderBarChart() {
       this.barChart = new Chart(this.$refs.barChart, {
@@ -178,65 +173,11 @@ export default {
         }
       });
     },
-    renderPieChart() {
-      this.pieChart = new Chart(this.$refs.pieChart, {
-        type: 'pie',
-        data: {
-          labels: ['Rojo', 'Azul', 'Amarillo', 'Verde', 'Morado', 'Naranja'],
-          datasets: [{
-            label: 'Cantidad',
-            data: this.dataValues,
-            backgroundColor: [
-              'rgba(255, 99, 132, 0.6)',
-              'rgba(54, 162, 235, 0.6)',
-              'rgba(255, 206, 86, 0.6)',
-              'rgba(75, 192, 192, 0.6)',
-              'rgba(153, 102, 255, 0.6)',
-              'rgba(255, 159, 64, 0.6)'
-            ],
-            borderColor: 'rgba(255, 255, 255, 1)',
-            borderWidth: 1
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { position: 'top' },
-            title: { display: true, text: 'Gráfico Circular' }
-          }
-        }
-      });
-    },
-    renderScatterChart() {
-      const scatterData = this.dataValues.map((value, index) => ({ x: index + 1, y: value }));
-      this.scatterChart = new Chart(this.$refs.scatterChart, {
-        type: 'scatter',
-        data: {
-          datasets: [{
-            label: 'Datos',
-            data: scatterData,
-            backgroundColor: 'rgba(255, 99, 132, 0.6)'
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { display: false },
-            title: { display: true, text: 'Gráfico de Puntos' }
-          },
-          scales: {
-            x: { title: { display: true, text: 'Índice' } },
-            y: { title: { display: true, text: 'Valor' } }
-          }
-        }
-      });
-    }
+   
+   
   },
   mounted() {
-    this.calculateStatistics();
-    this.renderPieChart();
-    this.renderScatterChart();
-    this.fetchComments('d'); // Reemplaza '6' con la matrícula del estudiante
+    this.fetchComments(this.matricula); // Reemplaza '2018-8' con la matrícula del estudiante
   }
 };
 </script>
@@ -253,7 +194,7 @@ export default {
   background-position: center;
   background-repeat: no-repeat;
   width: 100vw; /* Ocupa todo el ancho de la ventana */
-  /*height: calc(100vh - 60px);*/
+  height: calc(100vh - 80px);
   overflow: hidden; /* Evita que el contenido se desborde */
 }
 
@@ -272,7 +213,7 @@ export default {
   border-radius: 10px;
   text-align: center;
   width: 90vw;
-  height: 90vh;
+  height: 80vh;
   margin: 20px auto;
   display: flex;
   flex-direction: column;
@@ -280,33 +221,16 @@ export default {
   justify-content: flex-start; /* Alinea el contenido hacia arriba */
 }
 
-.centro {
+.charts-and-stats {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  margin-top: 250px;
-}
-
-#qualitativeChart {
+  align-items: center;
   width: 100%;
-  max-width: 600px;
-  height: 400px;
-  margin-top: 20px;
-}
-
-.charts-container {
-  display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  width: 100%;
-  gap: 20px;
-  margin-bottom: 30px;
-  margin-top: 50px;
+  gap: 20px; /* Espacio entre el gráfico y el cuadro de estadísticas */
 }
 
 .chart {
-  width: 30%;
+  width: 50%; /* Ajusta el ancho del gráfico */
   min-width: 250px;
   background-color: rgba(255, 255, 255, 0.9); /* Aumenta la opacidad */
   border: 1px solid #ccc;
@@ -316,30 +240,34 @@ export default {
 }
 
 .statistics-box {
+  width: 25%;
+  min-width: 250px;
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 20px;
-  width: 50%;
-  min-width: 300px;
   background-color: #f9f9f9;
   text-align: center;
+  height: 100%;
 }
 
 .statistics-box h3 {
-  margin-bottom: 15px;
+  margin-top: 40px;
+  margin-bottom: 100px;
+  font-size: 2.0rem; /* Aumenta el tamaño de la fuente del título */
+}
+
+.statistics-box p {
+  font-size: 1.5rem; /* Aumenta el tamaño de la fuente del texto */
+  justify-content: center;
 }
 
 @media (max-width: 768px) {
-  .charts-container {
+  .charts-and-stats {
     flex-direction: column;
     align-items: center;
   }
 
-  .chart {
-    width: 80%;
-  }
-
-  .statistics-box {
+  .chart, .statistics-box {
     width: 80%;
   }
 }
