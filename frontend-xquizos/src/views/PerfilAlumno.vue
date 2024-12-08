@@ -111,7 +111,7 @@ import flag from '@/components/Flag.vue';
 
 export default {
     name: 'PerfilAlumno',
-    props: ['matriculaalum', 'nombrealum'],
+    props: ['matriculaalum', 'nombrealum', 'codCurso', 'periodo'],
     mixins: [GoBackMixin],
     components: {
         navBar,
@@ -258,7 +258,7 @@ ${this.profesorNombre}
         async fetchComments() {
             try {
                 const response = await axios.get(
-                    `http://localhost:3333/api/comments/getFromMatricula/${this.matriculaalum}`
+                    `http://localhost:3333/api/comments/getFromMatricula/${this.matriculaalum}/${this.codCurso}/${this.periodo}`
                 );
                 this.comments = response.data.comments;
             } catch (error) {
