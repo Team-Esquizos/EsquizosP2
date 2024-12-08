@@ -93,6 +93,13 @@ const routes = [
     component: () => import("@/views/CursoPeriodo.vue"),
     props: true,
     state: true
+  },
+  { 
+    path: '/vistaCurso/:nombre/:seccion/:semestre/:codCurso',
+    name: 'VistaCurso',
+    component: () => import("@/views/VistaCurso.vue"),
+    props: true,
+    state: true
   }
 
 ];

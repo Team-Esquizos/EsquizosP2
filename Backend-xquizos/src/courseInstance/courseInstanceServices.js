@@ -80,12 +80,13 @@ module.exports.getAllCoursesInstanceDBService = async () => {
 };
 
 
-module.exports.getTeacherCourseInstancesDBService = async (codDocente) => {
+module.exports.getTeacherCourseInstancesDBService = async (codDocente, periodo) => {
     try {
         console.log(codDocente);
+        console.log(periodo);
         
         // Obtener todas las instancias de curso para el docente
-        const result = await courseInstanceModel.find({ codDocente: codDocente });
+        const result = await courseInstanceModel.find({ codDocente: codDocente, periodo: periodo });
         console.log(result);
 
         if (!result || result.length === 0) {

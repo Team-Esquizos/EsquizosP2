@@ -50,7 +50,7 @@ const upload = multer();
     router.route('/courseInstance/get/students/:codCurso/:periodo').get(courseInstanceController.getStudentsFromCourseInstanceControllerFn);
     router.route('/courseInstance/setTeaching/:codCurso/:periodo/:codDocente').put(courseInstanceController.updateCodDocenteInCourseInstanceControllerFn); 
     router.route('/courseInstance/addStudent/:codCurso/:periodo/:matricula').post(courseInstanceController.addStudentToCourseInstanceControllerFn);
-    router.route('/courseInstance/getteacherinstance/:rut').get(courseInstanceController.getTeacherCourseInstanceControllerFn);
+    router.route('/courseInstance/getteacherinstance/:rut/:periodo').get(courseInstanceController.getTeacherCourseInstanceControllerFn);
     router.route('/courseInstance/removeStudent/:codCurso/:matricula').delete(courseInstanceController.removeStudentFromCourseInstanceControllerFn);
     
     

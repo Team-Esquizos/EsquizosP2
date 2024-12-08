@@ -10,7 +10,7 @@ module.exports.registerCourseDBService = (courseData) => {
         courseModelData.codigo = courseData.codigo.toUpperCase();
         courseModelData.carrera = courseData.carrera.toUpperCase();
         courseModelData.nombre = courseData.nombre.toUpperCase();
-        courseModelData.semestre = courseData.semestre.toUpperCase();
+        courseModelData.semestre = courseData.semestre;
         courseModelData.seccion = courseData.seccion.toUpperCase();
 
 
