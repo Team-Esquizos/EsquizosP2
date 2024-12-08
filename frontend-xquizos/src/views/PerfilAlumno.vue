@@ -3,89 +3,99 @@
     <navBar class="navbar" />
     <div class="student-profile">
         <header class="header-container">
-            <button class="btn btn-secondary back-button" @click="goBack">
+            <button class="btn btn-secondary back-button button" @click="goBack">
                 <i class="fa-solid fa-circle-left"></i> Volver a los estudiantes
             </button>
             <h1>Perfil del alumno</h1>
+            <button @click="showChoiceDialog" class="button">Generar Carta</button>
+            <button @click="iraEstadisticas" class="button">Ver estadistica</button>
         </header>
-        <section class="student-info">
-            <p><strong>Name:</strong> {{ nombrealum }}</p>
-            <p><strong>Matricula:</strong> {{ matriculaalum }}</p>
-            <button @click="showChoiceDialog">Generar Carta</button>
+        
 
-            <button @click="iraEstadisticas">Ver estadistica</button>
-        </section>
-        <ResumenAlum
-            :nombres="this.alumno.nombres" 
-            :apellidoP="alumno.apellidoP" 
-            :apellidoM="alumno.apellidoM"  
-            :rut="alumno.rut" 
-            :matricula="alumno.matricula" 
-            :fecNac="alumno.fecNac"
-            :fecIng="alumno.fecIng"
-        />
-    </div>
-    <div class="container">
-        <!-- Default Comments -->
-        <section class="default-comments">
-            <h2>Comentarios por defecto</h2>
-            <div class="default-comments-group">
-                <div class="comment-category">
-                    <h3>Comentarios positivos</h3>
-                    <ul>
-                        <li class="comment-box positive" @click="addDefaultComment('Ayuda a sus compañeros con la materia', 9)">
-                            Ayuda a sus compañeros con la materia
-                        </li>
-                        <li class="comment-box positive" @click="addDefaultComment('Alumno Puntual', 10)">
-                            Alumno Puntual
-                        </li>
-                        <li class="comment-box positive" @click="addDefaultComment('Participativo en clases', -5)">
-                            Participativo en clases
-                        </li>
-                    </ul>
+        <!-- Card -->
+        <div class="contenedor-card">
+            <div class="card">
+                <section class="info-section">
+                <div class="background-design">
+                    <div class="circle"></div>
+                    <div class="circle"></div>
+                    <div class="circle"></div>
                 </div>
-                <div class="comment-category">
-                    <h3>comentarios negativos</h3>
-                    <ul>
-                        <li class="comment-box negative" @click="addDefaultComment('Copia de prueba', -8)">
-                            Copia de prueba
-                        </li>
-                        <li class="comment-box negative" @click="addDefaultComment('Copia proyecto', -10)">
-                            Copia proyecto
-                        </li>
-                        <li class="comment-box negative" @click="addDefaultComment('Golpeo al jefe de grupo', -2)">
-                            Golpeo al jefe de grupo
-                        </li>
-                    </ul>
+                <div class="left-side">
+                    <div class="weather">
+                    <div>
+
+                    </div>
+                    <div>{{ alumno.matricula }}</div>
+                    </div>
+                    <div class="temperature"></div>
+                    <div class="range">{{ alumno.rut }}</div>
                 </div>
+                <div class="right-side">
+                    <div>
+                    <div class="hour"> {{ alumno.nombres }} </div>
+                    <div class="date">{{ alumno.apellidoP }} {{ alumno.apellidoM }}</div>
+                    </div>
+                    <div class="city">{{ alumno.fecIng }}</div>
+                </div>
+                </section>
+                <section class="days-section">
+                <button class="verde">
+                    <span class="day">Positivos: {{ comentarioStats.buenComportamiento }}</span>
+                    <span class="icon-weather-day">
+                    
+                    </span>
+                </button>
+                <button class="amarillo">
+                    <span class="day">Advertencias:{{ comentarioStats.advertencia }}</span>
+                    <span class="icon-weather-day">
+                    
+                    </span>
+                </button>
+                <button class="rojo">
+                    <span class="day">Negativos:{{ comentarioStats.malComportamiento }}</span>
+                    <span class="icon-weather-day">
+                    
+                    </span>
+                </button>
+                </section>
             </div>
-        </section>
+        </div>
+        <!-- Card -->
 
-        <div class="flags-container">
+    </div>
+    
+    <div class="container">
+        <!-- Add a Commentary -->
+        <section class="comment-section">
+            <h2>Añadir comentario personalizado</h2>
+            <textarea v-model="newComment.comentario" placeholder="Escribe un comentario..."></textarea>
+            <div class="flags-container">
             <flag :regularColor="'#00FF00'" :solidColor="'#006400'" :texto="'Buen comportamiento'" :checked="selectedFlag === 'buenComportamiento'" @update:checked="updateSelectedFlag('buenComportamiento')" v-model="newComment.flag" />
             <flag :regularColor="'#FFFF00'" :solidColor="'#FFD700'" :texto="'Advertencia'" :checked="selectedFlag === 'advertencia'" @update:checked="updateSelectedFlag('advertencia')" v-model="newComment.flag" />
             <flag :regularColor="'#FF0000'" :solidColor="'#8B0000'" :texto="'Mal comportamiento'" :checked="selectedFlag === 'malComportamiento'" @update:checked="updateSelectedFlag('malComportamiento')" v-model="newComment.flag" />
         </div>
-
-        <!-- Add a Commentary -->
-        <section class="comment-section">
-            <h2>añadir comentario personalizado</h2>
-            <textarea v-model="newComment.comentario" placeholder="Write a comment..."></textarea>
             <div>
                 <Slide v-model="newComment.peso" />
                 <p>Peso seleccionado: {{ newComment.peso }}</p>
             </div>
-            <button @click="addComment">Añadir Comentario</button>
+            <div class="button-container">
+                <button @click="addComment" class="button">Añadir Comentario</button>
+            </div>
+            
             <div class="comments-list">
-                <h3>Comentarios:</h3>
+                <h3>Comentarios postivios:</h3>
+                <h3>Comentarios negativos:</h3>
                 <ul>
                     <li v-for="(comment, index) in comments" :key="index" class="comment-box">
                         {{ comment.comentario }}
+                        <p>{{ comment.peso }}</p>
                         <button @click="deleteComment(comment._id)" class="delete-button">Eliminar</button>
                     </li>
                 </ul>
             </div>
         </section>
+        
     </div>
 </div>
 </template>
@@ -99,7 +109,6 @@ import jsPDF from 'jspdf';
 import logo from '@/assets/Utalca.png';
 import Slide from '@/components/Slide.vue';
 import flag from '@/components/Flag.vue';
-import ResumenAlum from '@/components/ResumenAlum.vue'
 
 export default {
     name: 'PerfilAlumno',
@@ -109,7 +118,6 @@ export default {
         navBar,
         Slide,
         flag,
-        ResumenAlum
     },
     data() {
         return {
@@ -140,6 +148,21 @@ export default {
         this.fetchComments();
         this.fetchAlumno()
         this.profesorNombre = localStorage.getItem('user') || sessionStorage.getItem('user') || 'Usuario';
+    },
+    computed: {
+        comentarioStats() {
+            if (!this.comments) return { buenComportamiento: 0, advertencia: 0, malComportamiento: 0 };
+
+            const buenComportamiento = this.comments.filter(c => c.flag === 'buenComportamiento').length;
+            const advertencia = this.comments.filter(c => c.flag === 'advertencia').length;
+            const malComportamiento = this.comments.filter(c => c.flag === 'malComportamiento').length;
+
+            return {
+                buenComportamiento,
+                advertencia,
+                malComportamiento,
+            };
+        },
     },
     methods: {
         async fetchAlumno() {
@@ -470,10 +493,7 @@ Profesor(a) responsable
 <style scoped>
 .body {
     font-family: 'Arial', sans-serif;
-    background-image: url(../assets/text.jpg);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    background-color: var(--background);
     color: #333;
     margin: 0;
     padding: 0;
@@ -498,6 +518,7 @@ Profesor(a) responsable
 .student-profile {
     text-align: center;
     margin-bottom: 20px;
+    
 }
 
 .student-profile header h1 {
@@ -590,7 +611,7 @@ textarea {
     border-radius: 8px;
 }
 
-button {
+.button {
     background-color: #4CAF50;
     color: white;
     padding: 10px 20px;
@@ -598,10 +619,6 @@ button {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-}
-
-button:hover {
-    background-color: #45a049;
 }
 
 /* Comments List */
@@ -638,4 +655,231 @@ button:hover {
     margin-top: 2%;
     margin-bottom: 2%;
 }
+
+.contenedor-card{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 400px;
+    width: 855px;
+    border-radius: 25px;
+    background:var(--blue);
+    overflow: hidden;
+    transition: 100ms ease;
+    box-shadow: rgba(0, 0, 0, 0.15) 2px 3px 4px;
+  }
+  
+  /* ---------- Info section ---------- */
+  
+  .info-section {
+    text-transform: uppercase;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 75%;
+    color: rgb(0, 0, 0);
+  }
+  
+  .left-side {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 100%;
+    z-index: 1;
+    padding-left: 18px;
+  }
+  
+  button {
+    display: block;
+    border: none;
+    background: transparent;
+  }
+  
+  .weather {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 5px;
+  }
+  
+  .weather div {
+    display: flex;
+    align-items: center;
+  }
+  
+  .weather div:nth-child(1) {
+    width: 40%;
+    height: auto;
+  }
+  
+  .temperature {
+    font-size: 34pt;
+    font-weight: 500;
+    line-height: 8%;
+  }
+  
+  .right-side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-around;
+    height: 100%;
+    padding-right: 18px;
+    z-index: 1;
+  }
+  
+  .right-side > div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  
+  .hour {
+    font-size: 19pt;
+    line-height: 1em;
+  }
+  
+  .date {
+    font-size: 15px;
+  }
+  
+  /* ---------- Background ---------- */
+  .background-design {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: #f0f0f0;
+    overflow: hidden;
+  }
+  
+  .circle {
+    background-color: #efc745;
+  }
+  
+  .circle:nth-child(1) {
+    position: absolute;
+    top: -80%;
+    right: -50%;
+    width: 300px;
+    height: 300px;
+    opacity: 0.4;
+    border-radius: 50%;
+  }
+  
+  .circle:nth-child(2) {
+    position: absolute;
+    top: -70%;
+    right: -30%;
+    width: 210px;
+    height: 210px;
+    opacity: 0.4;
+    border-radius: 50%;
+  }
+  
+  .circle:nth-child(3) {
+    position: absolute;
+    top: -35%;
+    right: -8%;
+    width: 100px;
+    height: 100px;
+    opacity: 1;
+    border-radius: 50%;
+  }
+  
+  /* ---------- Days section ---------- */
+  .days-section {
+    
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 25%;
+    background-color: #f0f0f0;
+    gap: 2px;
+    box-shadow: inset 0px 2px 5px #00000049;
+  }
+
+  .verde {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      width: 100%;
+      background-color: #16831f;
+      box-shadow: inset 0px 2px 5px #0c3510;
+      cursor: pointer;
+      gap: 5px;
+  }
+  .amarillo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      width: 100%;
+      background-color: #d4d64a;
+      box-shadow: inset 0px 2px 5px #4d4e1f;
+      cursor: pointer;
+      transition: 100ms ease;
+      gap: 5px;
+  }
+.rojo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    background-color: #c73a3a;
+    box-shadow: inset 0px 2px 5px #3b1414;
+    cursor: pointer;
+    transition: 100ms ease;
+    gap: 5px;
+}
+  .days-section button:hover {
+    scale: 0.9;
+    border-radius: 10px;
+  }
+  
+  .days-section .day {
+    font-size: 10pt;
+    font-weight: 500;
+    color: white;
+    opacity: 0.7;
+  }
+  
+  .icon-weather-day {
+    display: flex;
+    align-items: center;
+    width: 20px;
+    height: 100%;
+  }
+
+/* Button container*/ 
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* Espaciado entre los botones */
+}
+
+.button-container .button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button-container .button:hover {
+    background-color: #45a049;
+}
+
 </style>
