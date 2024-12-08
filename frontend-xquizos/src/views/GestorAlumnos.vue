@@ -130,7 +130,9 @@ export default {
                 name: 'PerfilAlumno',
                 params: {
                     matriculaalum: matricula,
-                    nombrealum: nombrePrimer
+                    nombrealum: nombrePrimer,
+                    codCurso: 'admin',
+                    periodo: 'admin'
                 }
             });
         },

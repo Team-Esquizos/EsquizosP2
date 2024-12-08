@@ -99,7 +99,7 @@ import jsPDF from 'jspdf';
 import logo from '@/assets/Utalca.png';
 import Slide from '@/components/Slide.vue';
 import flag from '@/components/Flag.vue';
-import ResumenAlum from '@/components/ResumenAlum.vue'
+//import ResumenAlum from '@/components/ResumenAlum.vue'
 
 export default {
     name: 'PerfilAlumno',
@@ -109,13 +109,15 @@ export default {
         navBar,
         Slide,
         flag,
-        ResumenAlum
+        
     },
     data() {
         return {
             newComment: {
                 matricula: '',
                 codDocente: '',
+                codCurso: this.codCurso,
+                periodo: this.periodo,
                 comentario: '',
                 peso: 0,
                 flag: '',
