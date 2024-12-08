@@ -75,13 +75,14 @@ const routes = [
     component: GestorCursosPeriodo
   },
 
-  { path: '/vistaEstadisticas',
+  { path: '/vistaEstadisticas/:matricula',
     name: 'VistaEstadisticas',
-    component: VistaEstadisticas
+    component: VistaEstadisticas,
+    props: route => ({ matricula: route.params.matricula })
   },
 
   { 
-    path: '/perfilalumno/:matriculaalum/:nombrealum',
+    path: '/perfilalumno/:matriculaalum/:nombrealum/:codCurso/:periodo',
     name: 'PerfilAlumno',
     component: PerfilAlumno,
     props: true

@@ -15,8 +15,8 @@
         />
       </div>
     </div>
-  </template>
-  
+</template>
+
 
 <script>
   import navBara from '@/components/AppNavbarAdm.vue';
@@ -90,42 +90,42 @@
 
 <style scoped>
 .vista-docente {
-  background-image: url('../assets/oficina.jpg'); 
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  min-height: 100vh;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
+background-color: var(--background);
+background-size: cover;
+background-position: center;
+background-repeat: no-repeat;
+min-height: 100vh;
+width: 100%;
+display: flex;
+flex-direction: column;
 }
 
 /* Estilos del contenedor de módulos */
 .body {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 10px;
-    padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 10px;
+  padding: 20px;
 }
 
 /* Media queries para adaptar el diseño */
 @media (max-width: 768px) {
-  .body {
-    grid-template-columns: repeat(1, 1fr);
-    padding: 10px;
-  }
+.body {
+  grid-template-columns: repeat(1, 1fr);
+  padding: 10px;
+}
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
-  .body {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.body {
+  grid-template-columns: repeat(2, 1fr);
+}
 }
 
 @media (min-width: 1025px) {
-  .body {
-    margin-left: 10%;
-    margin-right: 10%;
-  }
+.body {
+  margin-left: 10%;
+  margin-right: 10%;
+}
 }
 </style>

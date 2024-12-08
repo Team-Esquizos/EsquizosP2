@@ -58,7 +58,8 @@ const upload = multer();
     
     router.route('/comments/add').post(commentController.addCommentControllerFn);
     router.route('/comments/remove/:_id').delete(commentController.removeCommentControllerFn);
-    router.route('/comments/getFromMatricula/:matricula').get(commentController.getCommentsControllerFn);
+    router.route('/comments/getFromMatricula/:matricula/:codCurso/:periodo').get(commentController.getCommentsControllerFn);
+    router.route('/comments/getFromCourse/:codCurso/:periodo').get(commentController.getCommentsByCourseControllerFn);
     
     
     module.exports = router; 
