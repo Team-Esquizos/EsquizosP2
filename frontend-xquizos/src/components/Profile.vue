@@ -75,9 +75,11 @@ export default {
       localStorage.removeItem('email');
       localStorage.removeItem('user');
       localStorage.removeItem('isAdmin');
+      localStorage.removeItem('rut');
       sessionStorage.removeItem('email');
       sessionStorage.removeItem('user');
       sessionStorage.removeItem('isAdmin');
+      sessionStorage.removeItem('rut');
       this.$router.push('/');
     },
     irAInicio() {

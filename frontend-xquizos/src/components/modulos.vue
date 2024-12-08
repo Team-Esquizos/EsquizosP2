@@ -6,9 +6,9 @@
         <span class="card-title">{{ nombre }}</span>
         <span class="card-seccion"> {{ seccion }}</span>
         <p class="card-content">
-          {{ carrera }}
+          {{ periodo }} - {{ semestre }}
         </p>
-        <button class="see-more"  @click="irAlumnos(nombre, seccion, codigo)">Entrar</button>
+        <button class="see-more"  @click="irAlumnos(nombre, seccion, codigo, periodo)">Entrar</button>
       </div>
     </div>
   </div>
@@ -37,7 +37,14 @@ export default {
       type: String,
       required:true
     },
-
+    semestre: {
+      type: String,
+      required:true
+    },
+    periodo: {
+      type: String,
+      required:true
+    },
   },
   data() {
     return {
@@ -47,15 +54,15 @@ export default {
   methods: {
     async obtenerModulos() {
       try {
-        const response = await axios.get('http://localhost:8080/getCurso');
+        const response = await axios.get('http://localhost:8080/api/getCurso');
         this.cursos = response.data; // Asigna los datos a la propiedad 'cursos'
       } catch (error) {
         console.error(error);
       }
     },
-    irAlumnos(nombre, seccion, codigo) {
+    irAlumnos(nombre, seccion, codigo, periodo) {
       // Pasa la id del curso al navegar a la vista de alumnos
-      this.$router.push({ name: 'VistaAlumnos', params: { nombreCurso: nombre, seccionCurso: seccion , codigo: codigo} });
+      this.$router.push({ name: 'VistaAlumnos', params: { nombreCurso: nombre, seccionCurso: seccion , codigo: codigo, periodo: periodo} });
     }
   },
   created() {

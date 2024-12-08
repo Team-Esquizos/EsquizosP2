@@ -1,65 +1,91 @@
 <template>
-  <div class="vista-docente">
-    <navBara />
-    <div class="body">
-      <!-- Usa v-for para iterar sobre los módulos y crear una tarjeta para cada uno -->
-      <modulos v-for="curso in cursos" :key="curso.id" :nombre="curso.nombre" :seccion="curso.seccion" :area="curso.carrera"  :codigo="curso.codigo" />
+    <div class="vista-docente">
+      <navBara />
+      <div class="body">
+        <!-- Usa v-for para iterar sobre los módulos y crear una tarjeta para cada uno -->
+        <modulos 
+          v-for="curso in cursos" 
+          :key="`${curso.codigo}-${curso.instancia.periodo}`" 
+          :nombre="curso.nombre" 
+          :seccion="curso.seccion" 
+          :area="curso.carrera"  
+          :codigo="curso.codigo" 
+          :semestre="curso.semestre" 
+          :periodo="curso.instancia.periodo"
+        />
+      </div>
     </div>
-  </div>
 </template>
 
 
 <script>
-import navBara from '@/components/AppNavbarAdm.vue';
-import modulos from '@/components/modulos.vue';
-import axios from 'axios';
-import autenticadorSesion from '@/mixins/AutenticadorSesion';   // Se debe agregar a nuevos componentes (Que puedan ser accedidos por ruta)
-
-export default {
-  name: "VistaDocente",
-  mixins: [autenticadorSesion],  // Se debe agregar a nuevos componentes (Que puedan ser accedidos por ruta)
-  components: {
-    navBara,
-    modulos
-  },
-  data() {
-      return {
-      cursos: [],
-      curso: {
-          nombre: '', seccion: '', carrera: '', codigo: '',
-          semestre: ''
-      },
-      formFields: {
-          nombre: 'Nombre Curso', seccion: 'Sección',
-          carrera: 'Carrera', codigo: 'Docente a cargo'
-      },
-      requiredFields: ['nombre','seccion', 'carrera']
-      };
-  },
-  created() {
-      this.fetchCursos();
-  },
-  methods: {
-    goBack() {
-        this.$router.push({ name: 'VistaDocente' });
+  import navBara from '@/components/AppNavbarAdm.vue';
+  import modulos from '@/components/modulos.vue';
+  import axios from 'axios';
+  import autenticadorSesion from '@/mixins/AutenticadorSesion';   // Se debe agregar a nuevos componentes (Que puedan ser accedidos por ruta)
+  
+  export default {
+    name: "VistaDocente",
+    mixins: [autenticadorSesion],  // Se debe agregar a nuevos componentes (Que puedan ser accedidos por ruta)
+    components: {
+      navBara,
+      modulos
     },
+    data() {
+        return {
+        cursos: [],
+        curso: {
+            nombre: '', seccion: '', carrera: '', codigo: '',
+            semestre: '', periodo: ''
+        },
+        instancias: [],
+        instancia: {
+            codCurso: '', codDocente: '', periodo: '',
+        },
+        formFields: {
+            nombre: 'Nombre Curso', seccion: 'Sección',
+            carrera: 'Carrera', codigo: 'Docente a cargo'
+        },
+        requiredFields: ['nombre','seccion', 'carrera']
+        };
+    },
+    created() {
+        this.fetchCursos();
+    },
+    methods: {
+      goBack() {
+          this.$router.push({ name: 'VistaDocente' });
+      },
 
-    async fetchCursos() {
+      async fetchCursos() {
       try {
         const storedUser = localStorage.getItem('rut') || sessionStorage.getItem('rut');
         console.log('Rut:', storedUser);
         const response = await axios.get(`http://localhost:3333/api/courseInstance/getteacherinstance/${storedUser}`);
+        
         if (response.data.status) {
-          this.cursos = response.data.courses;
+          const { courses, instance } = response.data;
+
+          // Combinar cursos e instancias en el frontend
+          const combinedData = courses.map(course => {
+            const relatedInstance = instance.find(inst => inst.codCurso === course.codigo);
+            return {
+              ...course, // Datos del curso
+              instancia: relatedInstance ? relatedInstance : null // Instancia relacionada o null si no hay coincidencia
+            };
+          });
+
+          this.cursos = combinedData;
+          console.log(this.cursos);
         } else {
           console.error(response.data.msg);
         }
       } catch (error) {
         console.error('Error al obtener cursos:', error);
       }
-    },
-  }
-};
+    }
+    }
+  };
 </script>
 
 <style scoped>
