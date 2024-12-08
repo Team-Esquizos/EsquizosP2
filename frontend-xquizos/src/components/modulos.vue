@@ -70,39 +70,38 @@ export default {
   padding: 20px;
 
 }
-
 .card {
+  background:var(--blue);
   padding-top: 60px;
   border-radius: 15px;
-  border: 3px solid rgb(0, 0, 0);
-  transform-style: preserve-3d;
-  background: linear-gradient(135deg, #00000000 18.75%, #353535 0 31.25%, #00000000 0),
-    repeating-linear-gradient(45deg, #353535 -6.25% 6.25%, #000000 0 18.75%);
-  background-size: 60px 60px;
-  background-position: 0 0, 0 0;
-  background-color: #000000;
   width: 100%;
-  box-shadow: rgba(142, 142, 142, 0.3) 0px 30px 30px -10px;
-  transition: all 0.5s ease-in-out;
   display: flex; /* Flexbox para alinear contenido */
   flex-direction: column;
   height: 310px; /* Altura fija para tarjetas uniformes */
   overflow: hidden; /* Evita que el contenido sobresalga */
 }
 
-.card:hover {
-  background-position: -100px 100px, -100px 100px;
-}
 
 .content-box {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
   width: 100%;
   height: 100%;
-  padding: 60px 25px 25px 25px;
-  flex-direction: column; /* Alinear elementos en columna */
-  justify-content: space-between; /* Distribuir espacio entre los elementos */
-  background-size: cover;
+  padding: 25px;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #f0f0f0, #d9d9d9);
 }
+
+.content-box .card-content {
+  flex-grow: 1;
+  text-align: center;
+
+ }
 
 .content-box::before {
   content: '';
@@ -111,7 +110,7 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('../assets/red.png');
+  background-color: rgb(165, 162, 162);
   background-size: cover;
   background-position: center;
   filter: blur(2px); /* Ajusta el nivel de difuminado */
@@ -124,41 +123,45 @@ export default {
   font-size: 20px;
   font-weight: 900;
   transition: all 0.5s ease-in-out;
+  
 }
 
 .content-box .card-seccion {
   display: block; /* Forzar a ocupar una línea nueva */
   font-size: 18px;
   font-weight: 600;
-  color: #555;
-
-}
-
-
-.content-box .card-content {
-  margin-top: 10px;
-  font-size: 12px;
-  font-weight: 700;
   color: #000000;
-  transition: all 0.5s ease-in-out;
+
 }
 
 .content-box .see-more {
   cursor: pointer;
-  margin-top: 1rem;
-  display:inline-flex;
-  font-weight: 900;
-  font-size: 9px;
-  text-transform: uppercase;
-  color: rgb(0, 0, 0);
-  border-radius: 5px; 
-  background: white;
-  padding: 0.5rem 0.7rem;
+  font-weight: bold;
+  font-size: 14px;
+  color:white;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  border-radius: 13px;
+  padding: 0.7rem 1.5rem;
+  border: none;
   transition: all 0.5s ease-in-out;
-  transform: translate3d(0px, 0px, 20px);
-  border: 0.5px solid #000000;
-  align-items: flex-end;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
+.content-box .see-more:hover {
+  background: linear-gradient(135deg, #0056b3, #003f7f);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+}
+
+.content-box .see-more:active {
+  transform: scale(1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.content-box .see-more span {
+  display: inline-block;
+  position: relative;
+  transition: all 0.3s ease-in-out;
+}
+
 
 /* Media queries para pantallas pequeñas */
 @media (max-width: 768px) {

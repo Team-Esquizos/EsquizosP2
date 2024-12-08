@@ -159,7 +159,7 @@ export default {
   --burger-line-width: 1.125em;
   --burger-line-height: 0.125em;
   --burger-offset: 0.625em;
-  --burger-bg: #00bf63;
+  --burger-bg: var(--blue);
   --burger-color: #333;
   --burger-line-border-radius: 0.1875em;
   --burger-diameter: 3.125em;
@@ -195,7 +195,7 @@ export default {
   --nav-button-padding-y: 0.375em;
   --nav-button-border-radius: 0.375em;
   --nav-button-font-size: 17px;
-  --nav-button-hover-bg: #00bf63;
+  --nav-button-hover-bg: var(--blue);
   --nav-button-hover-text-color: #fff;
   --nav-button-distance: 0.875em;
   /* Subrayado */
@@ -301,7 +301,7 @@ export default {
 /* Colores de íconos en el dropdown */
 .popup-window ul li:nth-child(1) svg,
 .popup-window ul li:nth-child(2) svg {
-  color: #00bf63;
+  color: var(--blue);
 }
 
 .popup-window ul li:nth-child(4) svg,
