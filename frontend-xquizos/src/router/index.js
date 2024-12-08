@@ -82,7 +82,7 @@ const routes = [
   },
 
   { 
-    path: '/perfilalumno/:matriculaalum/:nombrealum',
+    path: '/perfilalumno/:matriculaalum/:nombrealum/:codCurso/:periodo',
     name: 'PerfilAlumno',
     component: PerfilAlumno,
     props: true
