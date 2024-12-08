@@ -208,3 +208,32 @@ module.exports.getCourseByNomDBService = async (nombre, seccion) => {
         return { status: false, msg: "Error al obtener el curso" };
     }
 };
+
+module.exports.getStudentByMatriculaDBService = async (matricula) => {
+    try {
+        // Consulta a la base de datos para buscar al estudiante por matrícula
+        const student = await studentModel.findOne({ matricula });
+
+        // Si se encuentra el estudiante
+        if (student) {
+            console.log("Estudiante:", student);
+            return {
+                status: true,
+                student: student,
+            };
+        } else {
+            // Si no se encuentra ningún estudiante con esa matrícula
+            return {
+                status: false,
+                msg: "Estudiante no encontrado",
+            };
+        }
+    } catch (err) {
+        // Manejo de errores en el servicio
+        console.log("Error en getStudentByMatriculaDBService:", err);
+        return {
+            status: false,
+            msg: "Error al consultar la base de datos",
+        };
+    }
+};
