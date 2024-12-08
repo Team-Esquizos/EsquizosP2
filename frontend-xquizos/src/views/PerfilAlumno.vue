@@ -90,15 +90,18 @@ import jsPDF from 'jspdf';
 import logo from '@/assets/Utalca.png';
 import Slide from '@/components/Slide.vue';
 import flag from '@/components/Flag.vue';
+import ResumenAlum from '@/components/ResumenAlum.vue'
+
 
 export default {
     name: 'PerfilAlumno',
-    props: ['matriculaalum', 'nombrealum'],
+    props: ['matriculaalum', 'nombrealum', 'codCurso', 'periodo'],
     mixins: [GoBackMixin],
     components: {
         navBar,
         Slide,
-        flag
+        flag,
+        ResumenAlum
     },
     data() {
         return {
@@ -267,13 +270,15 @@ Profesor(a) responsable
         },
         async iraEstadisticas() {
             this.$router.push({
+                name: 'VistaEstadisticas',
+                params: { matricula: this.matriculaalum },
                 name: 'VistaEstadisticas'
             });
         },
         async fetchComments() {
             try {
                 const response = await axios.get(
-                    `http://localhost:3333/api/comments/getFromMatricula/${this.matriculaalum}`
+                    `http://localhost:3333/api/comments/getFromMatricula/${this.matriculaalum}/${this.codCurso}/${this.periodo}`
                 );
                 this.comments = response.data.comments;
             } catch (error) {
