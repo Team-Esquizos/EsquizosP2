@@ -1,101 +1,83 @@
 <template>
-    <div class="body">
-        <navBar class="navbar"/>
-        <div class="student-profile">
-            <header class="header-container">
-                <button class="btn btn-secondary back-button" @click="goBack">
-                    <i class="fa-solid fa-circle-left"></i> Volver a los estudiantes
-                </button>
-                <h1>Perfil del alumno</h1>
-            </header>
-            <section class="student-info">
-                <p><strong>Name:</strong> {{ nombrealum }}</p>
-                <p><strong>Matricula:</strong> {{ matriculaalum }}</p>
-                <button @click="showChoiceDialog">Generar Carta</button>
+<div class="body">
+    <navBar class="navbar" />
+    <div class="student-profile">
+        <header class="header-container">
+            <button class="btn btn-secondary back-button" @click="goBack">
+                <i class="fa-solid fa-circle-left"></i> Volver a los estudiantes
+            </button>
+            <h1>Perfil del alumno</h1>
+        </header>
+        <section class="student-info">
+            <p><strong>Name:</strong> {{ nombrealum }}</p>
+            <p><strong>Matricula:</strong> {{ matriculaalum }}</p>
+            <button @click="showChoiceDialog">Generar Carta</button>
 
-                <button @click="iraEstadisticas">Ver estadistica</button>
-            </section>
-        </div>
-        <div class="container">
-            <!-- Default Comments -->
-            <section class="default-comments">
-                <h2>Comentarios por defecto</h2>
-                <div class="default-comments-group">
-                    <div class="comment-category">
-                        <h3>Comentarios positivos</h3>
-                        <ul>
-                            <li class="comment-box positive" @click="addDefaultComment('Ayuda a sus compañeros con la materia', 9)">
-                                Ayuda a sus compañeros con la materia
-                            </li>
-                            <li class="comment-box positive" @click="addDefaultComment('Alumno Puntual', 10)">
-                                Alumno Puntual
-                            </li>
-                            <li class="comment-box positive" @click="addDefaultComment('Participativo en clases', -5)">
-                                Participativo en clases
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="comment-category">
-                        <h3>comentarios negativos</h3>
-                        <ul>
-                            <li class="comment-box negative" @click="addDefaultComment('Copia de prueba', -8)">
-                                Copia de prueba
-                            </li>
-                            <li class="comment-box negative" @click="addDefaultComment('Copia proyecto', -10)">
-                                Copia proyecto
-                            </li>
-                            <li class="comment-box negative" @click="addDefaultComment('Golpeo al jefe de grupo', -2)">
-                                Golpeo al jefe de grupo
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </section>
-
-            <div class="flags-container">
-              <flag 
-              :regularColor="'#00FF00'" 
-              :solidColor="'#006400'" 
-              :texto="'Buen comportamiento'" 
-              :checked="selectedFlag === 'buenComportamiento'"
-              @update:checked="updateSelectedFlag('buenComportamiento')"
-              v-model="newComment.flag"/>
-              <flag 
-              :regularColor="'#FFFF00'" 
-              :solidColor="'#FFD700'" 
-              :texto="'Advertencia'"
-              :checked="selectedFlag === 'advertencia'"
-              @update:checked="updateSelectedFlag('advertencia')" 
-              v-model="newComment.flag"/>
-              <flag 
-              :regularColor="'#FF0000'" 
-              :solidColor="'#8B0000'" 
-              :texto="'Mal comportamiento'" 
-              :checked="selectedFlag === 'malComportamiento'"
-              @update:checked="updateSelectedFlag('malComportamiento')"
-              v-model="newComment.flag"/>
-            </div>
-
-            <!-- Add a Commentary -->
-            <section class="comment-section">
-                <h2>añadir comentario personalizado</h2>
-                <textarea v-model="newComment.comentario" placeholder="Write a comment..."></textarea>
-                <div>
-                    <Slide v-model="newComment.peso"/>
-                    <p>Peso seleccionado: {{ newComment.peso }}</p>
-                </div>
-                <button @click="addComment">Añadir Comentario</button>
-                <div class="comments-list">
-                    <h3>Comentarios:</h3>
+            <button @click="iraEstadisticas">Ver estadistica</button>
+        </section>
+    </div>
+    <div class="container">
+        <!-- Default Comments -->
+        <section class="default-comments">
+            <h2>Comentarios por defecto</h2>
+            <div class="default-comments-group">
+                <div class="comment-category">
+                    <h3>Comentarios positivos</h3>
                     <ul>
-                        <li v-for="(comment, index) in comments" :key="index" class="comment-box">
-                            {{ comment.comentario }}
-                            <button @click="deleteComment(comment._id)" class="delete-button">Eliminar</button>
+                        <li class="comment-box positive" @click="addDefaultComment('Ayuda a sus compañeros con la materia', 9)">
+                            Ayuda a sus compañeros con la materia
+                        </li>
+                        <li class="comment-box positive" @click="addDefaultComment('Alumno Puntual', 10)">
+                            Alumno Puntual
+                        </li>
+                        <li class="comment-box positive" @click="addDefaultComment('Participativo en clases', -5)">
+                            Participativo en clases
                         </li>
                     </ul>
                 </div>
-            </section>
+                <div class="comment-category">
+                    <h3>comentarios negativos</h3>
+                    <ul>
+                        <li class="comment-box negative" @click="addDefaultComment('Copia de prueba', -8)">
+                            Copia de prueba
+                        </li>
+                        <li class="comment-box negative" @click="addDefaultComment('Copia proyecto', -10)">
+                            Copia proyecto
+                        </li>
+                        <li class="comment-box negative" @click="addDefaultComment('Golpeo al jefe de grupo', -2)">
+                            Golpeo al jefe de grupo
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <div class="flags-container">
+            <flag :regularColor="'#00FF00'" :solidColor="'#006400'" :texto="'Buen comportamiento'" :checked="selectedFlag === 'buenComportamiento'" @update:checked="updateSelectedFlag('buenComportamiento')" v-model="newComment.flag" />
+            <flag :regularColor="'#FFFF00'" :solidColor="'#FFD700'" :texto="'Advertencia'" :checked="selectedFlag === 'advertencia'" @update:checked="updateSelectedFlag('advertencia')" v-model="newComment.flag" />
+            <flag :regularColor="'#FF0000'" :solidColor="'#8B0000'" :texto="'Mal comportamiento'" :checked="selectedFlag === 'malComportamiento'" @update:checked="updateSelectedFlag('malComportamiento')" v-model="newComment.flag" />
         </div>
+
+        <!-- Add a Commentary -->
+        <section class="comment-section">
+            <h2>añadir comentario personalizado</h2>
+            <textarea v-model="newComment.comentario" placeholder="Write a comment..."></textarea>
+            <div>
+                <Slide v-model="newComment.peso" />
+                <p>Peso seleccionado: {{ newComment.peso }}</p>
+            </div>
+            <button @click="addComment">Añadir Comentario</button>
+            <div class="comments-list">
+                <h3>Comentarios:</h3>
+                <ul>
+                    <li v-for="(comment, index) in comments" :key="index" class="comment-box">
+                        {{ comment.comentario }}
+                        <button @click="deleteComment(comment._id)" class="delete-button">Eliminar</button>
+                    </li>
+                </ul>
+            </div>
+        </section>
+    </div>
 </div>
 </template>
 
@@ -108,6 +90,7 @@ import jsPDF from 'jspdf';
 import logo from '@/assets/Utalca.png';
 import Slide from '@/components/Slide.vue';
 import flag from '@/components/Flag.vue';
+import ResumenAlum from '@/components/ResumenAlum.vue'
 
 export default {
     name: 'PerfilAlumno',
@@ -116,7 +99,8 @@ export default {
     components: {
         navBar,
         Slide,
-        flag
+        flag,
+        ResumenAlum
     },
     data() {
         return {
@@ -150,22 +134,38 @@ export default {
 
                 // Contenido de la carta de recomendación
                 const recommendationContent = `
-Estimado/a:
+[Fecha: ${new Date().toLocaleDateString()}]
 
-Por la presente, recomiendo ampliamente a ${this.nombrealum}, con matrícula ${this.matriculaalum}, por su destacada participación en el programa académico. 
-Durante su tiempo con nosotros, demostró ser una persona comprometida, proactiva y orientada a resultados.
+A quien corresponda,
 
-Comentarios destacados:
+Por medio de la presente, me permito recomendar de manera entusiasta y formal al estudiante:
+
+Nombre: ${this.nombrealum}  
+Matrícula: ${this.matriculaalum}  
+
+Contexto y méritos destacados  
+
+Durante su participación en el programa académico, ${this.nombrealum} ha demostrado ser un(a) estudiante altamente comprometido(a), proactivo(a) y orientado(a) a resultados. Entre las cualidades y logros que lo/la distinguen, destaco los siguientes:
+
 ${positiveComments.map(comment => `- ${comment.comentario}`).join('\n')}
 
-Estoy convencido de que ${this.nombrealum} será un gran activo para cualquier organización o proyecto en el que participe.
+Estas cualidades no solo reflejan su excelencia académica, sino también su capacidad para colaborar efectivamente en equipo, asumir retos con determinación y contribuir de manera significativa al éxito de proyectos en los que participa.
 
-Atentamente,
+Conclusión  
+
+Estoy plenamente convencido(a) de que ${this.nombrealum} será un recurso invaluable para cualquier organización o proyecto en el que decida participar. Su dedicación y habilidades garantizan un desempeño sobresaliente en cualquier entorno.
+
+Sin más que agregar, quedo a su disposición para ampliar esta información o responder cualquier consulta que considere necesaria.
+
+Atentamente,  
 ${this.profesorNombre}
-                `;
+Profesor(a) responsable  
+`;
                 doc.setFont("Times", "normal");
                 doc.setFontSize(12);
-                doc.text(recommendationContent, 10, 40, { maxWidth: 190 });
+                doc.text(recommendationContent, 10, 40, {
+                    maxWidth: 190
+                });
             } else if (type === "sumario") {
                 // Encabezado de carta de sumario
                 doc.addImage(imgData, "PNG", 10, 10, 30, 30); // Logo
@@ -175,23 +175,40 @@ ${this.profesorNombre}
 
                 // Contenido de la carta de sumario
                 const summaryContent = `
-Estudiante: ${this.nombrealum}
-Matrícula: ${this.matriculaalum}
-Fecha: ${new Date().toLocaleDateString()}
+[Fecha: ${new Date().toLocaleDateString()}]
 
-A quien corresponda:
+A quien corresponda,
 
-Se realiza esta comunicación con el propósito de detallar observaciones y comentarios negativos sobre el desempeño del estudiante ${this.nombrealum}:
+Por medio de la presente, y en mi calidad de profesor(a), me permito presentar un sumario relacionado con el desempeño académico y comportamental del estudiante identificado como:
 
-Comentarios destacados:
+Nombre del estudiante: ${this.nombrealum}  
+Matrícula: ${this.matriculaalum}  
+
+Exposición de hechos  
+A continuación, se detalla una relación de los principales aspectos observados que fundamentan esta comunicación:
+
 ${negativeComments.map(comment => `- ${comment.comentario}`).join('\n')}
 
-Atentamente,
+Estos hechos han sido constatados en el marco de su participación en las actividades académicas y/o conductas dentro del aula, impactando negativamente en su desempeño y/o en el ambiente educativo.
+
+Solicitud y medidas solicitadas  
+
+Con base en lo anterior, se solicita que se tomen las medidas correspondientes para atender esta situación. Entre las posibles acciones, se sugiere:  
+1. Establecer un plan de mejora para el estudiante.  
+2. Programar una reunión con el estudiante y sus representantes, de ser aplicable.  
+3. Implementar un seguimiento periódico para evaluar su progreso.  
+
+Quedo en espera de su respuesta y a disposición para colaborar en el seguimiento y resolución de esta situación, en aras de favorecer el bienestar académico y personal del estudiante.
+
+Atentamente,  
 ${this.profesorNombre}
-                `;
+Profesor(a) responsable  
+`;
                 doc.setFont("Times", "normal");
                 doc.setFontSize(12);
-                doc.text(summaryContent, 10, 40, { maxWidth: 190 });
+                doc.text(summaryContent, 10, 40, {
+                    maxWidth: 190
+                });
             }
 
             // Guardar el archivo PDF
@@ -221,7 +238,7 @@ ${this.profesorNombre}
                     `http://localhost:3333/api/comments/getFromMatricula/${this.matriculaalum}`
                 );
                 this.comments = response.data.comments || [];
-                
+
                 // Filtra comentarios positivos y negativos
                 const positiveComments = this.comments.filter(comment => comment.peso > 0);
                 const negativeComments = this.comments.filter(comment => comment.peso < 0);
@@ -252,7 +269,8 @@ ${this.profesorNombre}
         },
         async iraEstadisticas() {
             this.$router.push({
-                name: 'VistaEstadisticas'
+                name: 'VistaEstadisticas',
+                params: { matricula: this.matriculaalum }
             });
         },
         async fetchComments() {
@@ -302,7 +320,7 @@ ${this.profesorNombre}
                         title: 'Comentario añadido',
                         text: 'El comentario se agregó exitosamente.',
                         icon: 'success',
-                        confirmButtonColor  : '#3085d6',
+                        confirmButtonColor: '#3085d6',
                         confirmButtonText: 'Aceptar',
                     });
                 }
@@ -405,8 +423,8 @@ ${this.profesorNombre}
             }
         },
         updateSelectedFlag(flag) {
-          this.selectedFlag = flag;
-          this.newComment.flag = flag;
+            this.selectedFlag = flag;
+            this.newComment.flag = flag;
         },
     },
 };
@@ -427,14 +445,16 @@ ${this.profesorNombre}
 .header-container {
     display: flex;
     align-items: center;
-    gap: 30%; /* Espaciado entre el botón y el título */
-    justify-content: flex-start; /* Alinear los elementos hacia la izquierda */
+    gap: 30%;
+    /* Espaciado entre el botón y el título */
+    justify-content: flex-start;
+    /* Alinear los elementos hacia la izquierda */
     margin-top: 5.2%;
 }
 
-
 .back-button {
-    margin-left: 1%; /* Opcional, ajusta si hay márgenes no deseados */
+    margin-left: 1%;
+    /* Opcional, ajusta si hay márgenes no deseados */
 }
 
 /* Profile Header */
@@ -456,7 +476,6 @@ ${this.profesorNombre}
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     text-align: left;
 }
-
 
 .student-info p {
     margin: 5px 0;
@@ -578,8 +597,8 @@ button:hover {
     background-color: #d32f2f;
 }
 
-.flags-container{
-  margin-top: 2%;
-  margin-bottom: 2%;
+.flags-container {
+    margin-top: 2%;
+    margin-bottom: 2%;
 }
 </style>

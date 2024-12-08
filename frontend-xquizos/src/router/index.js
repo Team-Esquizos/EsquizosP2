@@ -39,7 +39,7 @@ const routes = [
     component: VistaDocente
   },
   {
-    path: '/VistaAlumnos/:nombreCurso/:seccionCurso/:codigo',
+    path: '/VistaAlumnos/:nombreCurso/:seccionCurso/:codigo/:periodo',
     name: 'VistaAlumnos',
     component: VistaAlumnos,
   },
@@ -75,9 +75,10 @@ const routes = [
     component: GestorCursosPeriodo
   },
 
-  { path: '/vistaEstadisticas',
+  { path: '/vistaEstadisticas/:matricula',
     name: 'VistaEstadisticas',
-    component: VistaEstadisticas
+    component: VistaEstadisticas,
+    props: route => ({ matricula: route.params.matricula })
   },
 
   { 
