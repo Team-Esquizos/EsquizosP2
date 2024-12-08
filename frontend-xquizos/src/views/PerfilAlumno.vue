@@ -101,6 +101,7 @@ import Slide from '@/components/Slide.vue';
 import flag from '@/components/Flag.vue';
 //import ResumenAlum from '@/components/ResumenAlum.vue'
 
+
 export default {
     name: 'PerfilAlumno',
     props: ['matriculaalum', 'nombrealum', 'codCurso', 'periodo'],
@@ -309,7 +310,8 @@ Profesor(a) responsable
         async iraEstadisticas() {
             this.$router.push({
                 name: 'VistaEstadisticas',
-                params: { matricula: this.matriculaalum }
+                params: { matricula: this.matriculaalum },
+                name: 'VistaEstadisticas'
             });
         },
         async fetchComments() {
