@@ -277,6 +277,18 @@
         };
         return inputTypes[key] || "text";
       },
+      viewCurso(curso){
+        console.log(curso.codigo);
+        this.$router.push({
+            name: 'VistaCurso',
+            params: {
+                nombre: curso.nombre,
+                seccion: curso.seccion,
+                semestre: curso.semestre,
+                codCurso: curso.codigo,
+            }
+        });
+    },
     },
   };
 </script>

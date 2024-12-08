@@ -203,12 +203,13 @@ var removeStudentFromCourseInstanceControllerFn = async (req, res) => {
 
 var getTeacherCourseInstanceControllerFn = async (req, res) => {
     try {
-        const rut = req.params.rut; 
+        const rut = req.params.rut;
+        const periodo = req.params.periodo; 
 
         console.log("Rut:", rut);
+        console.log("Periodo:", periodo);
 
-        // Llama al servicio para actualizar codDocente
-        const result = await courseInstanceService.getTeacherCourseInstancesDBService(rut);
+        const result = await courseInstanceService.getTeacherCourseInstancesDBService(rut, periodo);
 
         if (result.status) {
             res.json(result); // Responde con el resultado del servicio
