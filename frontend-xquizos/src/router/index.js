@@ -39,7 +39,7 @@ const routes = [
     component: VistaDocente
   },
   {
-    path: '/VistaAlumnos/:nombreCurso/:seccionCurso/:codigo',
+    path: '/VistaAlumnos/:nombreCurso/:seccionCurso/:codigo/:periodo',
     name: 'VistaAlumnos',
     component: VistaAlumnos,
   },
@@ -82,7 +82,7 @@ const routes = [
   },
 
   { 
-    path: '/perfilalumno/:matriculaalum/:nombrealum',
+    path: '/perfilalumno/:matriculaalum/:nombrealum/:codCurso/:periodo',
     name: 'PerfilAlumno',
     component: PerfilAlumno,
     props: true

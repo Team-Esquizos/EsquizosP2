@@ -17,6 +17,8 @@ module.exports.addCommentDBService = (commentData) => {
 
         commentModelData.matricula = commentData.matricula;
         commentModelData.codDocente = commentData.codDocente;
+        commentModelData.codCurso = commentData.codCurso;
+        commentModelData.periodo = commentData.periodo;
         commentModelData.comentario = commentData.comentario;
         commentModelData.peso = commentData.peso;
         commentModelData.flag = commentData.flag;
@@ -57,12 +59,34 @@ module.exports.removeCommentDBService = async (_id) => {
 
 
 
-module.exports.getCommentsDBService = async (matricula) => {
+module.exports.getCommentsDBService = async (instance) => {
     try {
-        const comments = await commentModel.find({matricula: matricula});
+        if(instance.codCurso === 'admin'){
+            var comments = await commentModel.find({matricula: instance.matricula});
+        } else {
+            var comments = await commentModel.find({matricula: instance.matricula, codCurso: instance.codCurso, periodo: instance.periodo});
+        }
 
         if (comments) {
-            console.log("Comentarios del alumno ", matricula ,":", comments);
+            console.log("Comentarios del alumno ", instance.matricula ,":", comments);
+            return { status: true, msg: "Comentarios obtenidos correctamente", comments };
+        } else {
+            console.log("Comentarios no encontrados");
+            return { status: false, msg: "Comentarios no encontrados" };
+        }
+    } catch (error) {
+        console.log("Error al obtener Comentarios:", error);
+        return { status: false, msg: "Error al obtener Comentarios" };
+    }
+};
+
+module.exports.getCommentsByCourseDBService = async (curso, periodo) => {
+    try {
+
+        const comments = await commentModel.find({codCurso: curso, periodo: periodo});
+
+        if (comments) {
+            console.log("Comentarios del curso ", curso ,":", comments);
             return { status: true, msg: "Comentarios obtenidos correctamente", comments };
         } else {
             console.log("Comentarios no encontrados");
