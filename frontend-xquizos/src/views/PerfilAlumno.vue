@@ -252,7 +252,8 @@ ${this.profesorNombre}
         },
         async iraEstadisticas() {
             this.$router.push({
-                name: 'VistaEstadisticas'
+                name: 'VistaEstadisticas',
+                params: { matricula: this.matriculaalum }
             });
         },
         async fetchComments() {
