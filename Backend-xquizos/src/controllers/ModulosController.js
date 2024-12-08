@@ -17,30 +17,24 @@ const importModulos = async (req, res) => {
 
         console.log("Datos leídos del archivo Excel:", sheetData);
 
-        // Crear un mapa para agrupar los datos
-        const groupedData = {};
+        // Crear un conjunto para almacenar aprendizajes únicos
+        const aprendizajesSet = new Set();
 
-        sheetData.forEach(row => {
-            const key = `${row['Módulo']}-${row['Semestre']}-${row['Competencia']}`;
-        
-            if (!groupedData[key]) {
-                groupedData[key] = {
-                    Modulo: row['Módulo'], // Ajustar los nombres según las columnas del Excel
-                    semestre: parseInt(row['Semestre'], 10), // Convertir a entero
-                    Competencia: row['Competencia'],
-                    Aprendizajes: [] // Crear un array para los aprendizajes
-                };
+        // Filtrar datos para eliminar aprendizajes repetidos
+        const datosData = [];
+
+        for (let row of sheetData) {
+            const aprendizaje = row['Aprendizaje'];
+
+            if (!aprendizajesSet.has(aprendizaje)) {
+                aprendizajesSet.add(aprendizaje);
+
+                datosData.push({
+                    Aprendizaje: aprendizaje,
+                    TipoSaber: row['Tipo de saber']
+                });
             }
-        
-            // Agregar el aprendizaje y el tipo de saber al arreglo correspondiente
-            groupedData[key].Aprendizajes.push({
-                Aprendizaje: row['Aprendizaje'],
-                TipoSaber: row['Tipo de saber']
-            });
-        });
-
-        // Convertir el mapa a un arreglo
-        const datosData = Object.values(groupedData);
+        }
 
         // Insertar datos en MongoDB
         await datos.insertMany(datosData);
@@ -69,7 +63,6 @@ const importModulos = async (req, res) => {
         });
     }
 };
-
 
 
 
