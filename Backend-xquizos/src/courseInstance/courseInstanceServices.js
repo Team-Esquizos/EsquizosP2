@@ -103,7 +103,7 @@ module.exports.getTeacherCourseInstancesDBService = async (codDocente) => {
 
         if (cursos && cursos.length > 0) {
             console.log("Cursos encontrados");
-            return { status: true, msg: "Cursos encontrados", courses: cursos };
+            return { status: true, msg: "Cursos encontrados", courses: cursos, instance: result };
         } else {
             console.log("No se encontraron cursos para las instancias");
             return { status: false, msg: "No se encontraron cursos para las instancias" };
