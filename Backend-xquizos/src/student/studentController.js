@@ -148,4 +148,28 @@ var getCourseByNomControllerFn = async (req, res) => {
     }
 }
 
-module.exports = {registerStudentControllerFn, searchStudentControllerFn, getStudentsControllerFn, editStudentControllerFn, removeStudentControllerFn, getCourseByNomControllerFn, addlista_de_accionesControllerFn};
+
+var getStudentByMatriculaControllerFn = async (req, res) => {
+    try {
+        // Obtenemos la matrícula del parámetro de la solicitud
+        const { matricula } = req.params;
+
+        // Llamamos al servicio para obtener el estudiante por matrícula
+        var result = await studentService.getStudentByMatriculaDBService(matricula);
+
+        // Si la consulta es exitosa y encontramos al estudiante
+        if (result.status) {
+            console.log("Estudiante encontrado");
+            res.status(200).json(result.student);  // Retornamos el estudiante encontrado
+        } else {
+            res.status(404).json({ message: result.msg });  // Retornamos mensaje si no se encuentra
+        }
+
+    } catch (err) {
+        // Si ocurre un error en el servidor, respondemos con error 500
+        res.status(500).send({ status: false, message: "Error en el servidor" });
+        console.log(err);
+    }
+};
+
+module.exports = {registerStudentControllerFn, searchStudentControllerFn, getStudentsControllerFn, editStudentControllerFn, removeStudentControllerFn, getCourseByNomControllerFn, addlista_de_accionesControllerFn, getStudentByMatriculaControllerFn};
