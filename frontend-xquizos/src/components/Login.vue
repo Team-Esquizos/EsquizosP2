@@ -70,7 +70,8 @@ export default {
           Swal.fire({
             title: "Sesión iniciada",
             text: "Has iniciado sesión de forma exitosa",
-            icon: "success"
+            icon: "success",
+            confirmButtonColor: "#007bff"
           });
 
           const storage = this.user.rememberMe ? localStorage : sessionStorage;
