@@ -10,12 +10,9 @@ module.exports.registerCourseDBService = (courseData) => {
         courseModelData.codigo = courseData.codigo.toUpperCase();
         courseModelData.carrera = courseData.carrera.toUpperCase();
         courseModelData.nombre = courseData.nombre.toUpperCase();
-        courseModelData.semestre = courseData.semestre.toUpperCase();
+        courseModelData.semestre = courseData.semestre;
         courseModelData.seccion = courseData.seccion.toUpperCase();
 
-        // Llama a la función y maneja el resultado
-        const instanceStatus = await courseInstanceDBService.registerCourseInstanceDBService(courseData);
-        console.log("Estado de la instancia:", instanceStatus);
 
         try {
             await courseModelData.save();

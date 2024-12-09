@@ -12,14 +12,15 @@
       <li v-if="isAdmin" class="navbar-item"><a href="#" @click="GestorDocentes">Docentes</a></li>
       <li v-if="isAdmin" class="navbar-item"><a href="#" @click="GestorCursos">Cursos</a></li>
       <li v-if="isAdmin" class="navbar-item"><a href="#" @click="GestorCursosPeriodo">Cursos Periodo</a></li>
-      <li v-if="isAdmin" class="navbar-item"><a href="#" @click="cerrarSesion">Salir</a></li>
       
     </ul>
     <div class="navbar-toggle" @click="toggleMobileMenu">
       <span class="navbar-toggle-icon"></span>
     </div>
-    <span >{{ userName }}</span>
-    <Profile/>
+    <div class="navbar-profile"> 
+      <span >{{ userName }}</span>
+      <Profile class="Profile"/>
+    </div>
   </nav>
 </template>
 
@@ -92,25 +93,22 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: rgb(255, 255, 255);
+  background-color: white;
   padding: 20px 50px;
   color: #333;
-  position: absolute;
+  position: fixed;
   top: 0;
   height: 80px;
   box-sizing: border-box;
-  backdrop-filter: blur(10px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease;
-  opacity: 0.9;
   z-index: 9999;
 }
 
 .navbar-logo {
-  color: #333;
   display: flex;
   align-items: center;
 }
+
 
 .navbar-logo img {
   height: 40px;
@@ -130,7 +128,6 @@ export default {
 .navbar-links li {
   display: inline;
 }
-
 .navbar-links a {
   color: #333;
   text-decoration: none;
@@ -163,6 +160,34 @@ export default {
   background-color: #333;
   display: block;
   margin: 5px 0;
+}
+.navbar span {
+  margin-left:10px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+}
+.navbar-logo span {
+  margin-left: 10px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #555;
+  text-transform: capitalize;
+}
+
+.navbar-profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.navbar-profile span {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.Profile {
+  margin-left: 5px;
 }
 
 @media (max-width: 768px) {

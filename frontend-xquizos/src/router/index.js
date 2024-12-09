@@ -15,6 +15,7 @@ import VistaAlumnos from '@/views/VistaAlumnos.vue';
 import VistaEstadisticas from '@/views/VistaEstadisticas.vue';
 
 import PerfilAlumno from '@/views/PerfilAlumno.vue';
+import VistaEstadisticasGeneralDocente from '@/views/VistaEstadisticasGeneralDocente.vue';
 
 
 const routes = [
@@ -39,7 +40,7 @@ const routes = [
     component: VistaDocente
   },
   {
-    path: '/VistaAlumnos/:nombreCurso/:seccionCurso/:codigo',
+    path: '/VistaAlumnos/:nombreCurso/:seccionCurso/:codigo/:periodo',
     name: 'VistaAlumnos',
     component: VistaAlumnos,
   },
@@ -75,23 +76,37 @@ const routes = [
     component: GestorCursosPeriodo
   },
 
-  { path: '/vistaEstadisticas',
+  { path: '/vistaEstadisticas/:matricula/:codCurso/:periodo',
     name: 'VistaEstadisticas',
-    component: VistaEstadisticas
+    component: VistaEstadisticas,
+    props: true
   },
 
   { 
-    path: '/perfilalumno/:matriculaalum/:nombrealum',
+    path: '/perfilalumno/:matriculaalum/:nombrealum/:codCurso/:periodo',
     name: 'PerfilAlumno',
     component: PerfilAlumno,
     props: true
   },
   { 
-    path: '/cursoPeriodo/:nombre/:seccion/:semestre/:codCurso',
+    path: '/cursoPeriodo/:nombre/:seccion/:semestre/:codCurso/:periodo',
     name: 'CursoPeriodo',
     component: () => import("@/views/CursoPeriodo.vue"),
     props: true,
     state: true
+  },
+  { 
+    path: '/vistaCurso/:nombre/:seccion/:semestre/:codCurso',
+    name: 'VistaCurso',
+    component: () => import("@/views/VistaCurso.vue"),
+    props: true,
+    state: true
+  },
+
+  {path: '/vistaEstadisticasGeneralDocente/:codCurso/:periodo',
+  name: 'VistaEstadisticasGeneralDocente',
+  component: VistaEstadisticasGeneralDocente,
+  props: true
   }
 
 ];

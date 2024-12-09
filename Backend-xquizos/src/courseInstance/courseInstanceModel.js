@@ -1,10 +1,10 @@
 var mongoose = require('mongoose');
-const { truncateSync } = require('node:fs');
 var Schema = mongoose.Schema;
 
 var courseInstanceSchema = new Schema ({
     codCurso: {type: String, required: true, unique: false},
     codDocente: {type: String, required: false, unique: false},
+    periodo: {type: String, required: true, unique: false},
     alumnos: [
         {
         matricula: {type: String, required: false}
@@ -13,7 +13,9 @@ var courseInstanceSchema = new Schema ({
 
 })
 
-// Validamos que la matricula no se repita dentro del arreglo alumnos
+courseInstanceSchema.index({ codCurso: 1, periodo: 1 }, { unique: true });
+
+
 courseInstanceSchema.pre('save', function (next) {
     const matriculas = this.alumnos.map(alumno => alumno.matricula);
     const matriculasUnicas = new Set(matriculas);

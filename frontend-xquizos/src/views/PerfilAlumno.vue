@@ -1,103 +1,101 @@
 <template>
-    <div class="body">
-        <navBar class="navbar"/>
-        <div class="student-profile">
-            <header class="header-container">
+    <navBar class="navbar" />
+    <div class="maincontent">
+          <div class="gestor-cursos-periodo-container">
+            <!-- Botón de retroceso y título -->
+            <div class="header-container">
                 <button class="btn btn-secondary back-button" @click="goBack">
                     <i class="fa-solid fa-circle-left"></i> Volver a los estudiantes
                 </button>
-                <h1>Perfil del alumno</h1>
-            </header>
-            <section class="student-info">
-                <p><strong>Name:</strong> {{ nombrealum }}</p>
-                <p><strong>Matricula:</strong> {{ matriculaalum }}</p>
-                <button @click="showChoiceDialog">Generar Carta de Recomendación</button>
-
-                <button @click="iraEstadisticas">Ver estadistica</button>
-            </section>
-        </div>
-        <div class="container">
-            <!-- Default Comments -->
-            <section class="default-comments">
-                <h2>Default Comments</h2>
-                <div class="default-comments-group">
-                    <div class="comment-category">
-                        <h3>Positive Comments</h3>
-                        <ul>
-                            <li class="comment-box positive" @click="addDefaultComment('Ayuda a sus compañeros con la materia', 9)">
-                                Ayuda a sus compañeros con la materia
-                            </li>
-                            <li class="comment-box positive" @click="addDefaultComment('Alumno Puntual', 10)">
-                                Alumno Puntual
-                            </li>
-                            <li class="comment-box positive" @click="addDefaultComment('Participativo en clases', -5)">
-                                Participativo en clases
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="comment-category">
-                        <h3>Negative Comments</h3>
-                        <ul>
-                            <li class="comment-box negative" @click="addDefaultComment('Copia de prueba', -8)">
-                                Copia de prueba
-                            </li>
-                            <li class="comment-box negative" @click="addDefaultComment('Copia proyecto', -10)">
-                                Copia proyecto
-                            </li>
-                            <li class="comment-box negative" @click="addDefaultComment('Golpeo al jefe de grupo', -2)">
-                                Golpeo al jefe de grupo
-                            </li>
-                        </ul>
-                    </div>
+                <h1 class="title">Perfil del alumno</h1>
+                <div class="button-header">
+                    <button @click="showChoiceDialog" class="button">Generar Carta</button>
+                    <button @click="iraEstadisticas" class="button">Ver estadistica</button>
                 </div>
-            </section>
-
-            <div class="flags-container">
-              <flag 
-              :regularColor="'#00FF00'" 
-              :solidColor="'#006400'" 
-              :texto="'Buen comportamiento'" 
-              :checked="selectedFlag === 'buenComportamiento'"
-              @update:checked="updateSelectedFlag('buenComportamiento')"
-              v-model="newComment.flag"/>
-              <flag 
-              :regularColor="'#FFFF00'" 
-              :solidColor="'#FFD700'" 
-              :texto="'Advertencia'"
-              :checked="selectedFlag === 'advertencia'"
-              @update:checked="updateSelectedFlag('advertencia')" 
-              v-model="newComment.flag"/>
-              <flag 
-              :regularColor="'#FF0000'" 
-              :solidColor="'#8B0000'" 
-              :texto="'Mal comportamiento'" 
-              :checked="selectedFlag === 'malComportamiento'"
-              @update:checked="updateSelectedFlag('malComportamiento')"
-              v-model="newComment.flag"/>
             </div>
-
+    
+            <div class="gestor-docentes-container">
+              <div >
+                <div class="card" >
+                  <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0">
+                      <i class="bi bi-journal-bookmark-fill me-2"></i>
+                      {{ alumno.nombres }} {{ alumno.apellidoP }} {{ alumno.apellidoM }}
+                    </h4>
+                  </div>
+                  <div class="card-body">
+                    <h5 class="card-title text-center text-secondary">
+                      <i class="bi bi-calendar-event me-1"></i>
+                      <strong>Fecha ingreso: </strong> {{ alumno.fecIng }}
+                    </h5>
+                    <ul class="list-group list-group-flush mt-4">
+                      <li class="list-group-item">
+                        <i class="bi bi-code me-2 text-primary"></i>
+                        <strong>Rut: </strong> {{ alumno.rut }} // <strong>Matricula: </strong> {{ alumno.matricula }}
+                      </li>
+                      <li class="list-group-item">
+                        <i class="bi bi-person-badge me-2 text-primary"></i>
+                        <span class="positive"><strong> Comentarios positivos: </strong>{{ comentarioStats.buenComportamiento }}</span>
+                        <span class="alert"><strong> Comentarios de advertencias: </strong>{{ comentarioStats.advertencia }}</span>
+                        <span class="negative"><strong> Comentarios negativos: </strong>{{ comentarioStats.malComportamiento }}</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+    
             <!-- Add a Commentary -->
             <section class="comment-section">
-                <h2>Add a Custom Comment</h2>
-                <textarea v-model="newComment.comentario" placeholder="Write a comment..."></textarea>
+                <h1 class="title2">Añadir comentario personalizado</h1>
+                <textarea v-model="newComment.comentario" placeholder="Escribe un comentario..."></textarea>
+                <div class="flags-container">
+                    <flag :regularColor="'#00FF00'" :solidColor="'#006400'" :texto="'Buen comportamiento'" :checked="selectedFlag === 'buenComportamiento'" @update:checked="updateSelectedFlag('buenComportamiento')" v-model="newComment.flag" />
+                    <flag :regularColor="'#FFFF00'" :solidColor="'#FFD700'" :texto="'Advertencia'" :checked="selectedFlag === 'advertencia'" @update:checked="updateSelectedFlag('advertencia')" v-model="newComment.flag" />
+                    <flag :regularColor="'#FF0000'" :solidColor="'#8B0000'" :texto="'Mal comportamiento'" :checked="selectedFlag === 'malComportamiento'" @update:checked="updateSelectedFlag('malComportamiento')" v-model="newComment.flag" />
+                </div>
+
                 <div>
-                    <Slide v-model="newComment.peso"/>
+                    <Slide v-model="newComment.peso" @input="validatePeso" :disabled="selectedFlag === 'advertencia'"/>
                     <p>Peso seleccionado: {{ newComment.peso }}</p>
                 </div>
-                <button @click="addComment">Add Comment</button>
+                <div class="button-container">
+                    <button @click="addComment" class="button">Añadir Comentario</button>
+                </div>
+                
                 <div class="comments-list">
-                    <h3>Comments:</h3>
-                    <ul>
-                        <li v-for="(comment, index) in comments" :key="index" class="comment-box">
+                    <div class="comments-container">
+                        <!-- Comentarios positivos -->
+                        <div class="positive-comments">
+                        <h3 class="comments-title">Comentarios positivos:</h3>
+                        <ul>
+                            <li v-for="(comment, index) in goodComments" :key="index" class="comment-box">
                             {{ comment.comentario }}
-                            <button @click="deleteComment(comment._id)" class="delete-button">Delete</button>
-                        </li>
-                    </ul>
+                            <p>{{ comment.peso }}</p>
+                            <button @click="deleteComment(comment._id)" class="delete-button">Eliminar</button>
+                            </li>
+                        </ul>
+                        </div>
+
+                        <!-- Comentarios negativos -->
+                        <div class="negative-comments">
+                        <h3 class="comments-title">Comentarios negativos:</h3>
+                        <ul>
+                            <li v-for="(comment, index) in badComments" :key="index" class="comment-box">
+                            {{ comment.comentario }}
+                            <p>{{ comment.peso }}</p>
+                            <button @click="deleteComment(comment._id)" class="delete-button">Eliminar</button>
+                            </li>
+                        </ul>
+                        </div>
+                    </div>
                 </div>
             </section>
+            
         </div>
-</div>
-</template>
+    
+    </div>
+ </template>
 
 <script>
 import axios from 'axios';
@@ -109,147 +107,299 @@ import logo from '@/assets/Utalca.png';
 import Slide from '@/components/Slide.vue';
 import flag from '@/components/Flag.vue';
 
+
 export default {
     name: 'PerfilAlumno',
-    props: ['matriculaalum', 'nombrealum'],
+    props: ['matriculaalum', 'nombrealum', 'codCurso', 'periodo'],
     mixins: [GoBackMixin],
     components: {
         navBar,
         Slide,
-        flag
+        flag,
     },
     data() {
         return {
             newComment: {
                 matricula: '',
                 codDocente: '',
+                codCurso: this.codCurso,
+                periodo: this.periodo,
                 comentario: '',
                 peso: 0,
                 flag: '',
             },
+            alumnos: [],
+            alumno: {
+                nombres: '',
+                apellidoP: '',
+                apellidoM: '',
+                rut: '',
+                matricula: '',
+                fecNac: '',
+                fecIng: '',
+            },
+            profesorNombre: '',
             comments: [],
             selectedFlag: null, // Controla la flag seleccionada
+            isDisabled: false,
+            requiredFields: ['nombrePrimer', 'apellidoP', 'rut', 'matricula', 'fecNac', 'fecIng'],
         };
+    },
+    watch: {
+        selectedFlag(newFlag) {
+            // Si la bandera verde está seleccionada y el peso es 0 o menor, ajustarlo a 1.
+            if (newFlag === 'buenComportamiento' && this.newComment.peso <= 0) {
+                this.newComment.peso = 1;
+            }
+            if (newFlag === 'advertencia' ) {
+                this.newComment.peso = 0;
+            }
+            if (newFlag === 'malComportamiento' && this.newComment.peso >= 0) {
+                this.newComment.peso = -1;
+            }
+        },
     },
     created() {
         this.fetchComments();
+        this.fetchAlumno()
+        this.profesorNombre = localStorage.getItem('user') || sessionStorage.getItem('user') || 'Usuario';
+    },
+    computed: {
+        
+        comentarioStats() {
+            if (!this.comments) return { buenComportamiento: 0, advertencia: 0, malComportamiento: 0 };
+
+            const buenComportamiento = this.comments.filter(c => c.flag === 'buenComportamiento').length;
+            const advertencia = this.comments.filter(c => c.flag === 'advertencia').length;
+            const malComportamiento = this.comments.filter(c => c.flag === 'malComportamiento').length;
+
+            return {
+                buenComportamiento,
+                advertencia,
+                malComportamiento,
+            };
+        },
+        goodComments() {
+            return this.comments.filter(
+            (comment) => comment.flag === "buenComportamiento"
+            );
+        },
+        badComments() {
+            return this.comments.filter(
+            (comment) => comment.flag === "malComportamiento"
+            );
+        },
     },
     methods: {
-        async generatePDF(type) {
-            const doc = new jsPDF();
-            const imgData = await this.loadLogo();
+        updateSelectedFlag(flag) {
+            this.selectedFlag = flag;
+            this.newComment.flag = flag;
 
-            if (type === "recomendacion") {
-                // Encabezado de carta de recomendación
-                doc.addImage(imgData, "PNG", 10, 10, 30, 30); // Logo
-                doc.setFont("Times", "bold");
-                doc.setFontSize(16);
-                doc.text("Carta de Recomendación", 60, 20);
+            if (flag === 'advertencia') {
+                this.newComment.peso = 0; // Bloquear slider en 0
+                this.isDisabled = true;
+            }
+        },
+        validatePeso() {
+            // Si la bandera verde está seleccionada, asegurarse de que el peso sea al menos 1.
+            if (this.selectedFlag === 'buenComportamiento' && this.newComment.peso <= 0) {
+                this.newComment.peso = 1;
+            }
+            if (this.selectedFlag === 'advertencia') {
+                this.newComment.peso = 0;
+                this.isDisabled = true; // Deshabilitar el slider
+            }
+            if (this.selectedFlag === 'malComportamiento' && this.newComment.peso >= 0) {
+                this.newComment.peso = -1;
+            }
+        },
+        async fetchAlumno() {
+            try {
+                const response = await axios.get(`http://localhost:3333/api/student/get/${this.matriculaalum}`);
+                console.log("response", response.data.nombres)
+                if (response.data) {
+                    console.log("data", response.data)
+                    this.alumno = response.data;
+                    console.log("alumnos", this.alumno)
+                    console.log("Alumno:", this.alumno[0])
+                } else {
+                console.error(response.data.msg);
+                }
+            } catch (error) {
+                console.error("Error al obtener alumnos:", error);
+            }
+        },
+        async generatePDF(type, positiveComments, negativeComments) {
+    const doc = new jsPDF();
+    const imgData = await this.loadLogo();
 
-                // Contenido de la carta de recomendación
-                const recommendationContent = `
-Estimado/a:
+    // Logo y encabezado
+    doc.addImage(imgData, "PNG", 20, 15, 30, 30); // Logo
+    doc.setFont("Helvetica", "bold");
+    doc.setFontSize(14);
+    doc.text("Universidad de Talca", 60, 25);
+    doc.setFontSize(12);
+    doc.text("Campus Talca", 60, 30);
+    doc.text("Dirección: Avenida Lircay s/n, Talca", 60, 35);
+    doc.text("Teléfono: +56 71 220 0000", 60, 40);
 
-Por la presente, recomiendo ampliamente a ${this.nombrealum}, con matrícula ${this.matriculaalum}, por su destacada participación en el programa académico. 
-Durante su tiempo con nosotros, demostró ser una persona comprometida, proactiva y orientada a resultados.
+    doc.setDrawColor(0, 0, 0);
+    doc.line(20, 50, 190, 50); // Línea separadora
 
-Entre sus logros más destacados se encuentran:
-- [Logro 1].
-- [Logro 2].
-- [Logro 3].
+    if (type === "recomendacion") {
+        // Título y contenido de la carta de recomendación
+        doc.setFontSize(16);
+        doc.setFont("Helvetica", "bold");
+        doc.text("CARTA DE RECOMENDACIÓN", 105, 60, { align: "center" });
 
-Estoy convencido de que ${this.nombrealum} será un gran activo para cualquier organización o proyecto en el que participe.
-        `;
-                doc.setFont("Times", "normal");
-                doc.setFontSize(12);
-                doc.text(recommendationContent, 10, 40, {
-                    maxWidth: 190
-                });
-            } else if (type === "sumario") {
-                // Encabezado de carta de sumario
-                doc.addImage(imgData, "PNG", 10, 10, 30, 30); // Logo
-                doc.setFont("Times", "bold");
-                doc.setFontSize(16);
-                doc.text("Carta de Sumario", 70, 20);
+        doc.setFont("Helvetica", "normal");
+        doc.setFontSize(12);
+        const recommendationContent = `
+[Destinatario]
+______________________________________
+[Nombre de la persona o departamento]
+______________________________________
+Universidad de Talca
+Talca
 
-                // Contenido de la carta de sumario
-                const summaryContent = `
-Estudiante: ${this.nombrealum}
+Me dirijo a usted el día ${new Date().toLocaleDateString()} para solicitar una carta de recomendación para ${this.alumno.nombres} ${this.alumno.apellidoP} ${this.alumno.apellidoM}, perteneciente a su departamento.
+
+Conozco al candidato ${this.alumno.nombres} ${this.alumno.apellidoP} ${this.alumno.apellidoM}. Quiero destacar su participación en clases por su profundo interés y dedicación hacia este ámbito.
+
+Además de sus excelentes resultados en las evaluaciones, destaco su gran nivel académico, su determinación en la presentación de su disertación final y habilidades excepcionales como:
+
+${positiveComments.map(comment => `- ${comment.comentario}`).join('\n')}
+
+En el plano personal, admiro su constancia, honradez y marcada persistencia. Estoy plenamente convencido de que tiene mucho por aportar en cualquier desafío que emprenda.
+
+Sin más que añadir, quedo a su disposición para ampliar esta información.
+
+Cordialmente,
+
+${this.profesorNombre}, profesor docente de ${this.codCurso}
+Correo electrónico: ${localStorage.getItem('email') || sessionStorage.getItem('email')}`;
+
+            doc.text(recommendationContent, 20, 70, { maxWidth: 170, align: "left" });
+            doc.text("___________________", 140, 270, { align: "left" });
+            doc.text("Firma del Profesor.", 140, 280, { align: "left" });
+            doc.text("___________________", 50, 270, { align: "left" });
+            doc.text("Firma del Decano.", 50, 280, { align: "left" });
+
+        } else if (type === "sumario") {
+            // Título y contenido de la carta de sumario
+            doc.setFontSize(16);
+            doc.setFont("Helvetica", "bold");
+            doc.text("CARTA DE SUMARIO", 105, 60, { align: "center" });
+
+            doc.setFont("Helvetica", "normal");
+            doc.setFontSize(12);
+            const summaryContent = `
+
+Sr./Sra. Decano(a) de la Universidad de Talca
+     
+[Fecha: ${new Date().toLocaleDateString()}]
+
+Me permito presentar un sumario relacionado con el desempeño académico y conductual del estudiante:
+
+Nombre del estudiante: ${this.nombrealum}
 Matrícula: ${this.matriculaalum}
-Fecha: ${new Date().toLocaleDateString()}
 
-A quien corresponda:
+Exposición de hechos
+A continuación, detallo los principales aspectos observados en el marco de su participación académica:
 
-Por medio de la presente, solicitamos información adicional sobre el estudiante ${this.nombrealum}, con matrícula ${this.matriculaalum}, 
-quien se encuentra registrado en nuestro sistema académico. Esta solicitud se realiza con el fin de llevar a cabo un seguimiento 
-detallado de su desempeño y cumplimiento con las políticas institucionales.
+${negativeComments.map(comment => `- ${comment.comentario}`).join('\n')}
 
-Los datos requeridos incluyen, pero no se limitan a:
-1. Historial académico detallado.
-2. Información sobre actividades extracurriculares realizadas.
-3. Cualquier observación relevante sobre su conducta o desempeño.
+Impacto y medidas propuestas:
+Dichos hechos han tenido un impacto negativo en su desempeño y en el ambiente educativo. Por ello, sugiero las siguientes medidas:
 
-Le solicitamos que esta información sea proporcionada a la brevedad posible, en un plazo no mayor a [insertar plazo], 
-para proceder con las evaluaciones correspondientes. Si requiere más información, no dude en contactarnos.
+1. Establecer un plan de mejora para el estudiante.
+2. Programar una reunión con el estudiante y sus representantes, si corresponde.
+3. Implementar un seguimiento periódico para evaluar su progreso.
+4. Realizar una revisión de las normas y reglamentos internos.
+5. Evaluar la posibilidad de expulsión, si la situación no mejora.
+
+Cierre
+Estoy a disposición para colaborar en el seguimiento y resolución de esta situación, con el objetivo de garantizar el bienestar académico.
 
 Atentamente,
-[Tu nombre]
-        `;
-                doc.setFont("Times", "normal");
-                doc.setFontSize(12);
-                doc.text(summaryContent, 10, 40, {
-                    maxWidth: 190
-                });
-            }
 
-            // Guardar el archivo PDF
-            doc.save(type === "recomendacion" ? "carta_recomendacion.pdf" : "carta_sumario.pdf");
-        },
+${this.profesorNombre}, profesor docente de ${this.codCurso}
+Correo electrónico: ${localStorage.getItem('email') || sessionStorage.getItem('email')}`;
 
-        loadLogo() {
-            // Método para cargar el logo como Base64
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.src = logo;
-                img.onload = () => {
-                    const canvas = document.createElement("canvas");
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    const ctx = canvas.getContext("2d");
-                    ctx.drawImage(img, 0, 0);
-                    resolve(canvas.toDataURL("image/png"));
-                };
-            });
-        },
+            doc.text(summaryContent, 20, 70, { maxWidth: 170, align: "left" });
+            doc.text("___________________", 140, 270, { align: "left" });
+            doc.text("Firma del Profesor.", 140, 280, { align: "left" });
+            doc.text("___________________", 50, 270, { align: "left" });
+            doc.text("Firma del Decano.", 50, 280, { align: "left" });
+        }
+
+        // Guardar el archivo PDF
+        doc.save(type === "recomendacion" ? "Carta_de_Recomendacion.pdf" : "Carta_de_Sumario.pdf");
+    },
+
+loadLogo() {
+    // Método para cargar el logo como Base64
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.src = logo;
+        img.onload = () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+            resolve(canvas.toDataURL("image/png"));
+        };
+    });
+}
+,
 
         async showChoiceDialog() {
-            const result = await Swal.fire({
-                title: "Seleccione el tipo de carta",
-                text: "¿Qué carta desea generar?",
-                icon: "question",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",  
-                confirmButtonText: "Recomendación",
-                cancelButtonColor: "#d33",
-                cancelButtonText: "Sumario",
-                reverseButtons: true,
-            });
+            try {
+                // Obtiene los comentarios
+                const response = await axios.get(
+                    `http://localhost:3333/api/comments/getFromMatricula/${this.matriculaalum}/${this.codCurso}/${this.periodo}`
+                );
+                this.comments = response.data.comments || [];
 
-            if (result.isConfirmed) {
-                this.generatePDF("recomendacion");
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                this.generatePDF("sumario");
+                // Filtra comentarios positivos y negativos
+                const positiveComments = this.comments.filter(comment => comment.peso > 0);
+                const negativeComments = this.comments.filter(comment => comment.peso < 0);
+
+                // Determina el tipo de carta según la suma total
+                const totalPeso = this.comments.reduce((sum, comment) => sum + (comment.peso || 0), 0);
+                const type = totalPeso > 0 ? "recomendacion" : "sumario";
+
+                // Genera la carta automáticamente
+                await this.generatePDF(type, positiveComments, negativeComments);
+
+                Swal.fire({
+                    title: `Carta generada`,
+                    text: `Se ha descargado automáticamente la carta de ${type === "recomendacion" ? "recomendación" : "sumario"}.`,
+                    icon: "success",
+                    confirmButtonText: "Aceptar",
+                    confirmButtonColor: "#3085d6",
+                });
+            } catch (error) {
+                console.error("Error al calcular los comentarios o generar la carta:", error);
+                Swal.fire({
+                    title: "Error",
+                    text: "Ocurrió un problema al generar la carta. Por favor, inténtalo de nuevo.",
+                    icon: "error",
+                    confirmButtonText: "Aceptar",
+                });
             }
         },
         async iraEstadisticas() {
             this.$router.push({
-                name: 'VistaEstadisticas'
+                name: 'VistaEstadisticas',
+                params: { matricula: this.matriculaalum },
             });
         },
         async fetchComments() {
             try {
                 const response = await axios.get(
-                    `http://localhost:3333/api/comments/getFromMatricula/${this.matriculaalum}`
+                    `http://localhost:3333/api/comments/getFromMatricula/${this.matriculaalum}/${this.codCurso}/${this.periodo}`
                 );
                 this.comments = response.data.comments;
             } catch (error) {
@@ -293,7 +443,7 @@ Atentamente,
                         title: 'Comentario añadido',
                         text: 'El comentario se agregó exitosamente.',
                         icon: 'success',
-                        confirmButtonColor  : '#3085d6',
+                        confirmButtonColor: '#3085d6',
                         confirmButtonText: 'Aceptar',
                     });
                 }
@@ -395,182 +545,238 @@ Atentamente,
                 });
             }
         },
-        updateSelectedFlag(flag) {
-          this.selectedFlag = flag;
-          this.newComment.flag = flag;
-        },
     },
 };
 </script>
 
-<style scoped>
-.body {
-    font-family: 'Arial', sans-serif;
-    background-image: url(../assets/text.jpg);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    color: #333;
-    margin: 0;
-    padding: 0;
+<style>
+.maincontent {
+  background-color: var(--background);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  overflow-x: hidden;
+}
+
+.gestor-cursos-periodo-container {
+  max-width: 1200px;
+  width: 100%;
+  margin: auto;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
 .header-container {
-    display: flex;
-    align-items: center;
-    gap: 30%; /* Espaciado entre el botón y el título */
-    justify-content: flex-start; /* Alinear los elementos hacia la izquierda */
-    margin-top: 5.2%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 60px;
+  position: relative;
 }
-
 
 .back-button {
-    margin-left: 1%; /* Opcional, ajusta si hay márgenes no deseados */
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  padding: 10px 20px;
+  margin-right: 20px;
+  background-color: #f8f9fa;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+  color: #333;
 }
 
-/* Profile Header */
-.student-profile {
-    text-align: center;
-    margin-bottom: 20px;
+.back-button:hover {
+  background-color: #e2e6ea;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
 }
 
-.student-profile header h1 {
-    color: #4CAF50;
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #2c3e50;
+  padding: 15px;
+  border: 2px solid #eaeaea;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-left: auto;
 }
 
-.student-info {
-    display: inline-block;
-    padding: 20px;
-    background-color: #ffffffaf;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    text-align: left;
+.button-header {
+  margin-left: 5%;
 }
 
-
-.student-info p {
-    margin: 5px 0;
+.button-header button {
+  margin: 0.3vh;
 }
 
-/* Container */
+.title2 {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #2c3e50;
+  max-width: 49%;
+  padding: 15px;
+  border: 2px solid #eaeaea;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+  display: block;
+  text-align: center;
+  margin-top: 1.5vh;
+  margin-bottom: 1.5vh;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #ffffffaf;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #ffffffaf;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Default Comments */
-.default-comments h2 {
-    text-align: center;
-    margin-bottom: 20px;
+.comment-section h2 {
+  text-align: center;
+  margin-bottom: 10px;
 }
 
-.default-comments-group {
-    display: flex;
-    gap: 20px;
+.flags-container {
+  padding: 2vh;
 }
 
-.comment-category {
-    flex: 1;
-    background-color: #ffffff;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px; /* Espaciado entre los botones */
 }
 
-.comment-category h3 {
-    color: #555;
-    margin-bottom: 10px;
+.button {
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  color: white;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  padding: 0.7rem 1.5rem;
+  border: none;
+  transition: all 0.5s ease-in-out;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+}
+
+.button:hover {
+  background: linear-gradient(135deg, #0056b3, #003f7f);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+}
+
+.button:active {
+  transform: scale(1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 2vh;
+}
+
+.comments-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 20px;
+}
+
+.positive-comments,
+.negative-comments {
+  flex: 1;
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.positive-comments {
+  margin-right: 10px;
+  border: 1px solid #4caf50; /* Verde */
+}
+
+.negative-comments {
+  margin-left: 10px;
+  border: 1px solid #f44336; /* Rojo */
+}
+
+.comments-list ul {
+  list-style-type: none;
+  padding: 0;
 }
 
 .comment-box {
-    cursor: pointer;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-    text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #1111e9;
 }
 
-.comment-box.positive {
-    background-color: #d9f7d9;
-    border: 1px solid #a4d4a4;
+.comments-title {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+  color: #333;
 }
 
-.comment-box.negative {
-    background-color: #fbdcdc;
-    border: 1px solid #f5a9a9;
+.positive-comments .comments-title {
+  color: #4caf50; /* Verde */
 }
 
-.comment-box:hover {
-    background-color: #e3e3e3;
-}
-
-/* Comment Section */
-.comment-section h2 {
-    text-align: center;
-    margin-bottom: 10px;
+.negative-comments .comments-title {
+  color: #f44336; /* Rojo */
 }
 
 textarea {
-    width: 100%;
-    height: 80px;
-    margin-bottom: 10px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
+  width: 80%;
+  height: 80px;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 16px;
 }
 
-button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+.positive {
+  color: #1d832a;
 }
 
-button:hover {
-    background-color: #45a049;
+.alert {
+  color: #cece27;
 }
 
-/* Comments List */
-.comments-list ul {
-    list-style-type: none;
-    padding: 0;
+.negative {
+  color: #ce2727;
 }
 
-.comments-list .comment-box {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    background-color: #f4f4f9;
-}
 
-.delete-button {
-    background-color: #f44336;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 5px 10px;
-    cursor: pointer;
-}
-
-.delete-button:hover {
-    background-color: #d32f2f;
-}
-
-.flags-container{
-  margin-top: 2%;
-  margin-bottom: 2%;
-}
 </style>

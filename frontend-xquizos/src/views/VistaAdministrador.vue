@@ -95,35 +95,31 @@ export default {
   align-items: center;
   padding: 0;
   margin: 0;
-  background-image: url('../assets/oficina.jpg'); /* Ruta a tu imagen de fondo */
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background-color: var(--background);
   width: 100vw; /* Asegúrate de que el contenedor ocupe todo el ancho de la ventana */
-  height: calc(100vh - 60px);
+  height: calc(100vh - 80px);
   overflow: hidden; /* Evita que el contenido se desborde */
 }
 
 .content {
-  margin-top: 100px; /* Ajusta este valor según la altura de tu navbar */
+  margin:0;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: calc(100vh - 100px); /* Ajusta la altura del contenido */
+  height: 100vh;/* Ajusta la altura del contenido */
   width: 100%;
+  overflow: auto;
 }
 
 .transparent-box {
-  background-color: rgba(255, 255, 255, 0.3); /* Fondo blanco medio transparente */
-  backdrop-filter: blur(10px); /* Aplica el efecto de desenfoque */
+  width: 100%;
+  max-width: 1400px; /* Limita el ancho del contenido */
+  background-color: #fff;
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 4px 8px #007bff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
-  width: 80%; /* Ajusta el ancho del rectángulo */
-  max-width: 1500px; /* Ancho máximo del rectángulo */
-  height: auto; /* Ajusta la altura automáticamente */
-  min-height: 900px; /* Altura mínima del rectángulo */
+  height: auto;
 }
 
 .button-container {
@@ -143,43 +139,6 @@ export default {
   margin-bottom: 5px;
   font-weight: bold;
 }
-
-/* From Uiverse.io by cybrejon */
-a {
-  color: rgba(0, 0, 0, 0.692); /* Cambiado a negro */
-  padding: 30px 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  text-shadow: 0 0 20px rgba(255, 255, 255, 0.397);
-  background: rgba(255, 255, 255, 0.068);
-  overflow: hidden;
-  font-size: 0.9rem;
-  font-weight: 600;
-  gap: 8px;
-  border-radius: 5px;
-  margin: 0 5px;
-  transition: 0.2s;
-  border: 1px solid transparent;
-}
-
-a:hover {
-  border-color: #007bff;
-  background: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.144),
-    rgba(255, 255, 255, 0.247),
-    rgba(255, 255, 255, 0.39)
-  );
-  box-shadow: 0 6px #007bff;
-  transform: translateY(-6px);
-}
-
-a:active {
-  transform: translateY(2px);
-  box-shadow: none;
-}
-
 h1 {
   color: #333;
   font-size: 2em;
