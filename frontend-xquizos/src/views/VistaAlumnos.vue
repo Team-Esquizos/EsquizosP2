@@ -194,7 +194,7 @@ export default {
                 name: 'PerfilAlumno',
                 params: {
                     matriculaalum: matricula,
-                    nombrealum: nombrePrimer
+                    nombrealum: nombrePrimer, codCurso: this.codigo, periodo: this.periodo 
                 }
             });
         },
