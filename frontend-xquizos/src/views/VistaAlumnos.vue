@@ -49,10 +49,6 @@
                     <td class="align-middle">{{ alumno.fecNac }}</td>
                     <td class="align-middle">{{ alumno.fecIng }}</td>
                     <td class="align-middle">
-                        <!-- Botón de "más" más grande -->
-                        <button type="button" class="btn btn-primary btn-sm mx-1" @click="toggleForm('add', alumno)">
-                            <i class="fa-solid fa-plus"></i>
-                        </button>
                         <!-- Botón de vista de alumno -->
                         <button @click="goperfilalumno(alumno.matricula,alumno.nombres)" class="btn btn-sm btn-primary mx-1">
                             <i class="far fa-eye"></i>
@@ -63,39 +59,7 @@
         </table>
     </div>
 
-    <!-- Formulario modal -->
-    <div v-if="formVisible" class="modal-overlay" @click.self="clearForm">
-        <div class="modal-content">
-            <form @submit.prevent="handleSubmit">
-                <h3 class="text-center mb-4">Agregar Comentario</h3>
 
-                <h1>{{ alumno.nombres }} {{ alumno.apellidoP }} {{ alumno.apellidoM }}</h1>
-                <h2>{{ alumno.matricula }}</h2>
-
-                <div class="flags-action-container">
-                    <div class="flags-container">
-                        <flag :regularColor="'#00FF00'" :solidColor="'#006400'" :texto="'Buen comportamiento'" :checked="selectedFlag === 'buenComportamiento'" @update:checked="updateSelectedFlag('buenComportamiento')" v-model="newComment.flag" />
-                        <flag :regularColor="'#FFFF00'" :solidColor="'#FFD700'" :texto="'Advertencia'" :checked="selectedFlag === 'advertencia'" @update:checked="updateSelectedFlag('advertencia')" v-model="newComment.flag" />
-                        <flag :regularColor="'#FF0000'" :solidColor="'#8B0000'" :texto="'Mal comportamiento'" :checked="selectedFlag === 'malComportamiento'" @update:checked="updateSelectedFlag('malComportamiento')" v-model="newComment.flag" />
-                    </div>
-                    <div class="action-value-container">
-                        <Slide v-model="newComment.peso" />
-                        <p>Peso seleccionado: {{ newComment.peso }}</p>
-                    </div>
-                </div>
-
-                <div class="comment-container">
-                    <label for="comentario">Comentario</label>
-                    <textarea id="comentario" v-model="newComment.comentario" class="form-control" placeholder="Escribe tu comentario aquí..." rows="4"></textarea>
-                </div>
-
-                <div class="d-flex justify-content-between mt-4">
-                    <button type="submit" class="btn btn-success" @click="addComment">Agregar comentario</button>
-                    <button type="button" class="btn btn-secondary" @click="clearForm">Cancelar</button>
-                </div>
-            </form>
-        </div>
-    </div>
     </div>
 </div>
 </template>
@@ -103,9 +67,7 @@
 <script>
 import axios from 'axios';
 import navBar from '@/components/AppNavbarAdm.vue';
-import flag from '@/components/Flag.vue';
 import autenticadorSesion from '../mixins/AutenticadorSesion.js';
-import Slide from '@/components/Slide.vue';
 import * as XLSX from 'xlsx';
 
 export default {
@@ -117,8 +79,7 @@ export default {
     },
     components: {
         navBar,
-        flag,
-        Slide
+
     },
     computed: {
         userRole() {
