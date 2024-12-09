@@ -176,10 +176,7 @@
     align-items: center;
     padding: 0;
     margin: 0;
-    background-image: url('../assets/estadistica.jpg'); /* Ruta a tu imagen de fondo */
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    background-color: var(--background);
     width: 100vw; /* Ocupa todo el ancho de la ventana */
     height: calc(100vh - 80px);
     overflow: hidden; /* Evita que el contenido se desborde */
@@ -195,7 +192,7 @@
   } 
   
   .transparent-box {
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: var(--background);
     padding: 20px;
     border-radius: 10px;
     text-align: center;
@@ -206,6 +203,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start; /* Alinea el contenido hacia arriba */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
   
   .charts-and-stats {
