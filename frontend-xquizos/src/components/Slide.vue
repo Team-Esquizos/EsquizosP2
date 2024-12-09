@@ -74,46 +74,4 @@ export default {
 .slider:hover {
   background: #ccc;
 }
-
-.slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  background: linear-gradient(135deg, #007bff, #0056b3);
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.slider::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
-  background: linear-gradient(135deg, #007bff, #0056b3);;
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.slider::-webkit-slider-runnable-track,
-.slider::-moz-range-track {
-  width: 100%;
-  height: 8px;
-  background: #ddd;
-  border-radius: 4px;
-}
-
-.slider::-webkit-slider-runnable-track {
-  background: linear-gradient(to right, transparent calc(100% / 7), #007bff calc(100% / 7), transparent calc(100% / 3), #007bff calc(100% / 3), transparent calc(100% / 2), #007bff calc(100% / 2), transparent calc(100% * 2 / 3), #007bff calc(100% * 2 / 3), transparent calc(100% * 5 / 7), #007bff calc(100% * 5 / 7), transparent);
-}
-
-.slider::-moz-range-progress {
-  background: linear-gradient(135deg, #007bff, #0056b3);
-}
-
-/* Añadir una etiqueta para el valor */
-.value {
-  font-size: 14px;
-  color: #555;
-}
 </style>
