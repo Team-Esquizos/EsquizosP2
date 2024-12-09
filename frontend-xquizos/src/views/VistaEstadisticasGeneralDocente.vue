@@ -179,7 +179,7 @@
     background-color: var(--background);
     width: 100vw; /* Ocupa todo el ancho de la ventana */
     height: calc(100vh - 80px);
-    overflow: hidden; /* Evita que el contenido se desborde */
+    overflow: auto; /* Permite el desplazamiento */
   }
   
   .content {
@@ -189,6 +189,7 @@
     align-items: center;
     height: calc(100vh - 100px); /* Ajusta la altura del contenido */
     width: 100%;
+    overflow: auto; /* Permite el desplazamiento */
   } 
   
   .transparent-box {
@@ -204,6 +205,7 @@
     align-items: center;
     justify-content: flex-start; /* Alinea el contenido hacia arriba */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: auto; /* Permite el desplazamiento */
   }
   
   .charts-and-stats {
