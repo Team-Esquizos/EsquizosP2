@@ -1,5 +1,4 @@
 <template>
-
   <div class="card">
     <section class="info-section">
       <div class="background-design">
@@ -27,19 +26,19 @@
     </section>
     <section class="days-section">
       <button class="verde">
-        <span class="day">TUE</span>
+        <span class="day">Positivos: {{ verde }}</span>
         <span class="icon-weather-day">
           
         </span>
       </button>
       <button class="amarillo">
-        <span class="day">WED</span>
+        <span class="day">Advertencias:{{ amarillo }}</span>
         <span class="icon-weather-day">
          
         </span>
       </button>
       <button class="rojo">
-        <span class="day">THU</span>
+        <span class="day">Negativos:{{ rojo }}</span>
         <span class="icon-weather-day">
           
         </span>
@@ -81,6 +80,18 @@
         type: String,
         required:true
       },
+      verde: {
+        type: String,
+        required:true
+      },
+      amarillo: {
+        type: String,
+        required:true
+      },
+      rojo: {
+        type: String,
+        required:true
+      },
     },
     created ()
     {console.log("Nombre alumno: ", this.nombres)}
@@ -96,8 +107,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 180px;
-    width: 280px;
+    height: 400px;
+    width: 855px;
     border-radius: 25px;
     background: lightgrey;
     overflow: hidden;

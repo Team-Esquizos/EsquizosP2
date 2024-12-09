@@ -1,24 +1,33 @@
 var courseLearningModel = require('./courseLearningModel.js');
-
-
+var learningModel = require('../learning/learningModel.js');
 
 module.exports.getCourseLearningsDBService = async (curso) => {
     try {
-        const result = await courseLearningModel.find({codCurso: curso});
+        // Buscar en courseLearningModel por el código del curso
+        const result = await courseLearningModel.find({ codCurso: curso });
+
+        console.log("RESULTADO en courseLearningModel: ", result);
 
         if (result.length > 0) {
-            console.log("Aprendizajes de curso [", curso, "] encontrados");
-            return { status: true, msg: "Aprendizajes encontrados", courseLearnings: result };
-        } else {
-            console.log("No se encontraron Aprendizajes");
-            return { status: false, msg: "No se encontraron Aprendizajes" };
-        }
+            // Extraer IDs o campo relevante para buscar en learningModel
+            const learningIds = result.map((item) => item.aprendizaje); // Cambiar 'idLearning' según tu esquema
 
+            // Buscar en learningModel con los IDs obtenidos
+            const datos = await learningModel.find({ _id: { $in: learningIds } });
+
+            console.log("Datos encontrados en learningModel: ", datos);
+
+            return { status: true, msg: "Aprendizajes encontrados", courseLearnings: datos };
+        } else {
+            console.log("No se encontraron aprendizajes para el curso [", curso, "]");
+            return { status: false, msg: "No se encontraron aprendizajes para el curso" };
+        }
     } catch (error) {
-        console.log("Error al obtener Aprendizajes:", error);
-        return { status: false, msg: "Error al obtener Aprendizajes" };
+        console.error("Error al obtener aprendizajes:", error);
+        return { status: false, msg: "Error al obtener aprendizajes", error: error.message };
     }
 };
+
 
 module.exports.addLearningToCourseDBService = async (curso, ap) => {
     try {
