@@ -1,61 +1,213 @@
 <template>
-
-    
-    <!-- Contenedor de la tarjeta -->
     <div>
       <navBar />
       <div class="maincontent">
         <div class="gestor-docentes-container">
-        <div class="container mt-4">
+          <div class="container mt-4">
             <div class="row justify-content-center">
-            <div class="col-md-8">
+              <div class="col-md-8">
                 <div class="card shadow-lg border-0">
-                <!-- Encabezado de la tarjeta -->
-                <div class="card-header bg-primary text-white text-center">
+                  <!-- Encabezado de la tarjeta -->
+                  <div class="card-header bg-primary text-white text-center">
                     <h4 class="mb-0">
-                    <i class="bi bi-journal-bookmark-fill me-2"></i>
-                    {{ nombre }} // SECCIÓN {{ seccion }}
+                      <i class="bi bi-journal-bookmark-fill me-2"></i>
+                      {{ nombre }} // SECCIÓN {{ seccion }}
                     </h4>
-                </div>
-                <!-- Cuerpo de la tarjeta -->
-                <div class="card-body">
+                  </div>
+                  <!-- Cuerpo de la tarjeta -->
+                  <div class="card-body">
                     <h5 class="card-title text-center text-secondary">
-                    <i class="bi bi-calendar-event me-1"></i>
-                    Semestre dictado: {{ semestre }}
+                      <i class="bi bi-calendar-event me-1"></i>
+                      Semestre dictado: {{ semestre }}
                     </h5>
                     <ul class="list-group list-group-flush mt-4">
-                    <li class="list-group-item">
+                      <li class="list-group-item">
                         <i class="bi bi-code me-2 text-primary"></i>
                         <strong>Código del Curso:</strong> {{ codCurso }}
-                    </li>
+                      </li>
                     </ul>
+  
+                    <h5 class="text-center text-primary mt-4">Aprendizajes</h5>
+                    <ul class="list-group mt-3">
+                      <li
+                        v-for="aprendizaje in aprendizajes"
+                        :key="aprendizaje._id"
+                        class="list-group-item d-flex justify-content-between align-items-center"
+                      >
+                        {{ aprendizaje.aprendizaje }}
+                        <button
+                          class="btn btn-outline-danger btn-sm"
+                          @click="eliminarAprendizaje(aprendizaje._id)"
+                        >
+                          <i class="bi bi-trash"></i> Eliminar
+                        </button>
+                      </li>
+                    </ul>
+  
+                    <p v-if="aprendizajes.length === 0" class="text-center mt-3 text-muted">
+                      No hay aprendizajes registrados para este curso.
+                    </p>
+  
+                    <!-- Botón para abrir el modal -->
+                    <div class="d-flex justify-content-center mt-4">
+                      <button
+                        class="btn btn-outline-primary"
+                        data-bs-toggle="modal"
+                        data-bs-target="#agregarAprendizajeModal"
+                      >
+                        <i class="bi bi-plus-circle me-2"></i> Agregar Aprendizaje
+                      </button>
+                    </div>
+                  </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Modal para agregar aprendizaje -->
+      <div
+        class="modal fade"
+        id="agregarAprendizajeModal"
+        tabindex="-1"
+        aria-labelledby="agregarAprendizajeLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="agregarAprendizajeLabel">
+                Agregar Aprendizaje
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <form @submit.prevent="agregarAprendizaje()">
+                <div class="mb-3">
+                  <label for="aprendizaje" class="form-label">Selecciona un aprendizaje</label>
+                  <select v-model="aprendizajeSeleccionado" class="form-select" required>
+                    <option v-for="option in opciones" :key="option._id" :value="option._id">
+                      {{ option.aprendizaje }}
+                    </option>
+                  </select>
                 </div>
+                <div class="text-end">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Cancelar
+                  </button>
+                  <button type="submit" class="btn btn-primary">
+                    Agregar
+                  </button>
+                </div>
+              </form>
             </div>
-            </div>
+          </div>
         </div>
-        </div>
-    </div>
+      </div>
     </div>
   </template>
   
   <script>
   import navBar from "@/components/AppNavbarAdm.vue";
-  
+  import axios from "axios";
+  import bootstrap from "bootstrap";
+
   export default {
     name: "VistaCurso",
     components: { navBar },
     props: ["nombre", "seccion", "semestre", "codCurso"],
     data() {
       return {
-        aprendizajes: []
+        aprendizajes: [],
+        opciones: [],
+        aprendizajeSeleccionado: null,
       };
+    },
+    mounted() {
+      this.obtenerAprendizajes();
+      this.obtenerOpciones();
+    },
+    methods: {
+      async obtenerAprendizajes() {
+        try {
+          const response = await axios.get(
+            `http://localhost:3333/api/courseLearnings/getFromCourse/${this.codCurso}`
+          );
+          if (response.status) {
+            this.aprendizajes = response.data;
+          } else {
+            console.error(response.msg);
+          }
+        } catch (error) {
+          console.error("Error al obtener aprendizajes:", error);
+        }
+      },
+      async obtenerOpciones() {
+        try {
+          const response = await axios.get("http://localhost:3333/api/learning/get");
+          console.log("OPCIONES: ", response);
+          this.opciones = response.data;
+        } catch (error) {
+          console.error("Error al obtener las opciones:", error);
+        }
+      },
+      async agregarAprendizaje() {
+        try {
+            const id = this.aprendizajeSeleccionado;
+            if (!id) {
+            console.error("No se seleccionó ningún aprendizaje.");
+            return;
+            }
+            const response = await axios.post(
+            `http://localhost:3333/api/courseLearnings/addToCourse/${this.codCurso}/${id}`
+            );
+            if (response.status === 200) {
+            // Agregar el aprendizaje devuelto a la lista
+            this.aprendizajes.push(response.data);
+            this.aprendizajeSeleccionado = null; // Limpiar la selección
+            const modalElement = document.getElementById("agregarAprendizajeModal");
+            const modalInstance = bootstrap.Modal.getInstance(modalElement);
+            this.obtenerAprendizajes();
+            if (modalInstance) modalInstance.hide();
+            } else {
+            console.error("Error al agregar aprendizaje:", response.data.msg);
+            }
+        } catch (error) {
+            console.error("Error al agregar aprendizaje:", error);
+        }
+    },
+
+      async eliminarAprendizaje(id) {
+        try {
+          const response = await axios.delete(
+            `http://localhost:3333/api/courseLearnings/remove/${this.codCurso}/${id}`
+          );
+          if (response.status === 200) {
+            this.aprendizajes = this.aprendizajes.filter(
+              (aprendizaje) => aprendizaje._id !== id
+            );
+            this.obtenerAprendizajes();
+          } else {
+            console.error("Error al eliminar aprendizaje:", response.data.msg);
+          }
+        } catch (error) {
+          console.error("Error al intentar eliminar el aprendizaje:", error);
+        }
+      },
     },
   };
   </script>
   
+  
+  
   <style scoped>
-.maincontent {
+  .maincontent {
     background-color: var(--background);
     min-height: calc(100vh - 80px);
     display: flex;
@@ -288,4 +440,5 @@ body {
 }
 
   </style>
+  
   
