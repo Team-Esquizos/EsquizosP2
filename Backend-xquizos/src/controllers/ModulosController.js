@@ -1,4 +1,4 @@
-var datos = require('../Moduloseducativos/Modulosmodel.js');
+var datos = require('../learning/learningModel');
 const XLSX = require("xlsx");
 const fs = require('fs');
 const mongoose = require("mongoose");
@@ -30,8 +30,8 @@ const importModulos = async (req, res) => {
                 aprendizajesSet.add(aprendizaje);
 
                 datosData.push({
-                    Aprendizaje: aprendizaje,
-                    TipoSaber: row['Tipo de saber']
+                    aprendizaje: aprendizaje,
+                    tipoSaber: row['Tipo de saber']
                 });
             }
         }
