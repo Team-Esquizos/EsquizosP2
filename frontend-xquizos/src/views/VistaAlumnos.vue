@@ -20,6 +20,10 @@
                 <button class="btn btn-success" @click="GenerateExcel">
                     <i class="fa-solid fa-file-csv"></i> Exportar Alumnos en Excel
                 </button>
+              <button class="btn btn-success" @click="gotoEstadisticas">
+                <i class="fa-solid fa-chart-bar"></i> Estadísticas
+            
+              </button>
             </div>
         </div>
 
@@ -188,6 +192,16 @@ export default {
         this.fetchAlumnos();
     },
     methods: {
+        gotoEstadisticas() {
+            this.$router.push({
+                name: 'VistaEstadisticasGeneralDocente',
+                params: {
+                   
+                    codCurso: this.codigo,
+                    periodo: this.periodo
+                }
+            });
+        },
         goperfilalumno(matricula, nombrePrimer, codigo, periodo) {
             console.log('Datos enviados:', matricula, nombrePrimer); // Debug para confirmar los valores
             this.$router.push({
