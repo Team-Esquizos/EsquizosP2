@@ -9,7 +9,7 @@
       </select>
     </div>
     <div class="body">
-      <!-- Usa v-for para iterar sobre los módulos y crear una tarjeta para cada uno -->
+      <!-- Solo muestra los cursos si hay datos disponibles -->
       <modulos 
         v-for="curso in cursos" 
         :key="`${curso.codigo}-${curso.instancia.periodo}`" 
@@ -20,67 +20,72 @@
         :semestre="curso.semestre" 
         :periodo="curso.instancia.periodo"
       />
+      <!-- Mensaje si no hay cursos -->
+      <p v-if="cursos.length === 0" class="text-center">No hay cursos disponibles para el periodo seleccionado.</p>
     </div>
   </div>
 </template>
 
 <script>
-  import navBara from '@/components/AppNavbarAdm.vue';
-  import modulos from '@/components/modulos.vue';
-  import axios from 'axios';
-  import autenticadorSesion from '@/mixins/AutenticadorSesion';
+import navBara from '@/components/AppNavbarAdm.vue';
+import modulos from '@/components/modulos.vue';
+import axios from 'axios';
+import autenticadorSesion from '@/mixins/AutenticadorSesion';
 
-  export default {
-    name: "VistaDocente",
-    mixins: [autenticadorSesion],
-    components: {
-      navBara,
-      modulos
+export default {
+  name: "VistaDocente",
+  mixins: [autenticadorSesion],
+  components: {
+    navBara,
+    modulos
+  },
+  data() {
+    return {
+      cursos: [],
+      periodoAct: new Date().getFullYear(), // Año actual como valor predeterminado
+      periodos: Array.from({ length: 26 }, (_, i) => 2000 + i), // Genera años desde 2000 hasta 2025
+    };
+  },
+  created() {
+    this.fetchCursos();
+  },
+  methods: {
+    goBack() {
+      this.$router.push({ name: 'VistaDocente' });
     },
-    data() {
-      return {
-        cursos: [],
-        periodoAct: new Date().getFullYear(), // Año actual como valor predeterminado
-        periodos: Array.from({ length: 26 }, (_, i) => 2000 + i), // Genera años desde 2000 hasta 2025
-      };
-    },
-    created() {
-      this.fetchCursos();
-    },
-    methods: {
-      goBack() {
-        this.$router.push({ name: 'VistaDocente' });
-      },
-      async fetchCursos() {
-        try {
-          const storedUser = localStorage.getItem('rut') || sessionStorage.getItem('rut');
-          console.log('Rut:', storedUser);
-          console.log('Periodo seleccionado:', this.periodoAct);
+    async fetchCursos() {
+      try {
+        const storedUser = localStorage.getItem('rut') || sessionStorage.getItem('rut');
+        console.log('Rut:', storedUser);
+        console.log('Periodo seleccionado:', this.periodoAct);
 
-          const response = await axios.get(`http://localhost:3333/api/courseInstance/getteacherinstance/${storedUser}/${this.periodoAct}`);
-          
-          if (response.data.status) {
-            const { courses, instance } = response.data;
+        // Limpia los cursos anteriores al cambiar el periodo
+        this.cursos = [];
 
-            // Combinar cursos e instancias en el frontend
-            this.cursos = courses.map(course => {
-              const relatedInstance = instance.find(inst => inst.codCurso === course.codigo);
-              return {
-                ...course, // Datos del curso
-                instancia: relatedInstance ? relatedInstance : null // Instancia relacionada o null si no hay coincidencia
-              };
-            });
+        const response = await axios.get(`http://localhost:3333/api/courseInstance/getteacherinstance/${storedUser}/${this.periodoAct}`);
+        
+        if (response.data.status) {
+          const { courses, instance } = response.data;
 
-            console.log('Cursos obtenidos:', this.cursos);
-          } else {
-            console.error(response.data.msg);
-          }
-        } catch (error) {
-          console.error('Error al obtener cursos:', error);
+          // Combinar cursos e instancias en el frontend
+          this.cursos = courses.map(course => {
+            const relatedInstance = instance.find(inst => inst.codCurso === course.codigo);
+            return {
+              ...course, // Datos del curso
+              instancia: relatedInstance ? relatedInstance : null // Instancia relacionada o null si no hay coincidencia
+            };
+          });
+
+          console.log('Cursos obtenidos:', this.cursos);
+        } else {
+          console.error(response.data.msg);
         }
+      } catch (error) {
+        console.error('Error al obtener cursos:', error);
       }
     }
-  };
+  }
+};
 </script>
 
 <style scoped>
@@ -129,4 +134,5 @@
   }
 }
 </style>
+
 

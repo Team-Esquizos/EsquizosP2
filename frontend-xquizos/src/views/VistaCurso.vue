@@ -7,14 +7,12 @@
             <div class="row justify-content-center">
               <div class="col-md-8">
                 <div class="card shadow-lg border-0">
-                  <!-- Encabezado de la tarjeta -->
                   <div class="card-header bg-primary text-white text-center">
                     <h4 class="mb-0">
                       <i class="bi bi-journal-bookmark-fill me-2"></i>
                       {{ nombre }} // SECCIÓN {{ seccion }}
                     </h4>
                   </div>
-                  <!-- Cuerpo de la tarjeta -->
                   <div class="card-body">
                     <h5 class="card-title text-center text-secondary">
                       <i class="bi bi-calendar-event me-1"></i>
@@ -48,7 +46,6 @@
                       No hay aprendizajes registrados para este curso.
                     </p>
   
-                    <!-- Botón para abrir el modal -->
                     <div class="d-flex justify-content-center mt-4">
                       <button
                         class="btn btn-outline-primary"
@@ -66,7 +63,7 @@
         </div>
       </div>
   
-      <!-- Modal para agregar aprendizaje -->
+      <!-- Modal -->
       <div
         class="modal fade"
         id="agregarAprendizajeModal"
@@ -74,12 +71,10 @@
         aria-labelledby="agregarAprendizajeLabel"
         aria-hidden="true"
       >
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="agregarAprendizajeLabel">
-                Agregar Aprendizaje
-              </h5>
+              <h5 class="modal-title" id="agregarAprendizajeLabel">Agregar Aprendizaje</h5>
               <button
                 type="button"
                 class="btn-close"
@@ -89,10 +84,21 @@
             </div>
             <div class="modal-body">
               <form @submit.prevent="agregarAprendizaje()">
-                <div class="mb-3">
+                <div class="mb-3 text-center">
                   <label for="aprendizaje" class="form-label">Selecciona un aprendizaje</label>
-                  <select v-model="aprendizajeSeleccionado" class="form-select" required>
-                    <option v-for="option in opciones" :key="option._id" :value="option._id">
+                  <select
+                    v-model="aprendizajeSeleccionado"
+                    class="form-select mx-auto"
+                    id="aprendizaje"
+                    style="width: 70%;"
+                    required
+                  >
+                    <option disabled value="">-- Selecciona un aprendizaje --</option>
+                    <option
+                      v-for="option in opciones"
+                      :key="option._id"
+                      :value="option._id"
+                    >
                       {{ option.aprendizaje }}
                     </option>
                   </select>
@@ -101,9 +107,7 @@
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                     Cancelar
                   </button>
-                  <button type="submit" class="btn btn-primary">
-                    Agregar
-                  </button>
+                  <button type="submit" class="btn btn-primary">Agregar</button>
                 </div>
               </form>
             </div>
@@ -117,7 +121,7 @@
   import navBar from "@/components/AppNavbarAdm.vue";
   import axios from "axios";
   import bootstrap from "bootstrap";
-
+  
   export default {
     name: "VistaCurso",
     components: { navBar },
@@ -151,7 +155,6 @@
       async obtenerOpciones() {
         try {
           const response = await axios.get("http://localhost:3333/api/learning/get");
-          console.log("OPCIONES: ", response);
           this.opciones = response.data;
         } catch (error) {
           console.error("Error al obtener las opciones:", error);
@@ -159,30 +162,28 @@
       },
       async agregarAprendizaje() {
         try {
-            const id = this.aprendizajeSeleccionado;
-            if (!id) {
+          const id = this.aprendizajeSeleccionado;
+          if (!id) {
             console.error("No se seleccionó ningún aprendizaje.");
             return;
-            }
-            const response = await axios.post(
+          }
+          const response = await axios.post(
             `http://localhost:3333/api/courseLearnings/addToCourse/${this.codCurso}/${id}`
-            );
-            if (response.status === 200) {
-            // Agregar el aprendizaje devuelto a la lista
+          );
+          if (response.status === 200) {
             this.aprendizajes.push(response.data);
-            this.aprendizajeSeleccionado = null; // Limpiar la selección
+            this.aprendizajeSeleccionado = null;
             const modalElement = document.getElementById("agregarAprendizajeModal");
             const modalInstance = bootstrap.Modal.getInstance(modalElement);
             this.obtenerAprendizajes();
             if (modalInstance) modalInstance.hide();
-            } else {
+          } else {
             console.error("Error al agregar aprendizaje:", response.data.msg);
-            }
+          }
         } catch (error) {
-            console.error("Error al agregar aprendizaje:", error);
+          console.error("Error al agregar aprendizaje:", error);
         }
-    },
-
+      },
       async eliminarAprendizaje(id) {
         try {
           const response = await axios.delete(
@@ -203,8 +204,6 @@
     },
   };
   </script>
-  
-  
   
   <style scoped>
   .maincontent {
@@ -414,31 +413,16 @@ body {
   color: #dc3545;
 }
 
-
-
-.suggestion-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  border: 1px solid #ddd;
-  background: #fff;
-  max-height: 150px;
-  overflow-y: auto;
-  position: absolute;
-  width: 100%;
-  z-index: 1000;
-}
-
-.suggestion-list li {
-  padding: 10px;
-  cursor: pointer;
-}
-
-.suggestion-list li:hover {
-  background-color: #007bff;
-  color: white;
-}
-
+  .modal-dialog-centered {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .form-select {
+    margin: 0 auto;
+  }
   </style>
+  
   
   
