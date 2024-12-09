@@ -351,4 +351,9 @@ export default {
   opacity: 1;
 }
 
+a {
+  color: inherit; /* Conserva el color predeterminado del texto */
+  text-decoration: none; /* Quita el subrayado predeterminado */
+}
+
 </style>

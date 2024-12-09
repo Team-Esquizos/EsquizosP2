@@ -54,7 +54,7 @@
                             <i class="fa-solid fa-plus"></i>
                         </button>
                         <!-- Botón de vista de alumno -->
-                        <button @click="goperfilalumno(alumno.matricula,alumno.nombres)" class="btn btn-sm btn-primary mx-1">
+                        <button @click="goperfilalumno(alumno.matricula,alumno.nombres, codCurso, periodo)" class="btn btn-sm btn-primary mx-1">
                             <i class="far fa-eye"></i>
                         </button>
                     </td>
@@ -192,7 +192,6 @@ export default {
         this.fetchAlumnos();
     },
     methods: {
-
         gotoEstadisticas() {
             this.$router.push({
                 name: 'VistaEstadisticasGeneralDocente',
@@ -203,15 +202,13 @@ export default {
                 }
             });
         },
-
-
-        goperfilalumno(matricula, nombrePrimer) {
+        goperfilalumno(matricula, nombrePrimer, codigo, periodo) {
             console.log('Datos enviados:', matricula, nombrePrimer); // Debug para confirmar los valores
             this.$router.push({
                 name: 'PerfilAlumno',
                 params: {
                     matriculaalum: matricula,
-                    nombrealum: nombrePrimer, codCurso: this.codigo, periodo: this.periodo 
+                    nombrealum: nombrePrimer, codigo, periodo 
                 }
             });
         },
