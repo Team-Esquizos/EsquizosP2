@@ -77,7 +77,7 @@
             </div>
             <button @click="addComment">Añadir Comentario</button>
             <div class="comments-list">
-                <h3>Comentarios:</h3>
+                <h3>Comentarios en el ramo: {{ this.codCurso }} - {{ this.periodo }}</h3>
                 <ul>
                     <li v-for="(comment, index) in comments" :key="index" class="comment-box">
                         {{ comment.comentario }}
@@ -275,7 +275,7 @@ Profesor(a) responsable
             try {
                 // Obtiene los comentarios
                 const response = await axios.get(
-                    `http://localhost:3333/api/comments/getFromMatricula/${this.matriculaalum}`
+                    `http://localhost:3333/api/comments/getFromMatricula/${this.matriculaalum}/${this.codCurso}/${this.periodo}`
                 );
                 this.comments = response.data.comments || [];
 
@@ -310,8 +310,8 @@ Profesor(a) responsable
         async iraEstadisticas() {
             this.$router.push({
                 name: 'VistaEstadisticas',
-                params: { matricula: this.matriculaalum },
-                name: 'VistaEstadisticas'
+                params: { matricula: this.matriculaalum, periodo: this.periodo, codCurso: this.codCurso },
+             
             });
         },
         async fetchComments() {

@@ -6,15 +6,12 @@
         <h1 class="titulo">Estadísticas</h1>
         <div class="charts-and-stats">
           <div class="chart">
-            <h2>Gráfico de Barras Apiladas</h2>
+            <h2>Pesos por Periodo</h2>
             <canvas ref="barChart"></canvas>
           </div>
           <div class="statistics-box">
             <h3>Estadísticas</h3>
-            <p> Según los datos recolectados del estudiante durante todos los periodos que ha estado inscrito
-            en la institución, se ha determinado un "Estado de comportamiento" basado en los pesos de los comentarios
-            que ha recibido por parte de l@s docentes.
-            </p>
+            <p> Según los datos recolectados del estudiante durante el periodo seleccionado, se ha determinado un "Estado de comportamiento" basado en los pesos de los comentarios que ha recibido por parte de l@s docentes.</p>
             <p>Estado del Estudiante: {{ studentStatus }}</p>
           </div>
         </div>
@@ -30,10 +27,6 @@ import {
   Chart, 
   BarController, 
   BarElement, 
-  PieController, 
-  ArcElement, 
-  ScatterController, 
-  PointElement,
   CategoryScale, 
   LinearScale, 
   Title, 
@@ -45,10 +38,6 @@ import {
 Chart.register(
   BarController, 
   BarElement, 
-  PieController, 
-  ArcElement, 
-  ScatterController, 
-  PointElement,
   CategoryScale, 
   LinearScale, 
   Title, 
@@ -61,99 +50,82 @@ export default {
   components: {
     navBar
   },
-  props: ['matricula'],
+  props: ['matricula', 'periodo', 'codCurso'],
   
   data() {
     return {
       barChart: null,
-      pieChart: null,
-      scatterChart: null,
-      dataValues: [12, 19, 3, 5, 2, 3], // Reemplaza con tus datos reales
-      average: 0,
-      mode: '',
-      standardDeviation: 0,
-      studentStatus: '',
-      positiveWeights: {
-        buenComportamiento: [],
-        advertencia: [],
-        malComportamiento: []
-      },
-      negativeWeights: {
-        buenComportamiento: [],
-        advertencia: [],
-        malComportamiento: []
-      }
+      labels: [],
+      positiveWeights: [],
+      negativeWeights: [],
+      studentStatus: ''
     };
   },
   methods: {
-    async fetchComments(matricula) {
+    async fetchComments(matricula, periodo, codCurso) {
       try {
-        const response = await axios.get(`http://localhost:3333/api/comments/getFromMatricula/${matricula}`);
+        const response = await axios.get(`http://localhost:3333/api/comments/getFromMatricula/${matricula}/${codCurso}/${periodo}`);
         const comments = response.data.comments;
+        console.log('Comentarios obtenidos:', comments);
 
-        this.positiveWeights.buenComportamiento = comments.filter(comment => comment.peso > 0 && comment.flag === 'buenComportamiento').map(comment => comment.peso);
-        this.positiveWeights.advertencia = comments.filter(comment => comment.peso > 0 && comment.flag === 'advertencia').map(comment => comment.peso);
-        this.positiveWeights.malComportamiento = comments.filter(comment => comment.peso > 0 && comment.flag === 'malComportamiento').map(comment => comment.peso);
+        // Filtrar los pesos positivos y negativos
+        const positiveWeights = comments.filter(comment => comment.peso > 0).map(comment => comment.peso);
+        const negativeWeights = comments.filter(comment => comment.peso < 0).map(comment => comment.peso);
 
-        this.negativeWeights.buenComportamiento = comments.filter(comment => comment.peso < 0 && comment.flag === 'buenComportamiento').map(comment => comment.peso);
-        this.negativeWeights.advertencia = comments.filter(comment => comment.peso < 0 && comment.flag === 'advertencia').map(comment => comment.peso);
-        this.negativeWeights.malComportamiento = comments.filter(comment => comment.peso < 0 && comment.flag === 'malComportamiento').map(comment => comment.peso);
+        // Sumar los pesos
+        const totalPositiveWeight = positiveWeights.reduce((sum, peso) => sum + peso, 0);
+        const totalNegativeWeight = negativeWeights.reduce((sum, peso) => sum + peso, 0);
+
+        // Preparar datos para el gráfico
+        this.labels = [periodo];
+        this.positiveWeights = [totalPositiveWeight];
+        this.negativeWeights = [totalNegativeWeight];
 
         this.calculateStatistics();
         this.renderBarChart();
-        
       } catch (error) {
-        console.error("Error al obtener comentarios:", error);
+        console.error('Error al obtener comentarios:', error);
       }
     },
     calculateStatistics() {
-      const totalPositiveWeights = this.positiveWeights.buenComportamiento.reduce((a, b) => a + b, 0) +
-                                   this.positiveWeights.advertencia.reduce((a, b) => a + b, 0) +
-                                   this.positiveWeights.malComportamiento.reduce((a, b) => a + b, 0);
+      const totalPositiveWeights = this.positiveWeights.reduce((a, b) => a + b, 0);
+      const totalNegativeWeights = this.negativeWeights.reduce((a, b) => a + b, 0);
 
-      const totalNegativeWeights = this.negativeWeights.buenComportamiento.reduce((a, b) => a + b, 0) +
-                                   this.negativeWeights.advertencia.reduce((a, b) => a + b, 0) +
-                                   this.negativeWeights.malComportamiento.reduce((a, b) => a + b, 0);
-
-      if (this.negativeWeights.malComportamiento.length === 0) {
-        this.studentStatus = "excelente estudiante";
+      if (totalNegativeWeights === 0) {
+        this.studentStatus = 'excelente estudiante';
       } else if (totalPositiveWeights > Math.abs(totalNegativeWeights)) {
-        this.studentStatus = "buen estudiante";
+        this.studentStatus = 'buen estudiante';
       } else if (Math.abs(totalNegativeWeights) > totalPositiveWeights) {
         const difference = Math.abs(totalNegativeWeights) - totalPositiveWeights;
         if (difference < 3) {
-          this.studentStatus = "estudiante regular";
+          this.studentStatus = 'estudiante regular';
         } else {
-          this.studentStatus = "mal estudiante";
+          this.studentStatus = 'mal estudiante';
         }
       } else {
-        this.studentStatus = "estudiante regular";
+        this.studentStatus = 'estudiante regular';
       }
     },
     renderBarChart() {
+      if (this.barChart) {
+        this.barChart.destroy();
+      }
+
       this.barChart = new Chart(this.$refs.barChart, {
         type: 'bar',
         data: {
-          labels: ['Buen Comportamiento', 'Advertencia', 'Mal Comportamiento'],
+          labels: this.labels,
           datasets: [
             {
               label: 'Pesos Positivos',
-              data: [
-                this.positiveWeights.buenComportamiento.reduce((a, b) => a + b, 0),
-                this.positiveWeights.advertencia.reduce((a, b) => a + b, 0),
-                this.positiveWeights.malComportamiento.reduce((a, b) => a + b, 0)
-              ],
+              data: this.positiveWeights,
               backgroundColor: 'rgba(54, 162, 235, 0.6)',
               borderColor: 'rgba(54, 162, 235, 1)',
               borderWidth: 1
             },
             {
               label: 'Pesos Negativos',
-              data: [
-                this.negativeWeights.buenComportamiento.reduce((a, b) => a + b, 0),
-                this.negativeWeights.advertencia.reduce((a, b) => a + b, 0),
-                this.negativeWeights.malComportamiento.reduce((a, b) => a + b, 0)
-              ],
+              data: this.negativeWeights.map(value => Math.abs(value)), // Convertir a positivo para apilar
               backgroundColor: 'rgba(255, 99, 132, 0.6)',
               borderColor: 'rgba(255, 99, 132, 1)',
               borderWidth: 1
@@ -164,20 +136,30 @@ export default {
           responsive: true,
           plugins: {
             legend: { display: true },
-            title: { display: true, text: 'Gráfico de Barras Apiladas' }
+            title: { display: true, text: 'Pesos por Periodo' }
           },
           scales: {
-            x: { stacked: true },
-            y: { stacked: true }
+            x: { 
+              stacked: true,
+              title: {
+                display: true,
+                text: 'Periodos'
+              }
+            },
+            y: { 
+              stacked: true,
+              title: {
+                display: true,
+                text: 'Pesos'
+              }
+            }
           }
         }
       });
     },
-   
-   
   },
   mounted() {
-    this.fetchComments(this.matricula); // Reemplaza '2018-8' con la matrícula del estudiante
+    this.fetchComments(this.matricula, this.periodo, this.codCurso);
   }
 };
 </script>
