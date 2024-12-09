@@ -162,114 +162,129 @@ export default {
             }
         },
         async generatePDF(type, positiveComments, negativeComments) {
-            const doc = new jsPDF();
-            const imgData = await this.loadLogo();
+    const doc = new jsPDF();
+    const imgData = await this.loadLogo();
 
-            if (type === "recomendacion") {
-                // Encabezado de carta de recomendación
-                doc.addImage(imgData, "PNG", 10, 10, 30, 30); // Logo
-                doc.setFont("Times", "bold");
-                doc.setFontSize(16);
-                doc.text("Carta de Recomendación", 60, 20);
+    // Logo y encabezado
+    doc.addImage(imgData, "PNG", 20, 15, 30, 30); // Logo
+    doc.setFont("Helvetica", "bold");
+    doc.setFontSize(14);
+    doc.text("Universidad de Talca", 60, 25);
+    doc.setFontSize(12);
+    doc.text("Campus Talca", 60, 30);
+    doc.text("Dirección: Avenida Lircay s/n, Talca", 60, 35);
+    doc.text("Teléfono: +56 71 220 0000", 60, 40);
 
-                // Contenido de la carta de recomendación
-                const recommendationContent = `
-[Fecha: ${new Date().toLocaleDateString()}]
+    doc.setDrawColor(0, 0, 0);
+    doc.line(20, 50, 190, 50); // Línea separadora
 
-A quien corresponda,
+    if (type === "recomendacion") {
+        // Título y contenido de la carta de recomendación
+        doc.setFontSize(16);
+        doc.setFont("Helvetica", "bold");
+        doc.text("CARTA DE RECOMENDACIÓN", 105, 60, { align: "center" });
 
-Por medio de la presente, me permito recomendar de manera entusiasta y formal al estudiante:
+        doc.setFont("Helvetica", "normal");
+        doc.setFontSize(12);
+        const recommendationContent = `
+[Destinatario]
+______________________________________
+[Nombre de la persona o departamento]
+______________________________________
+Universidad de Talca
+Talca
 
-Nombre: ${this.nombrealum}  
-Matrícula: ${this.matriculaalum}  
+Me dirijo a usted el día ${new Date().toLocaleDateString()} para solicitar una carta de recomendación para ${this.alumno.nombres} ${this.alumno.apellidoP} ${this.alumno.apellidoM}, perteneciente a su departamento.
 
-Contexto y méritos destacados  
+Conozco al candidato ${this.alumno.nombres} ${this.alumno.apellidoP} ${this.alumno.apellidoM}. Quiero destacar su participación en clases por su profundo interés y dedicación hacia este ámbito.
 
-Durante su participación en el programa académico, ${this.nombrealum} ha demostrado ser un(a) estudiante altamente comprometido(a), proactivo(a) y orientado(a) a resultados. Entre las cualidades y logros que lo/la distinguen, destaco los siguientes:
+Además de sus excelentes resultados en las evaluaciones, destaco su gran nivel académico, su determinación en la presentación de su disertación final y habilidades excepcionales como:
 
 ${positiveComments.map(comment => `- ${comment.comentario}`).join('\n')}
 
-Estas cualidades no solo reflejan su excelencia académica, sino también su capacidad para colaborar efectivamente en equipo, asumir retos con determinación y contribuir de manera significativa al éxito de proyectos en los que participa.
+En el plano personal, admiro su constancia, honradez y marcada persistencia. Estoy plenamente convencido de que tiene mucho por aportar en cualquier desafío que emprenda.
 
-Conclusión  
+Sin más que añadir, quedo a su disposición para ampliar esta información.
 
-Estoy plenamente convencido(a) de que ${this.nombrealum} será un recurso invaluable para cualquier organización o proyecto en el que decida participar. Su dedicación y habilidades garantizan un desempeño sobresaliente en cualquier entorno.
+Cordialmente,
 
-Sin más que agregar, quedo a su disposición para ampliar esta información o responder cualquier consulta que considere necesaria.
+${this.profesorNombre}, profesor docente de ${this.codCurso}
+Correo electrónico: ${localStorage.getItem('email') || sessionStorage.getItem('email')}`;
 
-Atentamente,  
-${this.profesorNombre}
-Profesor(a) responsable  
-`;
-                doc.setFont("Times", "normal");
-                doc.setFontSize(12);
-                doc.text(recommendationContent, 10, 40, {
-                    maxWidth: 190
-                });
-            } else if (type === "sumario") {
-                // Encabezado de carta de sumario
-                doc.addImage(imgData, "PNG", 10, 10, 30, 30); // Logo
-                doc.setFont("Times", "bold");
-                doc.setFontSize(16);
-                doc.text("Carta de Sumario", 70, 20);
+            doc.text(recommendationContent, 20, 70, { maxWidth: 170, align: "left" });
+            doc.text("___________________", 140, 270, { align: "left" });
+            doc.text("Firma del Profesor.", 140, 280, { align: "left" });
+            doc.text("___________________", 50, 270, { align: "left" });
+            doc.text("Firma del Decano.", 50, 280, { align: "left" });
 
-                // Contenido de la carta de sumario
-                const summaryContent = `
+        } else if (type === "sumario") {
+            // Título y contenido de la carta de sumario
+            doc.setFontSize(16);
+            doc.setFont("Helvetica", "bold");
+            doc.text("CARTA DE SUMARIO", 105, 60, { align: "center" });
+
+            doc.setFont("Helvetica", "normal");
+            doc.setFontSize(12);
+            const summaryContent = `
+
+Sr./Sra. Decano(a) de la Universidad de Talca
+     
 [Fecha: ${new Date().toLocaleDateString()}]
 
-A quien corresponda,
+Me permito presentar un sumario relacionado con el desempeño académico y conductual del estudiante:
 
-Por medio de la presente, y en mi calidad de profesor(a), me permito presentar un sumario relacionado con el desempeño académico y comportamental del estudiante identificado como:
+Nombre del estudiante: ${this.nombrealum}
+Matrícula: ${this.matriculaalum}
 
-Nombre del estudiante: ${this.nombrealum}  
-Matrícula: ${this.matriculaalum}  
-
-Exposición de hechos  
-A continuación, se detalla una relación de los principales aspectos observados que fundamentan esta comunicación:
+Exposición de hechos
+A continuación, detallo los principales aspectos observados en el marco de su participación académica:
 
 ${negativeComments.map(comment => `- ${comment.comentario}`).join('\n')}
 
-Estos hechos han sido constatados en el marco de su participación en las actividades académicas y/o conductas dentro del aula, impactando negativamente en su desempeño y/o en el ambiente educativo.
+Impacto y medidas propuestas:
+Dichos hechos han tenido un impacto negativo en su desempeño y en el ambiente educativo. Por ello, sugiero las siguientes medidas:
 
-Solicitud y medidas solicitadas  
+1. Establecer un plan de mejora para el estudiante.
+2. Programar una reunión con el estudiante y sus representantes, si corresponde.
+3. Implementar un seguimiento periódico para evaluar su progreso.
+4. Realizar una revisión de las normas y reglamentos internos.
+5. Evaluar la posibilidad de expulsión, si la situación no mejora.
 
-Con base en lo anterior, se solicita que se tomen las medidas correspondientes para atender esta situación. Entre las posibles acciones, se sugiere:  
-1. Establecer un plan de mejora para el estudiante.  
-2. Programar una reunión con el estudiante y sus representantes, de ser aplicable.  
-3. Implementar un seguimiento periódico para evaluar su progreso.  
+Cierre
+Estoy a disposición para colaborar en el seguimiento y resolución de esta situación, con el objetivo de garantizar el bienestar académico.
 
-Quedo en espera de su respuesta y a disposición para colaborar en el seguimiento y resolución de esta situación, en aras de favorecer el bienestar académico y personal del estudiante.
+Atentamente,
 
-Atentamente,  
-${this.profesorNombre}
-Profesor(a) responsable  
-`;
-                doc.setFont("Times", "normal");
-                doc.setFontSize(12);
-                doc.text(summaryContent, 10, 40, {
-                    maxWidth: 190
-                });
-            }
+${this.profesorNombre}, profesor docente de ${this.codCurso}
+Correo electrónico: ${localStorage.getItem('email') || sessionStorage.getItem('email')}`;
 
-            // Guardar el archivo PDF
-            doc.save(type === "recomendacion" ? "carta_recomendacion.pdf" : "carta_sumario.pdf");
-        },
+            doc.text(summaryContent, 20, 70, { maxWidth: 170, align: "left" });
+            doc.text("___________________", 140, 270, { align: "left" });
+            doc.text("Firma del Profesor.", 140, 280, { align: "left" });
+            doc.text("___________________", 50, 270, { align: "left" });
+            doc.text("Firma del Decano.", 50, 280, { align: "left" });
+        }
 
-        loadLogo() {
-            // Método para cargar el logo como Base64
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.src = logo;
-                img.onload = () => {
-                    const canvas = document.createElement("canvas");
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    const ctx = canvas.getContext("2d");
-                    ctx.drawImage(img, 0, 0);
-                    resolve(canvas.toDataURL("image/png"));
-                };
-            });
-        },
+        // Guardar el archivo PDF
+        doc.save(type === "recomendacion" ? "Carta_de_Recomendacion.pdf" : "Carta_de_Sumario.pdf");
+    },
+
+loadLogo() {
+    // Método para cargar el logo como Base64
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.src = logo;
+        img.onload = () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+            resolve(canvas.toDataURL("image/png"));
+        };
+    });
+}
+,
 
         async showChoiceDialog() {
             try {
