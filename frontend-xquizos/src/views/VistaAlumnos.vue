@@ -50,7 +50,7 @@
                             <i class="fa-solid fa-plus"></i>
                         </button>
                         <!-- Botón de vista de alumno -->
-                        <button @click="goperfilalumno(alumno.matricula,alumno.nombres, codigo, periodo)" class="btn btn-sm btn-primary mx-1">
+                        <button @click="goperfilalumno(alumno.matricula,alumno.nombres, codCurso, periodo)" class="btn btn-sm btn-primary mx-1">
                             <i class="far fa-eye"></i>
                         </button>
                     </td>
@@ -194,7 +194,7 @@ export default {
                 name: 'PerfilAlumno',
                 params: {
                     matriculaalum: matricula,
-                    nombrealum: nombrePrimer, codCurso: this.codigo, periodo: this.periodo 
+                    nombrealum: nombrePrimer, codigo, periodo 
                 }
             });
         },
