@@ -64,7 +64,8 @@ module.exports.getCommentsDBService = async (instance) => {
         if(instance.codCurso === 'admin'){
             var comments = await commentModel.find({matricula: instance.matricula});
         } else {
-            var comments = await commentModel.find({matricula: instance.matricula, codCurso: instance.codCurso, periodo: instance.periodo});
+            var comments = await commentModel.find({matricula: instance.matricula});
+            comments = comments.filter(comment => comment.codCurso === instance.codCurso && comment.periodo === instance.periodo);
         }
 
         if (comments) {
