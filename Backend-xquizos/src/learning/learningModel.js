@@ -3,7 +3,7 @@ var Schema = mongoose.Schema;
 
 var learningSchema = new Schema ({
     aprendizaje: {type: String, required: true, unique: true},
-    tipoSaber: {type: String, required: true, unique: false}
+    tipoSaber: {type: String, required: false, unique: false}
 
 })
 
