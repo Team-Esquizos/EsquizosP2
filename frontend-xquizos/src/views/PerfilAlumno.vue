@@ -311,7 +311,6 @@ Profesor(a) responsable
             this.$router.push({
                 name: 'VistaEstadisticas',
                 params: { matricula: this.matriculaalum, periodo: this.periodo, codCurso: this.codCurso },
-             
             });
         },
         async fetchComments() {
