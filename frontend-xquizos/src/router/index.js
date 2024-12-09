@@ -15,6 +15,7 @@ import VistaAlumnos from '@/views/VistaAlumnos.vue';
 import VistaEstadisticas from '@/views/VistaEstadisticas.vue';
 
 import PerfilAlumno from '@/views/PerfilAlumno.vue';
+import VistaEstadisticasGeneralDocente from '@/views/VistaEstadisticasGeneralDocente.vue';
 
 
 const routes = [
@@ -100,6 +101,12 @@ const routes = [
     component: () => import("@/views/VistaCurso.vue"),
     props: true,
     state: true
+  },
+
+  {path: '/vistaEstadisticasGeneralDocente/:codCurso/:periodo',
+  name: 'VistaEstadisticasGeneralDocente',
+  component: VistaEstadisticasGeneralDocente,
+  props: true
   }
 
 ];
