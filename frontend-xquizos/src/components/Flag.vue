@@ -66,6 +66,7 @@ export default {
   gap: 15px; /* Ajusta el espacio entre ícono y texto */
   cursor: pointer;
   user-select: none;
+  margin: 0.8vh;
 }
 
 /* Contenedor de íconos */
@@ -87,7 +88,7 @@ export default {
 }
 
 /* Mostrar el ícono sólido al seleccionar */
-input:checked ~ .flag-icons .flag-regular {
+  input:checked ~ .flag-icons .flag-regular {
   display: none;
 }
 

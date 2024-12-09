@@ -50,7 +50,7 @@
                             <i class="fa-solid fa-plus"></i>
                         </button>
                         <!-- Botón de vista de alumno -->
-                        <button @click="goperfilalumno(alumno.matricula,alumno.nombres)" class="btn btn-sm btn-primary mx-1">
+                        <button @click="goperfilalumno(alumno.matricula,alumno.nombres, codigo, periodo)" class="btn btn-sm btn-primary mx-1">
                             <i class="far fa-eye"></i>
                         </button>
                     </td>
@@ -188,13 +188,15 @@ export default {
         this.fetchAlumnos();
     },
     methods: {
-        goperfilalumno(matricula, nombrePrimer) {
+        goperfilalumno(matricula, nombrePrimer, codigo, periodo) {
             console.log('Datos enviados:', matricula, nombrePrimer); // Debug para confirmar los valores
             this.$router.push({
                 name: 'PerfilAlumno',
                 params: {
                     matriculaalum: matricula,
-                    nombrealum: nombrePrimer
+                    nombrealum: nombrePrimer,
+                    codCurso: codigo,
+                    periodo: periodo,
                 }
             });
         },
